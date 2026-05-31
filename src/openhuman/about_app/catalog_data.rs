@@ -1070,7 +1070,11 @@ pub(super) const CAPABILITIES: &[Capability] = &[
         description: "Spawn and manage MCP server connections (stdio subprocess or HTTP-remote). Reconfigure stored env vars and reconnect without uninstalling.",
         how_to: "Skills > MCP > select a server > Connect / Reconfigure",
         status: CapabilityStatus::Beta,
-        privacy: None,
+        privacy: Some(CapabilityPrivacy {
+            leaves_device: true,
+            data_kind: PrivacyDataKind::Derived,
+            destinations: &["Configured MCP endpoint(s)"],
+        }),
     },
     Capability {
         id: "channels.mcp_tool_call",
@@ -1080,7 +1084,11 @@ pub(super) const CAPABILITIES: &[Capability] = &[
         description: "Call tools exposed by connected MCP servers. Tools are surfaced to the agent and runnable from the tool playground.",
         how_to: "Skills > MCP > select a connected server > Tools > Try, or ask the assistant in Chat",
         status: CapabilityStatus::Beta,
-        privacy: None,
+        privacy: Some(CapabilityPrivacy {
+            leaves_device: true,
+            data_kind: PrivacyDataKind::Derived,
+            destinations: &["Configured MCP endpoint(s)"],
+        }),
     },
     Capability {
         id: "settings.configure_ai",

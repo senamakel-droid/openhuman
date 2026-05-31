@@ -1,14 +1,15 @@
 ---
 description: >-
   The dynamic, user-facing side of MCP-client support — discover servers on
-  Smithery.ai, persist installs to SQLite, supervise local-spawn subprocess
-  lifecycle, surface their tools to agents via the unified tool registry.
+  Smithery and the official MCP registry, persist installs to SQLite, supervise
+  local-spawn subprocess lifecycle, surface their tools to agents via the
+  unified tool registry.
 icon: plug
 ---
 
 # MCP Registry (`src/openhuman/mcp_registry/`)
 
-`src/openhuman/mcp_registry/` is the **dynamic, user-facing** half of OpenHuman's Model Context Protocol client support. It lets a user browse the Smithery.ai MCP registry, install a chosen server, persist that choice to SQLite, and (for servers launched as local subprocesses) supervise the subprocess lifecycle. Installed servers' tools are surfaced to agents via the unified tool registry (`crate::openhuman::tool_registry`).
+`src/openhuman/mcp_registry/` is the **dynamic, user-facing** half of OpenHuman's Model Context Protocol client support. It lets a user browse the supported upstream registries (Smithery and the official modelcontextprotocol registry), install a chosen server, persist that choice to SQLite, and (for servers launched as local subprocesses or HTTP-remote endpoints) supervise the connection lifecycle. Installed servers' tools are surfaced to agents via the unified tool registry (`crate::openhuman::tool_registry`).
 
 > **Naming note**: the Rust module path is `mcp_registry`, but the RPC namespace and on-disk SQLite filename are still `mcp_clients` for backward compatibility with existing frontend code and stored user state. Grep both names when chasing call sites.
 
@@ -16,7 +17,7 @@ This module is paired with `src/openhuman/mcp_client/` — the **transport libra
 
 ```text
                  ┌───────────────────────────────────────────────┐
-   Smithery.ai ──► registries/ + registry.rs (10-min SQLite cache)│
+   Registries ───► registries/ + registry.rs (10-min SQLite cache)│
                  └────────────────────┬──────────────────────────┘
                                       │ browse / install
                                       ▼

@@ -13,7 +13,11 @@
  */
 import debug from 'debug';
 
-import type { SmitheryServer, SmitheryServerDetail } from '../../components/channels/mcp/types';
+import type {
+  McpTool,
+  SmitheryServer,
+  SmitheryServerDetail,
+} from '../../components/channels/mcp/types';
 import { callCoreRpc } from '../coreRpcClient';
 
 const log = debug('mcp-setup:api');
@@ -38,22 +42,16 @@ interface SubmitSecretResult {
   fulfilled: boolean;
 }
 
-interface RemoteTool {
-  name: string;
-  description?: string;
-  input_schema?: unknown;
-}
-
 interface TestConnectionResult {
   ok: boolean;
-  tools?: RemoteTool[];
+  tools?: McpTool[];
   error?: string;
 }
 
 interface InstallAndConnectResult {
   server_id: string;
   status: 'connected' | 'installed_disconnected';
-  tools?: RemoteTool[];
+  tools?: McpTool[];
   error?: string;
 }
 

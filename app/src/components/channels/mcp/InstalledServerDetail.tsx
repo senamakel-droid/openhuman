@@ -118,10 +118,13 @@ const InstalledServerDetail = ({
   const openReconfigure = useCallback(
     (prefill?: Record<string, string>) => {
       const initial: Record<string, string> = {};
+      const initialVisibility: Record<string, boolean> = {};
       for (const key of server.env_keys) {
         initial[key] = prefill?.[key] ?? '';
+        initialVisibility[key] = false;
       }
       setReconfigValues(initial);
+      setShowReconfig(initialVisibility);
       setReconfigDone(false);
       setReconfigOpen(true);
     },

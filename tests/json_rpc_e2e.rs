@@ -8436,6 +8436,10 @@ async fn mcp_clients_install_connect_tool_call_happy_path() {
         Some(&json!(false)),
         "echo tool_call should not be an error: {tc_body}"
     );
+    assert!(
+        tc_body.to_string().contains("hello over rpc"),
+        "echo tool_call should round-trip the input payload: {tc_body}"
+    );
 
     // ── 4. update_env reconfigures + reconnects (no uninstall/reinstall) ─────
     let update_env = post_json_rpc(
@@ -8459,6 +8463,31 @@ async fn mcp_clients_install_connect_tool_call_happy_path() {
     assert!(
         env_keys.iter().any(|k| k.as_str() == Some("EXAMPLE_TOKEN")),
         "update_env should persist the new env key: {env_keys:?}"
+    );
+
+    // Verify the reconnected session is still functional: call echo again.
+    let tool_call2 = post_json_rpc(
+        &rpc_base,
+        9925,
+        "openhuman.mcp_clients_tool_call",
+        json!({
+            "server_id": server_id,
+            "tool_name": "echo",
+            "arguments": { "message": "hello after reconfigure" }
+        }),
+    )
+    .await;
+    let tc2_result =
+        assert_no_jsonrpc_error(&tool_call2, "mcp_clients_tool_call (after update_env)");
+    let tc2_body = tc2_result.get("result").unwrap_or(tc2_result);
+    assert_eq!(
+        tc2_body.get("is_error"),
+        Some(&json!(false)),
+        "echo tool_call after reconfigure should not be an error: {tc2_body}"
+    );
+    assert!(
+        tc2_body.to_string().contains("hello after reconfigure"),
+        "echo tool_call after reconfigure should round-trip the input payload: {tc2_body}"
     );
 
     // ── 5. disconnect cleans up the subprocess ───────────────────────────────
@@ -8542,6 +8571,27 @@ async fn mcp_clients_registry_settings_roundtrip() {
         "registry_settings_set must not echo the secret value"
     );
 
+    // Read-after-write: verify getter reflects the persisted state.
+    let get2 = post_json_rpc(
+        &rpc_base,
+        9933,
+        "openhuman.mcp_clients_registry_settings_get",
+        json!({}),
+    )
+    .await;
+    let get2_result = assert_no_jsonrpc_error(&get2, "registry_settings_get (after set)");
+    let get2_body = get2_result.get("result").unwrap_or(get2_result);
+    assert_eq!(get2_body.get("smithery_api_key_set"), Some(&json!(true)));
+    assert_eq!(
+        get2_body.get("mcp_official_base").and_then(Value::as_str),
+        Some("https://registry.example.test"),
+    );
+    // Getter must never return the raw secret.
+    assert!(
+        !get2.to_string().contains("sk-secret-value"),
+        "registry_settings_get must not return the secret value"
+    );
+
     // Clearing with an empty string flips the boolean back to false.
     let set2 = post_json_rpc(
         &rpc_base,
@@ -8556,6 +8606,23 @@ async fn mcp_clients_registry_settings_roundtrip() {
     // The base override persists across the clear of an unrelated field.
     assert_eq!(
         set2_body.get("mcp_official_base").and_then(Value::as_str),
+        Some("https://registry.example.test"),
+    );
+
+    // Read-after-clear: verify getter reflects the cleared state.
+    let get3 = post_json_rpc(
+        &rpc_base,
+        9934,
+        "openhuman.mcp_clients_registry_settings_get",
+        json!({}),
+    )
+    .await;
+    let get3_result = assert_no_jsonrpc_error(&get3, "registry_settings_get (after clear)");
+    let get3_body = get3_result.get("result").unwrap_or(get3_result);
+    assert_eq!(get3_body.get("smithery_api_key_set"), Some(&json!(false)));
+    // Base override should persist even after clearing the API key.
+    assert_eq!(
+        get3_body.get("mcp_official_base").and_then(Value::as_str),
         Some("https://registry.example.test"),
     );
 

@@ -35,7 +35,7 @@ subprocess, and the persistence.
 
 ## Tool surface
 
-Four tools registered behind a `mcp_setup_*` namespace. All tool inputs
+Five tools registered behind a `mcp_setup_*` namespace. All tool inputs
 and outputs are JSON; secret values **never** appear in either direction.
 
 | Tool | Input | Output | Notes |
@@ -44,7 +44,7 @@ and outputs are JSON; secret values **never** appear in either direction.
 | `mcp_setup_get` | `{ qualified_name }` | `{ detail, required_env_keys }` | Wraps `registry_get`; pre-computes `required_env_keys` from the `config_schema` (same logic as `ops::collect_required_env_keys`). |
 | `mcp_setup_request_secret` | `{ key_name, prompt }` | `{ ref: "secret://<opaque>" }` | Triggers an out-of-band UI prompt. Returns an opaque ref; raw value is held in a process-local in-memory map keyed by ref. |
 | `mcp_setup_test_connection` | `{ qualified_name, env_refs: { KEY: "secret://…" } }` | `{ ok, tools?: [McpTool], error?: string }` | Spawns the candidate subprocess in a **scratch** workspace, resolves refs to values just-in-time, runs `initialize` + `tools/list`, tears it down. No persistence. |
-| `mcp_setup_install_and_connect` | `{ qualified_name, env_refs }` | `{ server_id, status, tools: [McpTool] }` | Resolves refs, persists the install + `mcp_client_env` rows, calls `connections::connect`. Refs are consumed (removed from the in-memory map) regardless of outcome. |
+| `mcp_setup_install_and_connect` | `{ qualified_name, env_refs }` | `{ server_id, status, tools: [McpTool] }` | Resolves refs, persists the install + `mcp_client_env` rows, calls `connections::connect`. Refs are always consumed (removed from the in-memory map) regardless of outcome — on failure the agent must re-prompt via `mcp_setup_request_secret`. |
 
 ---
 
@@ -72,10 +72,11 @@ Lifecycle of `SETUP_SECRETS`:
 - Process-local `OnceLock<RwLock<HashMap<RefId, SecretEntry>>>`.
 - Entries TTL out after, say, 15 min (defends against stranded secrets if
   the conversation is abandoned mid-flow).
-- `mcp_setup_install_and_connect` consumes refs on success: pulls each
-  value, writes it to the `mcp_client_env` table (existing persistence,
-  already keyed by `server_id`), removes the ref. On failure refs are
-  left intact so the agent can retry without re-prompting the user.
+- `mcp_setup_install_and_connect` consumes refs regardless of outcome:
+  pulls each value, writes it to the `mcp_client_env` table (existing
+  persistence, already keyed by `server_id`), and removes the ref from
+  the in-memory map. On failure the agent should re-prompt via
+  `mcp_setup_request_secret` to collect fresh refs for a retry.
 - On core shutdown the map is dropped — refs do not survive restart.
 
 `RefId` is a short random hex string. **No structure or hint of the
