@@ -103,7 +103,8 @@ Rotate `XGITHUB_APP_PRIVATE_KEY` **every quarter** (and immediately on any suspe
 
 1. In the GitHub **App settings** (Org → Settings → Developer settings → GitHub Apps → the release App), under **Private keys** click **Generate a private key**. Download the new `.pem`.
 2. Update the repo secret: **Settings → Secrets and variables → Actions → `XGITHUB_APP_PRIVATE_KEY`** → paste the full new key (including the `-----BEGIN/END-----` lines). `XGITHUB_APP_ID` is unchanged.
-3. Trigger a low-risk verification run (e.g. **Release (Staging)**, or a `main_head` dry run with `create_release = false`) and confirm the **Generate GitHub App token** step succeeds and the push authenticates.
+3. Trigger a low-risk verification run (e.g. **Release (Staging)**) and confirm the **Generate GitHub App token** step succeeds and the push authenticates.
+   Do not use `main_head` for this check unless you intentionally want to cut a real bump commit and production tag — even with `create_release = false`, `prepare-build` still bumps the version, commits to `main`, and pushes the release tag.
 4. Back in **App settings → Private keys**, **delete the old key** so only the freshly-issued one remains valid.
 5. Record the rotation date (PR description, ops log, or `docs/OPERATIONS.md`) so the next quarter's owner can see when it last happened.
 
