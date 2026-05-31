@@ -56,7 +56,8 @@ describe('Skills page — MCP tab', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('No MCP servers installed yet.') || screen.getByText('Loading MCP servers...')
+        screen.getByText('No MCP servers installed yet.') ||
+          screen.getByText('Loading MCP servers...')
       ).toBeInTheDocument();
     });
   });
