@@ -1,12 +1,16 @@
-# MCP Setup Agent — design sketch
+# MCP Setup Agent
 
 A sub-agent that walks the user through installing, configuring, and
 connecting an MCP server from one of the upstream registries
 (`mcp_registry::registries`: Smithery, modelcontextprotocol/registry).
 
-This document is a **design sketch** for follow-up implementation. Nothing
-here is wired up yet beyond the underlying primitives in
-`src/openhuman/mcp_registry/`.
+**Status: implemented** (issue #3039). The agent archetype, its five
+`mcp_setup_*` tools, the opaque-secret request/submit flow, and the
+`install_and_connect` commit path are all live. The orchestrator delegates to
+it via the `setup_mcp_server` delegate (the `mcp_setup` entry in
+`src/openhuman/agent_registry/agents/orchestrator/agent.toml`), so a chat turn
+like *"set up the Notion MCP server"* routes here. The sections below describe
+how the flow works; paths reflect the shipped layout.
 
 ---
 
@@ -96,17 +100,18 @@ values.
 
 ## Where the agent lives
 
-Follow the existing sub-agent pattern (`src/openhuman/agent/harness/`):
+Follows the existing sub-agent pattern (`src/openhuman/agent_registry/`):
 
-- New archetype TOML at `app/src/lib/ai/agents/mcp_setup.toml` (loaded by
-  `AgentDefinitionRegistry::init_global`).
-- Prompt + tool allowlist scoped tight: only the four `mcp_setup_*` tools
-  plus the standard `chat` / `ask_user` primitives. **No** general
-  filesystem, network, or shell tools — the agent shouldn't be able to
-  exfiltrate a leaked ref even if one shows up.
-- Triggered by the main agent via `spawn_subagent("mcp_setup", { goal })`
-  or by an explicit UI affordance ("Add MCP server…" button that opens a
-  thread pinned to this archetype).
+- Archetype TOML at `src/openhuman/agent_registry/agents/mcp_setup/agent.toml`
+  (loaded by the agent registry loader).
+- Prompt + tool allowlist scoped tight: only the five `mcp_setup_*` tools
+  plus `ask_user_clarification`. **No** general filesystem, network, or shell
+  tools — the agent shouldn't be able to exfiltrate a leaked ref even if one
+  shows up. (`submit_secret` is intentionally NOT in the agent allowlist — the
+  UI calls it out-of-band via the socket bridge.)
+- Triggered by the orchestrator's `setup_mcp_server` delegate (the `mcp_setup`
+  entry in `agent_registry/agents/orchestrator/agent.toml`), or directly from
+  chat when the user asks to add/install/set up an MCP server.
 
 ---
 
@@ -127,7 +132,8 @@ Following the project's `Specify → Rust → JSON-RPC → UI → tests` flow:
    modal listening on a new socket event `mcp_setup_request_secret`),
    submit POSTs the value to a Tauri command that calls into core to
    register the ref.
-4. **Archetype** + system prompt at `app/src/lib/ai/agents/mcp_setup.toml`.
+4. **Archetype** + system prompt at
+   `src/openhuman/agent_registry/agents/mcp_setup/agent.toml`.
 5. **Tests**:
    - Unit: ref lifecycle (mint → resolve → consume → TTL expiry).
    - Integration (`tests/mcp_registry_e2e.rs` style): full flow against

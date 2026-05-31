@@ -115,6 +115,20 @@ const InstallDialog = ({ qualifiedName, prefillEnv, onSuccess, onCancel }: Insta
         config: parsedConfig,
       });
       log('install success server_id=%s', server.server_id);
+      // Auto-connect on success so the user lands on a live server with its
+      // tools listed, matching the setup-agent's install_and_connect behaviour
+      // (issue #3039 gap B3). Best-effort: a connect failure must not fail the
+      // install — the detail view surfaces the error and offers a Connect retry.
+      try {
+        await mcpClientsApi.connect(server.server_id);
+        log('auto-connect success server_id=%s', server.server_id);
+      } catch (connectErr) {
+        log(
+          'auto-connect failed server_id=%s: %s',
+          server.server_id,
+          connectErr instanceof Error ? connectErr.message : String(connectErr)
+        );
+      }
       onSuccess(server);
     } catch (err) {
       const msg = err instanceof Error ? err.message : t('mcp.install.failedInstall');
