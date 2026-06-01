@@ -2854,6 +2854,7 @@ const messages: TranslationMap = {
   'settings.ai.connectProviderLabel': 'Połącz {label}',
   'settings.ai.editProviderEndpoint': 'Edytuj punkt końcowy {label}',
   'settings.ai.defaultLocalEndpoint': 'http://localhost:11434/v1',
+  'settings.ai.editEndpoint': 'Edytuj endpoint',
   'settings.ai.endpointUrlLabel': 'URL endpointu',
   'settings.ai.localRuntimeHelper':
     'Miejsce, w którym dostępny jest {label}. Domyślnie jest to localhost; wskaż zdalny host (na przykład http://10.0.0.4:11434/v1), aby użyć współdzielonej instancji.',

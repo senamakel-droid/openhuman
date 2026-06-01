@@ -2805,6 +2805,7 @@ const messages: TranslationMap = {
   'settings.ai.connectProviderLabel': 'সংযোগ {label}',
   'settings.ai.editProviderEndpoint': '{label} শেষবিন্দু সম্পাদনা করুন',
   'settings.ai.defaultLocalEndpoint': 'http://localhost:11434/v1',
+  'settings.ai.editEndpoint': 'শেষবিন্দু সম্পাদনা করুন',
   'settings.ai.endpointUrlLabel': 'শেষবিন্দু URL',
   'settings.ai.localRuntimeHelper':
     'xqxqx সহযোগে সংযোগ ব্যবস্থা করা হবে। ডিফল্ট স্থানীয় হোস্ট; দূরবর্তী হোস্টটিকে এই অবস্থায় দেখা যাবে (যেমন, xq1xqxqx ব্যবহার করা হচ্ছে)।',

@@ -9,7 +9,7 @@
  * per row, so the resolved provider+model is always rendered inline.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LuCheck, LuCircleAlert, LuKeyRound } from 'react-icons/lu';
+import { LuCheck, LuCircleAlert, LuKeyRound, LuPencil } from 'react-icons/lu';
 
 import { listConnections as listComposioConnections } from '../../../lib/composio/composioApi';
 import type { ComposioConnection } from '../../../lib/composio/types';
@@ -582,21 +582,22 @@ const ProviderKeyDialog = ({
   slug,
   label,
   isLocalRuntime,
+  initialValue,
   oauthAction,
   onCancel,
   onSubmit,
-  initialValue,
 }: {
   slug: string;
   label: string;
   /** When true, render an "Endpoint URL" field instead of API key. */
   isLocalRuntime: boolean;
+  /** Pre-populate the field when editing an existing provider's endpoint. */
+  initialValue?: string;
   oauthAction?: { label: string; description?: string; onClick: () => Promise<void> | void } | null;
   onCancel: () => void;
   /** Returns the entered value. For local runtimes this is the endpoint URL;
    *  for cloud providers it's the API key. */
   onSubmit: (value: string) => Promise<void> | void;
-  initialValue?: string | null;
 }) => {
   const { t } = useT();
   const [value, setValue] = useState<string>(
@@ -2572,7 +2573,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
   const [routingEditorMode, setRoutingEditorMode] = useState<'own' | 'custom' | null>(null);
   // Which provider slug's API-key dialog is currently open (null = closed).
   const [keyDialogFor, setKeyDialogFor] = useState<string | null>(null);
-  const [keyDialogInitialValue, setKeyDialogInitialValue] = useState<string | null>(null);
   // When the user toggles LM Studio / Ollama (local runtimes), we
   // need to remember which label to attach to the upserted provider so the
   // chip can find it again. Cleared when the dialog closes.
@@ -2602,11 +2602,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
               const url = new URL(trimmed);
               if (!/^https?:$/.test(url.protocol)) {
                 throw new Error('Endpoint must start with http:// or https://');
-              }
-              if (url.hostname === '0.0.0.0') {
-                url.hostname = 'localhost';
-              } else if (url.hostname === '[::]') {
-                url.hostname = '[::1]';
               }
               if (url.pathname === '' || url.pathname === '/') {
                 url.pathname = '/v1';
@@ -2689,7 +2684,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
           setCodexAuthError(null);
         }
         setKeyDialogFor(null);
-        setKeyDialogInitialValue(null);
         setPendingLocalLabel(null);
       } finally {
         setBusyAction(null);
@@ -2888,9 +2882,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
                 const tone = LOCAL_CHIP_TONE[localKind];
                 const existing = draft.cloudProviders.find(cp => cp.slug === localKind);
                 const enabled = !!existing;
-                const editEndpointLabel = formatI18n(t('settings.ai.editProviderEndpoint'), {
-                  label,
-                });
                 // Use a styled chip directly for local runtimes — they have
                 // non-standard tones not in BUILTIN_PROVIDER_META.
                 return (
@@ -2898,6 +2889,19 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
                     key={localKind}
                     className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium ring-1 transition-colors ${tone}`}>
                     <span>{label}</span>
+                    {enabled && (
+                      <button
+                        type="button"
+                        aria-label={t('settings.ai.editEndpoint')}
+                        title={t('settings.ai.editEndpoint')}
+                        onClick={() => {
+                          setKeyDialogFor(localKind);
+                          setPendingLocalLabel(label);
+                        }}
+                        className="rounded p-0.5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
+                        <LuPencil className="h-3 w-3" />
+                      </button>
+                    )}
                     <button
                       type="button"
                       role="switch"
@@ -2920,7 +2924,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
                             routing: nextRouting,
                           });
                         } else {
-                          setKeyDialogInitialValue(null);
                           setKeyDialogFor(localKind);
                           setPendingLocalLabel(label);
                         }
@@ -2931,20 +2934,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
                         className={`inline-block h-3 w-3 transform rounded-full bg-white dark:bg-neutral-900 shadow transition-transform ${enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`}
                       />
                     </button>
-                    {enabled && existing ? (
-                      <button
-                        type="button"
-                        aria-label={editEndpointLabel}
-                        title={editEndpointLabel}
-                        onClick={() => {
-                          setKeyDialogInitialValue(existing.endpoint);
-                          setKeyDialogFor(localKind);
-                          setPendingLocalLabel(label);
-                        }}
-                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-current hover:bg-black/5 dark:hover:bg-white/10">
-                        <LuKeyRound className="h-3.5 w-3.5" aria-hidden />
-                      </button>
-                    ) : null}
                   </div>
                 );
               })}
@@ -3274,7 +3263,11 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
           slug={keyDialogFor}
           label={pendingLocalLabel ?? BUILTIN_PROVIDER_META[keyDialogFor]?.label ?? keyDialogFor}
           isLocalRuntime={Boolean(pendingLocalLabel)}
-          initialValue={keyDialogInitialValue}
+          initialValue={
+            pendingLocalLabel
+              ? (draft.cloudProviders.find(cp => cp.slug === keyDialogFor)?.endpoint ?? undefined)
+              : undefined
+          }
           oauthAction={
             keyDialogFor === 'openrouter' && !pendingLocalLabel
               ? {
@@ -3302,7 +3295,6 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
             openRouterOauthAbortRef.current?.abort();
             openRouterOauthAbortRef.current = null;
             setKeyDialogFor(null);
-            setKeyDialogInitialValue(null);
             setPendingLocalLabel(null);
           }}
           onSubmit={async value =>

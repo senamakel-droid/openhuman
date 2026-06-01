@@ -2848,6 +2848,7 @@ const messages: TranslationMap = {
   'settings.ai.connectProviderLabel': 'Connetti {label}',
   'settings.ai.editProviderEndpoint': 'Modifica punto finale di {label}',
   'settings.ai.defaultLocalEndpoint': 'http://localhost:11434/v1',
+  'settings.ai.editEndpoint': "Modifica l'endpoint",
   'settings.ai.endpointUrlLabel': "URL dell'endpoint",
   'settings.ai.localRuntimeHelper':
     "Dove {label} è raggiungibile. Il valore predefinito è localhost; punta questo a un host remoto (per esempio, http://10.0.0.4:11434/v1) per utilizzare un'istanza condivisa.",

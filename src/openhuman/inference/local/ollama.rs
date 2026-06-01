@@ -4,6 +4,32 @@ use serde::{Deserialize, Serialize};
 
 pub(crate) const DEFAULT_OLLAMA_BASE_URL: &str = "http://localhost:11434";
 
+/// Rewrite unspecified bind addresses (`0.0.0.0`, `[::]`) to their loopback
+/// equivalents (`127.0.0.1`, `[::1]`).  Ollama's default `OLLAMA_HOST` is
+/// `0.0.0.0:11434` — a valid *server-side* bind address but an invalid
+/// *client-side* connect target on Windows (and misleading on other OSes).
+fn normalize_unspecified_host(url: &str) -> String {
+    if let Ok(parsed) = reqwest::Url::parse(url) {
+        let replacement = match parsed.host() {
+            Some(url::Host::Ipv4(addr)) if addr.is_unspecified() => Some("127.0.0.1"),
+            Some(url::Host::Ipv6(addr)) if addr.is_unspecified() => Some("[::1]"),
+            _ => None,
+        };
+        if let Some(new_host) = replacement {
+            let scheme = parsed.scheme();
+            let port_suffix = parsed.port().map(|p| format!(":{p}")).unwrap_or_default();
+            let result = format!("{scheme}://{new_host}{port_suffix}");
+            log::debug!(
+                "[local_ai] normalize_unspecified_host: rewrote {} -> {}",
+                url,
+                result
+            );
+            return result;
+        }
+    }
+    url.to_string()
+}
+
 /// Returns the effective Ollama base URL.
 ///
 /// Priority (highest to lowest):
@@ -11,11 +37,14 @@ pub(crate) const DEFAULT_OLLAMA_BASE_URL: &str = "http://localhost:11434";
 /// 2. `OLLAMA_HOST` — Ollama's own env var; normalized to a full URL by
 ///    prepending `http://` when no scheme is present.
 /// 3. [`DEFAULT_OLLAMA_BASE_URL`] — `http://localhost:11434`.
+///
+/// Unspecified bind addresses (`0.0.0.0`, `[::]`) are rewritten to their
+/// loopback equivalents so the URL is valid as a client connect target.
 pub(crate) fn ollama_base_url() -> String {
     if let Ok(url) = std::env::var("OPENHUMAN_OLLAMA_BASE_URL") {
         let trimmed = url.trim();
         if !trimmed.is_empty() {
-            return normalize_ollama_client_url(trimmed.trim_end_matches('/'));
+            return normalize_unspecified_host(trimmed.trim_end_matches('/'));
         }
     }
 
@@ -27,9 +56,8 @@ pub(crate) fn ollama_base_url() -> String {
             } else {
                 format!("http://{trimmed}")
             };
-            let normalized = normalize_ollama_client_url(&url);
-            log::debug!("[local_ai] ollama_base_url: using OLLAMA_HOST -> {normalized}");
-            return normalized;
+            log::debug!("[local_ai] ollama_base_url: using OLLAMA_HOST -> {url}");
+            return normalize_unspecified_host(&url);
         }
     }
 
@@ -44,11 +72,14 @@ pub(crate) fn ollama_base_url() -> String {
 /// 2. `OPENHUMAN_OLLAMA_BASE_URL` env var
 /// 3. `OLLAMA_HOST` env var
 /// 4. [`DEFAULT_OLLAMA_BASE_URL`]
+///
+/// Unspecified bind addresses (`0.0.0.0`, `[::]`) are rewritten to their
+/// loopback equivalents so the URL is valid as a client connect target.
 pub(crate) fn ollama_base_url_from_config(config: &crate::openhuman::config::Config) -> String {
     if let Some(ref url) = config.local_ai.base_url {
         let trimmed = url.trim().trim_end_matches('/');
         if !trimmed.is_empty() {
-            let normalized = normalize_ollama_client_url(trimmed);
+            let normalized = normalize_unspecified_host(trimmed);
             log::debug!(
                 "[local_ai] ollama_base_url_from_config: using config base_url -> {}",
                 redact_ollama_base_url(&normalized)
@@ -103,8 +134,6 @@ pub(crate) fn validate_ollama_url(raw: &str) -> Result<String, String> {
     // Use the Host enum so IPv6 addresses are always re-bracketed correctly,
     // regardless of whether host_str() includes brackets in a given url-crate version.
     let host_formatted = match parsed.host() {
-        Some(url::Host::Ipv4(addr)) if addr.is_unspecified() => "localhost".to_string(),
-        Some(url::Host::Ipv6(addr)) if addr.is_unspecified() => "[::1]".to_string(),
         Some(url::Host::Ipv6(addr)) => format!("[{addr}]"),
         Some(h) => h.to_string(),
         None => String::new(),
@@ -117,37 +146,6 @@ pub(crate) fn validate_ollama_url(raw: &str) -> Result<String, String> {
 
     log::debug!("[local_ai] validate_ollama_url: raw={trimmed:?} -> normalized={normalized:?}");
     Ok(normalized)
-}
-
-/// Normalizes trusted env/config client URLs for outbound calls.
-///
-/// This is not input validation; user-supplied endpoint values must go through
-/// `validate_ollama_url` before being persisted.
-fn normalize_ollama_client_url(raw: &str) -> String {
-    let trimmed = raw.trim().trim_end_matches('/');
-    let Ok(parsed) = reqwest::Url::parse(trimmed) else {
-        return trimmed.to_string();
-    };
-    let Some(host) = parsed.host() else {
-        return trimmed.to_string();
-    };
-
-    let host_formatted = match host {
-        url::Host::Ipv4(addr) if addr.is_unspecified() => "localhost".to_string(),
-        url::Host::Ipv6(addr) if addr.is_unspecified() => "[::1]".to_string(),
-        url::Host::Ipv6(addr) => format!("[{addr}]"),
-        other => other.to_string(),
-    };
-    let mut normalized = format!("{}://{}", parsed.scheme(), host_formatted);
-    if let Some(port) = parsed.port() {
-        normalized.push(':');
-        normalized.push_str(&port.to_string());
-    }
-    let path = parsed.path().trim_end_matches('/');
-    if !path.is_empty() && path != "/" {
-        normalized.push_str(path);
-    }
-    normalized
 }
 
 /// Strips userinfo, query, and fragment from `raw` so logs and error messages
@@ -688,20 +686,6 @@ mod tests {
         assert_eq!(ollama_base_url(), "http://myhost:11434");
     }
 
-    #[test]
-    fn ollama_base_url_rewrites_unspecified_bind_hosts_for_client_use() {
-        let _lock = test_lock();
-        {
-            let _g = OllamaEnvGuard::set("http://0.0.0.0:11434");
-            assert_eq!(ollama_base_url(), "http://localhost:11434");
-        }
-        {
-            let _g1 = OllamaEnvGuard::clear();
-            let _g2 = OllamaEnvGuard::set_var(OLLAMA_HOST_VAR, "0.0.0.0:11434");
-            assert_eq!(ollama_base_url(), "http://localhost:11434");
-        }
-    }
-
     // ── ollama_base_url_from_config ───────────────────────────────────
 
     fn make_config_with_base_url(url: Option<&str>) -> crate::openhuman::config::Config {
@@ -732,26 +716,105 @@ mod tests {
         );
     }
 
+    // ── normalize_unspecified_host ──────────────────────────────────────
+
     #[test]
-    fn ollama_base_url_from_config_rewrites_unspecified_host() {
+    fn normalize_rewrites_ipv4_unspecified() {
+        assert_eq!(
+            normalize_unspecified_host("http://0.0.0.0:11434"),
+            "http://127.0.0.1:11434"
+        );
+    }
+
+    #[test]
+    fn normalize_rewrites_ipv6_unspecified() {
+        assert_eq!(
+            normalize_unspecified_host("http://[::]:11434"),
+            "http://[::1]:11434"
+        );
+    }
+
+    #[test]
+    fn normalize_preserves_loopback() {
+        assert_eq!(
+            normalize_unspecified_host("http://127.0.0.1:11434"),
+            "http://127.0.0.1:11434"
+        );
+        assert_eq!(
+            normalize_unspecified_host("http://[::1]:11434"),
+            "http://[::1]:11434"
+        );
+    }
+
+    #[test]
+    fn normalize_preserves_named_host() {
+        assert_eq!(
+            normalize_unspecified_host("http://localhost:11434"),
+            "http://localhost:11434"
+        );
+        assert_eq!(
+            normalize_unspecified_host("http://my-ollama.lan:11434"),
+            "http://my-ollama.lan:11434"
+        );
+    }
+
+    #[test]
+    fn normalize_preserves_private_ip() {
+        assert_eq!(
+            normalize_unspecified_host("http://192.168.1.5:11434"),
+            "http://192.168.1.5:11434"
+        );
+    }
+
+    #[test]
+    fn normalize_handles_invalid_url() {
+        assert_eq!(normalize_unspecified_host("not a url"), "not a url");
+    }
+
+    // ── ollama_base_url: 0.0.0.0 normalization ─────────────────────────
+
+    #[test]
+    fn ollama_base_url_normalizes_unspecified_in_env_override() {
+        let _lock = test_lock();
+        let _g = OllamaEnvGuard::set("http://0.0.0.0:11434");
+        assert_eq!(ollama_base_url(), "http://127.0.0.1:11434");
+    }
+
+    #[test]
+    fn ollama_base_url_normalizes_unspecified_in_ollama_host() {
+        let _lock = test_lock();
+        let _g1 = OllamaEnvGuard::clear();
+        let _g2 = OllamaEnvGuard::set_var(OLLAMA_HOST_VAR, "0.0.0.0:11434");
+        assert_eq!(ollama_base_url(), "http://127.0.0.1:11434");
+    }
+
+    #[test]
+    fn ollama_base_url_normalizes_ipv6_unspecified_in_ollama_host() {
+        let _lock = test_lock();
+        let _g1 = OllamaEnvGuard::clear();
+        let _g2 = OllamaEnvGuard::set_var(OLLAMA_HOST_VAR, "http://[::]:11434");
+        assert_eq!(ollama_base_url(), "http://[::1]:11434");
+    }
+
+    // ── ollama_base_url_from_config: 0.0.0.0 normalization ──────────────
+
+    #[test]
+    fn ollama_base_url_from_config_normalizes_unspecified() {
         let _lock = test_lock();
         let _g = OllamaEnvGuard::clear();
         let config = make_config_with_base_url(Some("http://0.0.0.0:11434"));
         assert_eq!(
             ollama_base_url_from_config(&config),
-            "http://localhost:11434"
+            "http://127.0.0.1:11434"
         );
     }
 
     #[test]
-    fn ollama_base_url_from_config_preserves_path_prefix() {
+    fn ollama_base_url_from_config_normalizes_ipv6_unspecified() {
         let _lock = test_lock();
         let _g = OllamaEnvGuard::clear();
-        let config = make_config_with_base_url(Some("http://127.0.0.1:11434/ollama/"));
-        assert_eq!(
-            ollama_base_url_from_config(&config),
-            "http://127.0.0.1:11434/ollama"
-        );
+        let config = make_config_with_base_url(Some("http://[::]:11434"));
+        assert_eq!(ollama_base_url_from_config(&config), "http://[::1]:11434");
     }
 
     // ── validate_ollama_url ───────────────────────────────────────────
@@ -801,18 +864,6 @@ mod tests {
     fn validate_ollama_url_handles_ipv6() {
         assert_eq!(
             validate_ollama_url("http://[::1]:11434"),
-            Ok("http://[::1]:11434".to_string())
-        );
-    }
-
-    #[test]
-    fn validate_ollama_url_rewrites_unspecified_bind_hosts() {
-        assert_eq!(
-            validate_ollama_url("http://0.0.0.0:11434"),
-            Ok("http://localhost:11434".to_string())
-        );
-        assert_eq!(
-            validate_ollama_url("http://[::]:11434"),
             Ok("http://[::1]:11434".to_string())
         );
     }

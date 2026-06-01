@@ -966,6 +966,65 @@ describe('AIPanel', () => {
     });
   });
 
+  // ─── local runtime: edit endpoint button on enabled chip ────────────────────
+
+  it('shows an edit-endpoint button on enabled Ollama chip', async () => {
+    const settingsWithOllama = {
+      ...baseSettings,
+      cloudProviders: [
+        ...baseSettings.cloudProviders,
+        {
+          id: 'p_ollama_1',
+          slug: 'ollama',
+          label: 'Ollama',
+          endpoint: 'http://192.168.1.5:11434/v1',
+          auth_style: 'bearer' as const,
+          has_api_key: false,
+        },
+      ],
+    };
+    vi.mocked(loadAISettings).mockResolvedValue(settingsWithOllama);
+    renderWithProviders(<AIPanel />);
+
+    const editBtn = await screen.findByRole('button', { name: /Edit endpoint/i });
+    expect(editBtn).toBeInTheDocument();
+  });
+
+  it('edit-endpoint button opens the dialog pre-populated with the saved URL', async () => {
+    const settingsWithOllama = {
+      ...baseSettings,
+      cloudProviders: [
+        ...baseSettings.cloudProviders,
+        {
+          id: 'p_ollama_1',
+          slug: 'ollama',
+          label: 'Ollama',
+          endpoint: 'http://192.168.1.5:11434/v1',
+          auth_style: 'bearer' as const,
+          has_api_key: false,
+        },
+      ],
+    };
+    vi.mocked(loadAISettings).mockResolvedValue(settingsWithOllama);
+    renderWithProviders(<AIPanel />);
+
+    fireEvent.click(await screen.findByRole('button', { name: /Edit endpoint/i }));
+
+    const dialog = await screen.findByRole('dialog', { name: /Connect Ollama/i });
+    const urlInput = within(dialog).getByLabelText(/Endpoint URL/i) as HTMLInputElement;
+    expect(urlInput.value).toBe('http://192.168.1.5:11434/v1');
+  });
+
+  it('does not show an edit-endpoint button when Ollama is disabled', async () => {
+    vi.mocked(loadAISettings).mockResolvedValue({ ...baseSettings, cloudProviders: [] });
+    renderWithProviders(<AIPanel />);
+
+    await waitFor(() =>
+      expect(screen.getByRole('switch', { name: /Connect Ollama/i })).toBeInTheDocument()
+    );
+    expect(screen.queryByRole('button', { name: /Edit endpoint/i })).not.toBeInTheDocument();
+  });
+
   // ─── Custom routing dialog: per-workload temperature override ───────────────
 
   it('Custom routing dialog saves the routing change immediately from the modal', async () => {

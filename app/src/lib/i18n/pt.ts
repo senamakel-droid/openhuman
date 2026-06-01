@@ -2853,6 +2853,7 @@ const messages: TranslationMap = {
   'settings.ai.connectProviderLabel': 'Conecte {label}',
   'settings.ai.editProviderEndpoint': 'Editar ponto de extremidade de {label}',
   'settings.ai.defaultLocalEndpoint': 'http://localhost:11434/v1',
+  'settings.ai.editEndpoint': 'Editar ponto de extremidade',
   'settings.ai.endpointUrlLabel': 'Ponto de extremidade URL',
   'settings.ai.localRuntimeHelper':
     'Onde {label} é acessível. O padrão é localhost; aponte isso para um host remoto (por exemplo, http://10.0.0.4:11434/v1) para usar uma instância compartilhada.',
