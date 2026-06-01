@@ -585,6 +585,7 @@ const ProviderKeyDialog = ({
   oauthAction,
   onCancel,
   onSubmit,
+  initialValue,
 }: {
   slug: string;
   label: string;
@@ -595,9 +596,12 @@ const ProviderKeyDialog = ({
   /** Returns the entered value. For local runtimes this is the endpoint URL;
    *  for cloud providers it's the API key. */
   onSubmit: (value: string) => Promise<void> | void;
+  initialValue?: string | null;
 }) => {
   const { t } = useT();
-  const [value, setValue] = useState<string>(isLocalRuntime ? defaultEndpointFor(slug) : '');
+  const [value, setValue] = useState<string>(
+    initialValue ?? (isLocalRuntime ? defaultEndpointFor(slug) : '')
+  );
   const [phase, setPhase] = useState<'idle' | 'saving' | 'oauth'>('idle');
   const [error, setError] = useState<string | null>(null);
   const busy = phase !== 'idle';
@@ -2568,6 +2572,7 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
   const [routingEditorMode, setRoutingEditorMode] = useState<'own' | 'custom' | null>(null);
   // Which provider slug's API-key dialog is currently open (null = closed).
   const [keyDialogFor, setKeyDialogFor] = useState<string | null>(null);
+  const [keyDialogInitialValue, setKeyDialogInitialValue] = useState<string | null>(null);
   // When the user toggles LM Studio / Ollama (local runtimes), we
   // need to remember which label to attach to the upserted provider so the
   // chip can find it again. Cleared when the dialog closes.
@@ -2597,6 +2602,11 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
               const url = new URL(trimmed);
               if (!/^https?:$/.test(url.protocol)) {
                 throw new Error('Endpoint must start with http:// or https://');
+              }
+              if (url.hostname === '0.0.0.0') {
+                url.hostname = 'localhost';
+              } else if (url.hostname === '[::]') {
+                url.hostname = '[::1]';
               }
               if (url.pathname === '' || url.pathname === '/') {
                 url.pathname = '/v1';
@@ -2679,6 +2689,7 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
           setCodexAuthError(null);
         }
         setKeyDialogFor(null);
+        setKeyDialogInitialValue(null);
         setPendingLocalLabel(null);
       } finally {
         setBusyAction(null);
@@ -2906,6 +2917,7 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
                             routing: nextRouting,
                           });
                         } else {
+                          setKeyDialogInitialValue(null);
                           setKeyDialogFor(localKind);
                           setPendingLocalLabel(label);
                         }
@@ -2916,6 +2928,20 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
                         className={`inline-block h-3 w-3 transform rounded-full bg-white dark:bg-neutral-900 shadow transition-transform ${enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`}
                       />
                     </button>
+                    {enabled && existing ? (
+                      <button
+                        type="button"
+                        aria-label={`Edit ${label} endpoint`}
+                        title={`Edit ${label} endpoint`}
+                        onClick={() => {
+                          setKeyDialogInitialValue(existing.endpoint);
+                          setKeyDialogFor(localKind);
+                          setPendingLocalLabel(label);
+                        }}
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-current hover:bg-black/5 dark:hover:bg-white/10">
+                        <LuKeyRound className="h-3.5 w-3.5" aria-hidden />
+                      </button>
+                    ) : null}
                   </div>
                 );
               })}
@@ -3245,6 +3271,7 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
           slug={keyDialogFor}
           label={pendingLocalLabel ?? BUILTIN_PROVIDER_META[keyDialogFor]?.label ?? keyDialogFor}
           isLocalRuntime={Boolean(pendingLocalLabel)}
+          initialValue={keyDialogInitialValue}
           oauthAction={
             keyDialogFor === 'openrouter' && !pendingLocalLabel
               ? {
@@ -3272,6 +3299,7 @@ const AIPanel = ({ embedded = false }: AIPanelProps = {}) => {
             openRouterOauthAbortRef.current?.abort();
             openRouterOauthAbortRef.current = null;
             setKeyDialogFor(null);
+            setKeyDialogInitialValue(null);
             setPendingLocalLabel(null);
           }}
           onSubmit={async value =>
