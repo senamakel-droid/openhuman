@@ -165,7 +165,6 @@ const messages: TranslationMap = {
   'welcome.title': 'OpenHuman में आपका स्वागत है',
   'welcome.subtitle': 'आपकी पर्सनल AI सुपर इंटेलिजेंस। प्राइवेट, सिंपल और बेहद पावरफुल।',
   'welcome.connectPrompt': 'RPC URL कॉन्फिगर करें (एडवांस्ड)',
-  'welcome.selectRuntime': 'एक रनटाइम चुनें',
   'welcome.clearingAppData': 'ऐप डेटा साफ़ किया जा रहा है...',
   'welcome.clearAppDataAndRestart': 'ऐप डेटा साफ़ करें और पुनरारंभ करें',
   'welcome.clearAppDataWarning':

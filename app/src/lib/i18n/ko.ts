@@ -164,7 +164,6 @@ const messages: TranslationMap = {
   'welcome.title': 'OpenHuman에 오신 것을 환영합니다',
   'welcome.subtitle': '개인용 AI 슈퍼 인텔리전스입니다. 비공개이며, 간단하고, 매우 강력합니다.',
   'welcome.connectPrompt': 'RPC URL 구성(고급)',
-  'welcome.selectRuntime': '런타임 선택',
   'welcome.clearingAppData': '앱 데이터 삭제 중...',
   'welcome.clearAppDataAndRestart': '앱 데이터 삭제 및 다시 시작',
   'welcome.clearAppDataWarning':

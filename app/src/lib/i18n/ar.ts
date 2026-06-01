@@ -164,7 +164,6 @@ const messages: TranslationMap = {
   'welcome.title': 'مرحبًا بك في OpenHuman',
   'welcome.subtitle': 'مساعدك الذكي الشخصي. خاص وبسيط وبالغ القوة.',
   'welcome.connectPrompt': 'ضبط عنوان URL للـ RPC (متقدم)',
-  'welcome.selectRuntime': 'اختر بيئة التشغيل',
   'welcome.clearingAppData': 'مسح بيانات التطبيق...',
   'welcome.clearAppDataAndRestart': 'مسح بيانات التطبيق وإعادة تشغيله',
   'welcome.clearAppDataWarning':

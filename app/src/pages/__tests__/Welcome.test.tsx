@@ -1,15 +1,8 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { clearBackendUrlCache } from '../../services/backendUrl';
-import { clearCoreRpcTokenCache, clearCoreRpcUrlCache } from '../../services/coreRpcClient';
 import { useDeepLinkAuthState } from '../../store/deepLinkAuthState';
 import { renderWithProviders } from '../../test/test-utils';
-import {
-  clearStoredCoreMode,
-  clearStoredCoreToken,
-  storeRpcUrl,
-} from '../../utils/configPersistence';
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../../utils/links';
 import { openUrl } from '../../utils/openUrl';
 import Welcome from '../Welcome';
@@ -239,55 +232,6 @@ describe('Welcome — decryption-failure recovery action', () => {
     await waitFor(() => {
       expect(screen.getByText(/Could not clear app data/)).toBeInTheDocument();
     });
-  });
-});
-
-describe('Welcome — Select runtime button', () => {
-  beforeEach(() => {
-    vi.mocked(useDeepLinkAuthState).mockReturnValue({
-      isProcessing: false,
-      errorMessage: null,
-      requiresAppDataReset: false,
-    });
-    vi.mocked(clearCoreRpcUrlCache).mockReset();
-    vi.mocked(clearCoreRpcTokenCache).mockReset();
-    vi.mocked(clearBackendUrlCache).mockReset();
-    vi.mocked(storeRpcUrl).mockReset();
-    vi.mocked(clearStoredCoreToken).mockReset();
-    vi.mocked(clearStoredCoreMode).mockReset();
-  });
-
-  it('renders the "Select a Runtime" button below the card', () => {
-    renderWithProviders(<Welcome />);
-
-    expect(screen.getByRole('button', { name: 'Select a Runtime' })).toBeInTheDocument();
-  });
-
-  it('does not render the legacy "Configure RPC URL (Advanced)" toggle', () => {
-    renderWithProviders(<Welcome />);
-
-    expect(
-      screen.queryByRole('button', { name: 'Configure RPC URL (Advanced)' })
-    ).not.toBeInTheDocument();
-  });
-
-  it('clicking "Select a Runtime" clears persisted core-mode state and resets caches', () => {
-    const { store } = renderWithProviders(<Welcome />, {
-      preloadedState: { coreMode: { mode: { kind: 'cloud', url: 'http://x', token: 't' } } },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Select a Runtime' }));
-
-    expect(storeRpcUrl).toHaveBeenCalledWith('');
-    expect(clearStoredCoreToken).toHaveBeenCalledTimes(1);
-    expect(clearStoredCoreMode).toHaveBeenCalledTimes(1);
-    expect(clearCoreRpcUrlCache).toHaveBeenCalledTimes(1);
-    expect(clearCoreRpcTokenCache).toHaveBeenCalledTimes(1);
-    expect(clearBackendUrlCache).toHaveBeenCalledTimes(1);
-    // Redux coreMode slice is reset to `unset` so BootCheckGate returns to picker.
-    expect((store.getState() as { coreMode: { mode: { kind: string } } }).coreMode.mode.kind).toBe(
-      'unset'
-    );
   });
 });
 

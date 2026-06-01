@@ -174,7 +174,6 @@ const messages: TranslationMap = {
   'welcome.subtitle':
     'Tu super inteligencia artificial personal. Privada, simple y extremadamente poderosa.',
   'welcome.connectPrompt': 'Configurar URL de RPC (Avanzado)',
-  'welcome.selectRuntime': 'Seleccionar un runtime',
   'welcome.clearingAppData': 'Borrando datos de la aplicación...',
   'welcome.clearAppDataAndRestart': 'Borrar datos de la aplicación y reiniciar',
   'welcome.clearAppDataWarning':

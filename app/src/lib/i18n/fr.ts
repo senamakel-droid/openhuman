@@ -172,7 +172,6 @@ const messages: TranslationMap = {
   'welcome.subtitle':
     'Ton assistant IA personnel super-intelligent. Privé, simple et extrêmement puissant.',
   'welcome.connectPrompt': "Configurer l'URL RPC (Avancé)",
-  'welcome.selectRuntime': 'Sélectionner un runtime',
   'welcome.clearingAppData': "Effacement des données de l'appli…",
   'welcome.clearAppDataAndRestart': "Effacer les données de l'appli et redémarrer",
   'welcome.clearAppDataWarning':

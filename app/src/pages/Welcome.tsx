@@ -8,14 +8,10 @@ import RotatingTetrahedronCanvas from '../components/RotatingTetrahedronCanvas';
 import Button from '../components/ui/Button';
 import { useT } from '../lib/i18n/I18nContext';
 import { useCoreState } from '../providers/CoreStateProvider';
-import { clearBackendUrlCache } from '../services/backendUrl';
-import { clearCoreRpcTokenCache, clearCoreRpcUrlCache } from '../services/coreRpcClient';
-import { resetCoreMode } from '../store/coreModeSlice';
 import { useDeepLinkAuthState } from '../store/deepLinkAuthState';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { resolveTheme, setThemeMode, type ThemeMode } from '../store/themeSlice';
 import { clearAllAppData } from '../utils/clearAllAppData';
-import { clearStoredCoreMode, clearStoredCoreToken, storeRpcUrl } from '../utils/configPersistence';
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../utils/links';
 import { createLocalSessionToken, LOCAL_SESSION_USER } from '../utils/localSession';
 import { openUrl } from '../utils/openUrl';
@@ -50,17 +46,6 @@ const Welcome = () => {
       setResetError(message || t('welcome.resetErrorFallback'));
       setIsClearingAppData(false);
     }
-  };
-
-  const handleSelectRuntime = () => {
-    log('[welcome] select-runtime — resetting core mode to return to picker');
-    storeRpcUrl('');
-    clearStoredCoreToken();
-    clearStoredCoreMode();
-    clearCoreRpcUrlCache();
-    clearCoreRpcTokenCache();
-    clearBackendUrlCache();
-    dispatch(resetCoreMode());
   };
 
   const handleLocalLogin = async () => {
@@ -229,13 +214,6 @@ const Welcome = () => {
         </div>
 
         <div className="mt-4 px-2 space-y-2">
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={handleSelectRuntime}
-            className="w-full py-3">
-            {t('welcome.selectRuntime')}
-          </Button>
           <Button
             variant="secondary"
             size="md"

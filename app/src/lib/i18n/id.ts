@@ -166,7 +166,6 @@ const messages: TranslationMap = {
   'welcome.title': 'Selamat datang di OpenHuman',
   'welcome.subtitle': 'Asisten AI Anda untuk komunitas',
   'welcome.connectPrompt': 'Konfigurasikan RPC URL (Lanjutan)',
-  'welcome.selectRuntime': 'Pilih Runtime',
   'welcome.clearingAppData': 'Menghapus data aplikasi...',
   'welcome.clearAppDataAndRestart': 'Hapus data aplikasi & memulai ulang',
   'welcome.clearAppDataWarning':
