@@ -43,7 +43,7 @@ pub(crate) fn inference_budget_exceeded_user_message() -> &'static str {
     // routing choice in Settings is respected.
     "You're out of credits, so I can't run the managed (cloud) model right now. \
      You can top up your credits or pick a plan to continue — or, if you've enabled a \
-     local model like Ollama, switch routing to \"Use your own model\" in Settings → LLM."
+     local model like Ollama, switch routing to \"Use Your Own Models\" in Settings → AI Configuration."
 }
 
 pub(crate) fn generic_inference_error_user_message() -> &'static str {

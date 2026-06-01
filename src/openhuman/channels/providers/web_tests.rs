@@ -157,7 +157,7 @@ fn budget_exceeded_copy_mentions_top_up() {
     // Issue #3088: the copy must guide the user to the self-service fix —
     // switching routing to their own local model — so an Ollama user with
     // no credits can self-diagnose. We guide, never auto-switch.
-    assert!(message.contains("Use your own model"));
+    assert!(message.contains("Use Your Own Models"));
     assert!(message.contains("Settings"));
 }
 
@@ -180,7 +180,7 @@ fn classify_inference_error_managed_insufficient_budget_400_is_budget_exhausted(
         "out of credits — retrying the same prompt won't help"
     );
     assert!(
-        classified.message.contains("Use your own model"),
+        classified.message.contains("Use Your Own Models"),
         "must guide the user to switch routing: {}",
         classified.message
     );
