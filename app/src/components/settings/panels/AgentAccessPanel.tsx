@@ -89,26 +89,30 @@ const AgentAccessPanel = () => {
         return;
       }
       try {
-        const [autonomyResp, agentResp] = await Promise.all([
-          openhumanGetAutonomySettings(),
-          openhumanGetAgentSettings(),
-        ]);
+        const autonomyResp = await openhumanGetAutonomySettings();
         if (cancelled) return;
         setLevel(autonomyResp.result.level);
         setWorkspaceOnly(autonomyResp.result.workspace_only);
         setRequireTaskPlanApproval(autonomyResp.result.require_task_plan_approval ?? true);
         setTrustedRoots(autonomyResp.result.trusted_roots ?? []);
         setAutoApprove(autonomyResp.result.auto_approve ?? []);
-        setTimeoutInput(String(agentResp.result.agent_timeout_secs));
-        setSavedTimeoutSecs(agentResp.result.agent_timeout_secs);
-        setTimeoutEnvOverride(agentResp.result.env_override);
-        setTimeoutMin(agentResp.result.min_timeout_secs);
-        setTimeoutMax(agentResp.result.max_timeout_secs);
       } catch (e) {
         if (!cancelled)
           setError(e instanceof Error ? e.message : t('settings.agentAccess.loadError'));
       } finally {
         if (!cancelled) setIsLoading(false);
+      }
+      try {
+        const agentResp = await openhumanGetAgentSettings();
+        if (cancelled) return;
+        setTimeoutInput(String(agentResp.result.agent_timeout_secs));
+        setSavedTimeoutSecs(agentResp.result.agent_timeout_secs);
+        setTimeoutEnvOverride(agentResp.result.env_override);
+        setTimeoutMin(agentResp.result.min_timeout_secs);
+        setTimeoutMax(agentResp.result.max_timeout_secs);
+      } catch {
+        // Non-fatal: autonomy controls still render; timeout section
+        // stays at defaults and the user can try saving manually.
       }
     };
     void load();
@@ -228,13 +232,17 @@ const AgentAccessPanel = () => {
       return;
     }
     const seq = ++timeoutSeqRef.current;
+    const draftAtCommit = timeoutInput;
     setTimeoutError(null);
     setTimeoutSavedNote(null);
     try {
       await openhumanUpdateAgentSettings({ agent_timeout_secs: parsed });
       if (timeoutSeqRef.current === seq) {
         setSavedTimeoutSecs(parsed);
-        setTimeoutInput(String(parsed));
+        // Only snap the field value back if the user hasn't typed further.
+        if (timeoutInput === draftAtCommit) {
+          setTimeoutInput(String(parsed));
+        }
         setTimeoutSavedNote(t('settings.agentAccess.saved'));
       }
     } catch (e) {

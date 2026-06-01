@@ -1022,6 +1022,10 @@ pub async fn load_and_apply_agent_settings(
 /// is overriding the configured value, so the UI can explain a no-op control.
 pub async fn get_agent_settings() -> Result<RpcOutcome<serde_json::Value>, String> {
     let config = load_config_with_timeout().await?;
+    // Ensure the runtime timeout is seeded from the persisted config so the
+    // `effective_timeout_secs` field is correct even if startup didn't seed it
+    // (e.g. in CLI invocations or tests that skip the full boot sequence).
+    crate::openhuman::tool_timeout::set_tool_timeout_secs(config.agent.agent_timeout_secs);
     let value = serde_json::json!({
         "agent_timeout_secs": config.agent.agent_timeout_secs,
         "effective_timeout_secs": crate::openhuman::tool_timeout::tool_execution_timeout_secs(),
