@@ -167,6 +167,7 @@ const messages: TranslationMap = {
   'welcome.title': 'Добро пожаловать в OpenHuman',
   'welcome.subtitle': 'Твой персональный суперинтеллект. Приватный, простой и невероятно мощный.',
   'welcome.connectPrompt': 'Настроить RPC URL (дополнительно)',
+  'welcome.selectRuntime': 'Выбрать среду выполнения',
   'welcome.clearingAppData': 'Очистка данных приложения...',
   'welcome.clearAppDataAndRestart': 'Очистка данных приложения и перезапуск',
   'welcome.clearAppDataWarning':

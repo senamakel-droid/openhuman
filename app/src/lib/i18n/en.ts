@@ -182,6 +182,7 @@ const en: TranslationMap = {
   'welcome.subtitle':
     'Your personal AI super intelligence. Private, simple and extremely powerful.',
   'welcome.connectPrompt': 'Configure RPC URL (Advanced)',
+  'welcome.selectRuntime': 'Select a Runtime',
   'welcome.clearingAppData': 'Clearing app data...',
   'welcome.clearAppDataAndRestart': 'Clear app data & restart',
   'welcome.clearAppDataWarning':

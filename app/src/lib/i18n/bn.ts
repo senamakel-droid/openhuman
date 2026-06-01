@@ -165,6 +165,7 @@ const messages: TranslationMap = {
   'welcome.subtitle':
     'আপনার ব্যক্তিগত AI সুপার ইন্টেলিজেন্স। ব্যক্তিগত, সহজ এবং অত্যন্ত শক্তিশালী।',
   'welcome.connectPrompt': 'RPC URL কনফিগার করুন (অ্যাডভান্সড)',
+  'welcome.selectRuntime': 'একটি রানটাইম বেছে নিন',
   'welcome.clearingAppData': 'অ্যাপ ডেটা সাফ করা হচ্ছে...',
   'welcome.clearAppDataAndRestart': 'অ্যাপ ডেটা সাফ করুন এবং পুনরায় চালু করুন',
   'welcome.clearAppDataWarning':

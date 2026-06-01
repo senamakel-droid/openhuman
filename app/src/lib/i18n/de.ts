@@ -173,6 +173,7 @@ const messages: TranslationMap = {
   'welcome.subtitle':
     'Deine persönliche KI-Superintelligenz. Privat, einfach und äußerst leistungsstark.',
   'welcome.connectPrompt': 'Konfiguriere RPC URL (Erweitert)',
+  'welcome.selectRuntime': 'Wähle eine Laufzeit aus',
   'welcome.clearingAppData': 'App-Daten löschen...',
   'welcome.clearAppDataAndRestart': 'App-Daten löschen und neu starten',
   'welcome.clearAppDataWarning':

@@ -161,6 +161,7 @@ const messages: TranslationMap = {
   'welcome.title': '欢迎使用 OpenHuman',
   'welcome.subtitle': '你的私人 AI 超级智能。私密、简单、强大。',
   'welcome.connectPrompt': '输入 Core RPC 地址以开始使用',
+  'welcome.selectRuntime': '选择运行时',
   'welcome.clearingAppData': '清除应用程序数据...',
   'welcome.clearAppDataAndRestart': '清除应用数据并重启',
   'welcome.clearAppDataWarning':
