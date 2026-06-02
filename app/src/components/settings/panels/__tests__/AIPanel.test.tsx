@@ -900,7 +900,7 @@ describe('AIPanel', () => {
     });
   });
 
-  it('normalizes Ollama 0.0.0.0 endpoint input to localhost before saving', async () => {
+  it('passes Ollama 0.0.0.0 endpoint through to the Rust normalizer', async () => {
     vi.mocked(loadAISettings).mockResolvedValue({ ...baseSettings, cloudProviders: [] });
     renderWithProviders(<AIPanel />);
     await waitFor(() =>
@@ -916,7 +916,7 @@ describe('AIPanel', () => {
 
     await waitFor(() => expect(openhumanUpdateLocalAiSettingsMock).toHaveBeenCalled());
     const [arg] = vi.mocked(openhumanUpdateLocalAiSettingsMock).mock.calls[0];
-    expect(arg).toMatchObject({ base_url: 'http://localhost:11434' });
+    expect(arg).toMatchObject({ base_url: 'http://0.0.0.0:11434' });
   });
 
   it('lets users edit an existing Ollama endpoint from the provider chip', async () => {
@@ -928,13 +928,13 @@ describe('AIPanel', () => {
           slug: 'ollama',
           label: 'Ollama',
           endpoint: 'http://127.0.0.1:11434/v1',
-          auth_style: 'none',
+          auth_style: 'none' as const,
           has_api_key: true,
         },
       ],
     });
     renderWithProviders(<AIPanel />);
-    const editButton = await screen.findByRole('button', { name: /Edit Ollama endpoint/i });
+    const editButton = await screen.findByRole('button', { name: /Edit endpoint/i });
     fireEvent.click(editButton);
 
     const dialog = await screen.findByRole('dialog', { name: /Connect Ollama/i });

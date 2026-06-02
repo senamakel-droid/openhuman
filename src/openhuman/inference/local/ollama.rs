@@ -11,7 +11,7 @@ pub(crate) const DEFAULT_OLLAMA_BASE_URL: &str = "http://localhost:11434";
 fn normalize_unspecified_host(url: &str) -> String {
     if let Ok(parsed) = reqwest::Url::parse(url) {
         let replacement = match parsed.host() {
-            Some(url::Host::Ipv4(addr)) if addr.is_unspecified() => Some("127.0.0.1"),
+            Some(url::Host::Ipv4(addr)) if addr.is_unspecified() => Some("localhost"),
             Some(url::Host::Ipv6(addr)) if addr.is_unspecified() => Some("[::1]"),
             _ => None,
         };
@@ -134,6 +134,8 @@ pub(crate) fn validate_ollama_url(raw: &str) -> Result<String, String> {
     // Use the Host enum so IPv6 addresses are always re-bracketed correctly,
     // regardless of whether host_str() includes brackets in a given url-crate version.
     let host_formatted = match parsed.host() {
+        Some(url::Host::Ipv4(addr)) if addr.is_unspecified() => "localhost".to_string(),
+        Some(url::Host::Ipv6(addr)) if addr.is_unspecified() => "[::1]".to_string(),
         Some(url::Host::Ipv6(addr)) => format!("[{addr}]"),
         Some(h) => h.to_string(),
         None => String::new(),
@@ -722,7 +724,7 @@ mod tests {
     fn normalize_rewrites_ipv4_unspecified() {
         assert_eq!(
             normalize_unspecified_host("http://0.0.0.0:11434"),
-            "http://127.0.0.1:11434"
+            "http://localhost:11434"
         );
     }
 
@@ -777,7 +779,7 @@ mod tests {
     fn ollama_base_url_normalizes_unspecified_in_env_override() {
         let _lock = test_lock();
         let _g = OllamaEnvGuard::set("http://0.0.0.0:11434");
-        assert_eq!(ollama_base_url(), "http://127.0.0.1:11434");
+        assert_eq!(ollama_base_url(), "http://localhost:11434");
     }
 
     #[test]
@@ -785,7 +787,7 @@ mod tests {
         let _lock = test_lock();
         let _g1 = OllamaEnvGuard::clear();
         let _g2 = OllamaEnvGuard::set_var(OLLAMA_HOST_VAR, "0.0.0.0:11434");
-        assert_eq!(ollama_base_url(), "http://127.0.0.1:11434");
+        assert_eq!(ollama_base_url(), "http://localhost:11434");
     }
 
     #[test]
@@ -805,7 +807,7 @@ mod tests {
         let config = make_config_with_base_url(Some("http://0.0.0.0:11434"));
         assert_eq!(
             ollama_base_url_from_config(&config),
-            "http://127.0.0.1:11434"
+            "http://localhost:11434"
         );
     }
 
@@ -864,6 +866,22 @@ mod tests {
     fn validate_ollama_url_handles_ipv6() {
         assert_eq!(
             validate_ollama_url("http://[::1]:11434"),
+            Ok("http://[::1]:11434".to_string())
+        );
+    }
+
+    #[test]
+    fn validate_ollama_url_rewrites_ipv4_unspecified_to_localhost() {
+        assert_eq!(
+            validate_ollama_url("http://0.0.0.0:11434"),
+            Ok("http://localhost:11434".to_string())
+        );
+    }
+
+    #[test]
+    fn validate_ollama_url_rewrites_ipv6_unspecified_to_loopback() {
+        assert_eq!(
+            validate_ollama_url("http://[::]:11434"),
             Ok("http://[::1]:11434".to_string())
         );
     }
