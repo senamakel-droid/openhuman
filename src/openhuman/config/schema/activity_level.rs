@@ -4,7 +4,6 @@
 //! cadence, heartbeat/subconscious toggles, and token budgets.
 
 use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /// User-facing activity level for background AI work.

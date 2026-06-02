@@ -79,6 +79,24 @@ fn kind_specific_fields() -> Vec<FieldSchema> {
             comment: "CSS selector for web_page sources.",
             required: false,
         },
+        FieldSchema {
+            name: "max_tokens_per_sync",
+            ty: TypeSchema::Option(Box::new(TypeSchema::U64)),
+            comment: "Max tokens per sync run.",
+            required: false,
+        },
+        FieldSchema {
+            name: "max_cost_per_sync_usd",
+            ty: TypeSchema::Option(Box::new(TypeSchema::F64)),
+            comment: "Max cost per sync run in USD.",
+            required: false,
+        },
+        FieldSchema {
+            name: "sync_depth_days",
+            ty: TypeSchema::Option(Box::new(TypeSchema::U64)),
+            comment: "Only sync items from the last N days.",
+            required: false,
+        },
     ]
 }
 
@@ -407,13 +425,13 @@ pub fn schemas(function: &str) -> ControllerSchema {
                 },
                 FieldSchema {
                     name: "estimated_cost_usd",
-                    ty: TypeSchema::String,
+                    ty: TypeSchema::F64,
                     comment: "Estimated cost in USD.",
                     required: true,
                 },
                 FieldSchema {
                     name: "budget_max_cost_usd",
-                    ty: TypeSchema::Option(Box::new(TypeSchema::String)),
+                    ty: TypeSchema::Option(Box::new(TypeSchema::F64)),
                     comment: "Configured cost cap if set.",
                     required: false,
                 },
@@ -439,7 +457,7 @@ pub fn schemas(function: &str) -> ControllerSchema {
                 },
                 FieldSchema {
                     name: "total_cost_usd",
-                    ty: TypeSchema::String,
+                    ty: TypeSchema::F64,
                     comment: "Total spend in USD.",
                     required: true,
                 },
