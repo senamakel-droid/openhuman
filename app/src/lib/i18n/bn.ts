@@ -4468,6 +4468,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': 'এই মাস: ${amount}',
   'activityLevel.saved': 'কার্যকলাপের স্তর আপডেট হয়েছে।',
   'activityLevel.default': 'ডিফল্ট',
+  'activityLevel.costFree': '$০',
+  'activityLevel.costRange': '~${min}–${max}/মাস',
 
   // Sync budget dialog
   'syncBudget.title': 'সিঙ্ক বাজেট',

@@ -4552,6 +4552,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': 'Este mes: ${amount}',
   'activityLevel.saved': 'Nivel de actividad actualizado.',
   'activityLevel.default': 'predeterminado',
+  'activityLevel.costFree': '$0',
+  'activityLevel.costRange': '~${min}–${max}/mes',
 
   // Sync budget dialog
   'syncBudget.title': 'Presupuesto de sincronización',

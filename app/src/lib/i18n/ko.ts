@@ -4431,6 +4431,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': '이번 달: ${amount}',
   'activityLevel.saved': '활동 수준이 업데이트되었습니다.',
   'activityLevel.default': '기본값',
+  'activityLevel.costFree': '$0',
+  'activityLevel.costRange': '~${min}–${max}/월',
 
   // Sync budget dialog
   'syncBudget.title': '동기화 예산',

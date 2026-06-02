@@ -4511,6 +4511,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': 'В этом месяце: ${amount}',
   'activityLevel.saved': 'Уровень активности обновлён.',
   'activityLevel.default': 'по умолчанию',
+  'activityLevel.costFree': '0 $',
+  'activityLevel.costRange': '~${min}–${max}/мес.',
 
   // Sync budget dialog
   'syncBudget.title': 'Бюджет синхронизации',

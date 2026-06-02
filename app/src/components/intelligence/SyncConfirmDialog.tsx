@@ -28,6 +28,8 @@ export default function SyncConfirmDialog({
 
   useEffect(() => {
     let cancelled = false;
+    setEstimate(null);
+    setError(null);
     (async () => {
       try {
         const resp = await callCoreRpc<{ result: SyncEstimate }>({

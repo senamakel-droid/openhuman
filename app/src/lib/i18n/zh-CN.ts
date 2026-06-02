@@ -4251,6 +4251,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': '本月：${amount}',
   'activityLevel.saved': '活动级别已更新。',
   'activityLevel.default': '默认',
+  'activityLevel.costFree': '$0',
+  'activityLevel.costRange': '~${min}–${max}/月',
 
   // Sync budget dialog
   'syncBudget.title': '同步预算',

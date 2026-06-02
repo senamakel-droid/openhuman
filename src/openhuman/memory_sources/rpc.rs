@@ -323,10 +323,14 @@ pub async fn estimate_sync_cost_rpc(
     let items = reader.list_items(&source, &config).await?;
 
     let item_count = items.len() as u32;
-    let estimated_tokens = item_count as u64 * 500;
+    // estimated_tokens includes both input (500/item) and output (100/item)
+    // to be consistent with the cost calculation below.
+    let estimated_input_tokens = item_count as u64 * 500;
+    let estimated_output_tokens = item_count as u64 * 100;
+    let estimated_tokens = estimated_input_tokens + estimated_output_tokens;
     let estimated_cost_usd = crate::openhuman::memory_sync::sources::audit::estimate_cost_usd(
-        estimated_tokens,
-        item_count as u64 * 100,
+        estimated_input_tokens,
+        estimated_output_tokens,
     );
 
     Ok(RpcOutcome::new(

@@ -707,6 +707,8 @@ const en: TranslationMap = {
   'activityLevel.currentMonth': 'This month: ${amount}',
   'activityLevel.saved': 'Activity level updated.',
   'activityLevel.default': 'default',
+  'activityLevel.costFree': '$0',
+  'activityLevel.costRange': '~${min}–${max}/mo',
 
   // Accounts
   'accounts.addAccount': 'Add Account',

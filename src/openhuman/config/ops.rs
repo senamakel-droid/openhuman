@@ -962,16 +962,19 @@ pub async fn apply_activity_level_settings(
         config.agent_activity_level = level;
     }
 
-    config.save().await.map_err(|e| e.to_string())?;
-
+    // Derive the gate mode from the (possibly updated) activity level and
+    // persist it alongside the level so the saved config is self-consistent.
     let level = config.agent_activity_level;
     let gate_mode = match level {
         AgentActivityLevel::Off => SchedulerGateMode::Off,
         AgentActivityLevel::Minimal | AgentActivityLevel::Moderate => SchedulerGateMode::Auto,
         AgentActivityLevel::Active | AgentActivityLevel::AlwaysOn => SchedulerGateMode::AlwaysOn,
     };
-    let mut gate_cfg = config.scheduler_gate.clone();
-    gate_cfg.mode = gate_mode;
+    config.scheduler_gate.mode = gate_mode;
+
+    config.save().await.map_err(|e| e.to_string())?;
+
+    let gate_cfg = config.scheduler_gate.clone();
     crate::openhuman::scheduler_gate::gate::update_config(gate_cfg);
 
     tracing::info!(

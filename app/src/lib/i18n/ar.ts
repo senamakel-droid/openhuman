@@ -4388,6 +4388,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': 'هذا الشهر: ${amount}',
   'activityLevel.saved': 'تم تحديث مستوى النشاط.',
   'activityLevel.default': 'افتراضي',
+  'activityLevel.costFree': '0$',
+  'activityLevel.costRange': '~${min}–${max}/شهر',
 
   // Sync budget dialog
   'syncBudget.title': 'ميزانية المزامنة',

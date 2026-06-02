@@ -4486,6 +4486,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': 'Bulan ini: ${amount}',
   'activityLevel.saved': 'Tingkat aktivitas diperbarui.',
   'activityLevel.default': 'bawaan',
+  'activityLevel.costFree': '$0',
+  'activityLevel.costRange': '~${min}–${max}/bln',
 
   // Sync budget dialog
   'syncBudget.title': 'Anggaran sinkronisasi',

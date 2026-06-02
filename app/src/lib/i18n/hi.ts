@@ -4474,6 +4474,8 @@ const messages: TranslationMap = {
   'activityLevel.currentMonth': 'इस महीने: ${amount}',
   'activityLevel.saved': 'गतिविधि स्तर अपडेट किया गया।',
   'activityLevel.default': 'डिफ़ॉल्ट',
+  'activityLevel.costFree': '$0',
+  'activityLevel.costRange': '~${min}–${max}/माह',
 
   // Sync budget dialog
   'syncBudget.title': 'सिंक बजट',

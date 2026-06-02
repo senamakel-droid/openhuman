@@ -32,6 +32,11 @@ type LevelKey = (typeof LEVELS)[number]['key'];
 
 type Status = 'idle' | 'loading' | 'saving' | 'saved' | 'error';
 
+// These tables intentionally duplicate the backend constants in
+// AgentActivityLevel::estimated_monthly_cost_range (config/schema/activity_level.rs).
+// The backend only returns cost ranges for the *current* level, so we need a
+// static lookup to render cost estimates for all levels simultaneously.
+// A future RPC that returns ranges for all levels would allow removing these.
 function getCostMin(level: number): number {
   return [0, 0.1, 1, 5, 20][level] ?? 0;
 }
@@ -151,7 +156,11 @@ export default function AgentActivityPanel() {
                   </p>
                 </div>
                 <div className="text-xs font-mono text-stone-500 dark:text-neutral-400 shrink-0 ml-4">
-                  {costMin === 0 && costMax === 0 ? '$0' : `~$${costMin}–$${costMax}/mo`}
+                  {costMin === 0 && costMax === 0
+                    ? t('activityLevel.costFree')
+                    : t('activityLevel.costRange')
+                        .replace('{min}', String(costMin))
+                        .replace('{max}', String(costMax))}
                 </div>
               </div>
             </button>
