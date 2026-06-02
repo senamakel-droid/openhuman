@@ -18,11 +18,13 @@ fn normalize_unspecified_host(url: &str) -> String {
         if let Some(new_host) = replacement {
             let scheme = parsed.scheme();
             let port_suffix = parsed.port().map(|p| format!(":{p}")).unwrap_or_default();
-            let result = format!("{scheme}://{new_host}{port_suffix}");
+            let path = parsed.path().trim_end_matches('/');
+            let result = format!("{scheme}://{new_host}{port_suffix}{path}");
+            let result = result.trim_end_matches('/').to_string();
             log::debug!(
                 "[local_ai] normalize_unspecified_host: rewrote {} -> {}",
-                url,
-                result
+                redact_ollama_base_url(url),
+                redact_ollama_base_url(&result)
             );
             return result;
         }
