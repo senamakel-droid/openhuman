@@ -93,6 +93,7 @@ impl AgentBuilder {
             model_name: None,
             temperature: None,
             workspace_dir: None,
+            action_dir: None,
             skills: None,
             workflows: None,
             auto_save: None,
@@ -197,6 +198,11 @@ impl AgentBuilder {
     /// Sets the workspace directory for the agent.
     pub fn workspace_dir(mut self, workspace_dir: std::path::PathBuf) -> Self {
         self.workspace_dir = Some(workspace_dir);
+        self
+    }
+
+    pub fn action_dir(mut self, action_dir: std::path::PathBuf) -> Self {
+        self.action_dir = Some(action_dir);
         self
     }
 
@@ -561,6 +567,9 @@ impl AgentBuilder {
             temperature: self.temperature.unwrap_or(0.7),
             workspace_dir: self
                 .workspace_dir
+                .unwrap_or_else(|| std::path::PathBuf::from(".")),
+            action_dir: self
+                .action_dir
                 .unwrap_or_else(|| std::path::PathBuf::from(".")),
             skills: self.skills.unwrap_or_default(),
             workflows: self.workflows.unwrap_or_default(),
@@ -1570,6 +1579,7 @@ impl Agent {
             .model_name(model_name)
             .temperature(effective_temperature)
             .workspace_dir(config.workspace_dir.clone())
+            .action_dir(config.action_dir.clone())
             .skills(crate::openhuman::skills::load_skills(&config.workspace_dir))
             .workflows({
                 let wf = crate::openhuman::agent_workflows::load_workflows(&config.workspace_dir);

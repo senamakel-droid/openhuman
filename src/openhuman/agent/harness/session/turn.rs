@@ -496,6 +496,12 @@ impl Agent {
                 agent_definition_id: self.agent_definition_id.clone(),
                 prefer_markdown: self.context.prefer_markdown_tool_output(),
                 budget_bytes: self.context.tool_result_budget_bytes(),
+                artifact_store: Some(
+                    crate::openhuman::agent::harness::tool_result_artifacts::ToolResultArtifactStore::new(
+                        self.action_dir.clone(),
+                        self.session_key.clone(),
+                    ),
+                ),
                 should_send_specs: self.tool_dispatcher.should_send_tool_specs(),
                 advertised_specs: self.visible_tool_specs.as_ref().clone(),
                 records: Vec::new(),
@@ -750,6 +756,11 @@ impl Agent {
         // `TurnProgress` over this agent's sink. Legacy `run_skill`-wrapped
         // built-in cron tool calls are normalized to direct calls first.
         let progress = super::super::engine::TurnProgress::new(self.on_progress.clone());
+        let artifact_store =
+            crate::openhuman::agent::harness::tool_result_artifacts::ToolResultArtifactStore::new(
+                self.action_dir.clone(),
+                self.session_key.clone(),
+            );
         let ctx = super::agent_tool_exec::AgentToolExecCtx {
             tools: &self.tools,
             visible_tool_names: &self.visible_tool_names,
@@ -761,6 +772,7 @@ impl Agent {
             agent_definition_id: &self.agent_definition_id,
             prefer_markdown: self.context.prefer_markdown_tool_output(),
             budget_bytes: self.context.tool_result_budget_bytes(),
+            artifact_store: Some(&artifact_store),
         };
         super::agent_tool_exec::run_agent_tool_call(&ctx, &progress, call, iteration).await
     }
