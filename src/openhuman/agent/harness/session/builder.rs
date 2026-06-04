@@ -545,6 +545,11 @@ impl AgentBuilder {
             prompt_builder,
         );
 
+        let workspace_dir = self
+            .workspace_dir
+            .unwrap_or_else(|| std::path::PathBuf::from("."));
+        let action_dir = self.action_dir.unwrap_or_else(|| workspace_dir.clone());
+
         Ok(Agent {
             provider,
             tools: Arc::new(tools),
@@ -565,12 +570,8 @@ impl AgentBuilder {
             config,
             model_name,
             temperature: self.temperature.unwrap_or(0.7),
-            workspace_dir: self
-                .workspace_dir
-                .unwrap_or_else(|| std::path::PathBuf::from(".")),
-            action_dir: self
-                .action_dir
-                .unwrap_or_else(|| std::path::PathBuf::from(".")),
+            workspace_dir,
+            action_dir,
             skills: self.skills.unwrap_or_default(),
             workflows: self.workflows.unwrap_or_default(),
             auto_save: self.auto_save.unwrap_or(false),

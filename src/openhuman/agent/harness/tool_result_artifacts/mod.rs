@@ -13,7 +13,6 @@ use crate::openhuman::context::{apply_tool_result_budget, BudgetOutcome};
 use crate::openhuman::memory_store::safety::{sanitize_text, SanitizationReport};
 
 const ARTIFACT_ROOT: &str = "artifacts/tool-results";
-const MIN_PREVIEW_BUDGET_BYTES: usize = 256;
 const AGGREGATE_PREVIEW_BUDGET_BYTES: usize = 512;
 
 #[derive(Debug, Clone)]
@@ -86,9 +85,8 @@ impl ToolResultArtifactStore {
         }
         tokio::fs::write(&absolute_path, sanitized.value.as_bytes()).await?;
 
-        let preview_budget = preview_budget_bytes.max(MIN_PREVIEW_BUDGET_BYTES);
         let (preview, preview_outcome) =
-            apply_tool_result_budget(sanitized.value.clone(), preview_budget);
+            apply_tool_result_budget(sanitized.value.clone(), preview_budget_bytes);
         let redaction_note = if sanitized.report.changed() {
             " Credential/PII redaction was applied before storage and preview exposure."
         } else {
@@ -154,6 +152,16 @@ pub(crate) async fn apply_per_result_persistence(
             .await
         {
             Ok(persisted) => {
+                let (output, final_bytes) = bound_text_to_budget(persisted.output, budget_bytes);
+                if final_bytes >= original_bytes {
+                    log::debug!(
+                        "[agent][tool-result-artifacts] persisted envelope too large tool={} original_bytes={} final_bytes={} budget_bytes={} -- falling back to inline truncation",
+                        tool_name,
+                        original_bytes,
+                        final_bytes,
+                        budget_bytes
+                    );
+                }
                 log::info!(
                     "[agent][tool-result-artifacts] persisted oversized tool result tool={} original_bytes={} stored_bytes={} path={} redacted={}",
                     tool_name,
@@ -162,9 +170,8 @@ pub(crate) async fn apply_per_result_persistence(
                     persisted.path,
                     persisted.redactions.changed()
                 );
-                let final_bytes = persisted.output.len();
                 return (
-                    persisted.output,
+                    output,
                     ToolResultArtifactOutcome {
                         original_bytes,
                         final_bytes,
@@ -219,50 +226,56 @@ pub(crate) async fn spill_aggregate_tool_results(
         if total <= budget_bytes {
             break;
         }
-        if looks_like_preview_envelope(&results[idx].output) {
-            continue;
-        }
         let original = results[idx].output.clone();
-        match store
-            .persist(
-                &results[idx].name,
-                results[idx].tool_call_id.as_deref(),
-                &original,
-                AGGREGATE_PREVIEW_BUDGET_BYTES,
-                "aggregate tool-result budget exceeded",
-            )
-            .await
-        {
+        let original_len = original.len();
+        let allowed_len = budget_bytes.saturating_sub(total.saturating_sub(original_len));
+        let persisted_output = if looks_like_preview_envelope(&original) {
+            Ok(PersistedToolResult {
+                output: original.clone(),
+                path: "<existing-preview>".to_string(),
+                original_bytes: original_len,
+                stored_bytes: original_len,
+                redactions: SanitizationReport::default(),
+            })
+        } else {
+            store
+                .persist(
+                    &results[idx].name,
+                    results[idx].tool_call_id.as_deref(),
+                    &original,
+                    allowed_len.min(AGGREGATE_PREVIEW_BUDGET_BYTES),
+                    "aggregate tool-result budget exceeded",
+                )
+                .await
+        };
+        match persisted_output {
             Ok(persisted) => {
-                if persisted.output.len() >= original.len() {
-                    log::debug!(
-                        "[agent][tool-result-artifacts] aggregate spill skipped tool={} original_bytes={} envelope_bytes={} reason=no-savings",
-                        results[idx].name,
-                        original.len(),
-                        persisted.output.len()
-                    );
-                    continue;
-                }
+                let (output, final_bytes) = bound_text_to_budget(persisted.output, allowed_len);
                 total = total
-                    .saturating_sub(original.len())
-                    .saturating_add(persisted.output.len());
+                    .saturating_sub(original_len)
+                    .saturating_add(final_bytes);
                 log::info!(
                     "[agent][tool-result-artifacts] aggregate spill tool={} original_bytes={} final_bytes={} total_bytes={} path={}",
                     results[idx].name,
-                    original.len(),
-                    persisted.output.len(),
+                    original_len,
+                    final_bytes,
                     total,
                     persisted.path
                 );
-                results[idx].output = persisted.output;
+                results[idx].output = output;
             }
             Err(err) => {
                 log::warn!(
-                    "[agent][tool-result-artifacts] aggregate spill failed tool={} bytes={} err={}",
+                    "[agent][tool-result-artifacts] aggregate spill failed tool={} bytes={} err={} -- falling back to inline budget trim",
                     results[idx].name,
-                    original.len(),
+                    original_len,
                     err
                 );
+                let (output, final_bytes) = bound_text_to_budget(original, allowed_len);
+                total = total
+                    .saturating_sub(original_len)
+                    .saturating_add(final_bytes);
+                results[idx].output = output;
             }
         }
     }
@@ -270,6 +283,21 @@ pub(crate) async fn spill_aggregate_tool_results(
 
 fn looks_like_preview_envelope(value: &str) -> bool {
     value.starts_with("[tool_result_preview]\n")
+}
+
+fn bound_text_to_budget(content: String, budget_bytes: usize) -> (String, usize) {
+    if budget_bytes == 0 {
+        return (String::new(), 0);
+    }
+    let (mut output, BudgetOutcome { final_bytes, .. }) =
+        apply_tool_result_budget(content, budget_bytes);
+    if final_bytes <= budget_bytes {
+        return (output, final_bytes);
+    }
+    let cut = crate::openhuman::util::floor_char_boundary(&output, budget_bytes);
+    output.truncate(cut);
+    let final_bytes = output.len();
+    (output, final_bytes)
 }
 
 fn sanitize_component(value: &str) -> String {
@@ -356,6 +384,25 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn persisted_preview_is_bounded_for_small_budget() {
+        let tmp = tempfile::tempdir().unwrap();
+        let store = ToolResultArtifactStore::new(tmp.path().to_path_buf(), "session");
+        let raw = "x".repeat(800);
+
+        let (out, outcome) =
+            apply_per_result_persistence(raw, Some(&store), "shell", Some("call"), 320).await;
+
+        assert!(outcome.persisted);
+        assert!(outcome.final_bytes <= 320, "final={}", outcome.final_bytes);
+        assert_eq!(out.len(), outcome.final_bytes);
+        assert!(out.contains("[tool_result_preview]"));
+        assert!(tmp
+            .path()
+            .join("artifacts/tool-results/session/shell/call.txt")
+            .exists());
+    }
+
+    #[tokio::test]
     async fn aggregate_spills_largest_until_under_budget() {
         let tmp = tempfile::tempdir().unwrap();
         let store = ToolResultArtifactStore::new(tmp.path().to_path_buf(), "session");
@@ -389,6 +436,41 @@ mod tests {
         assert!(tmp
             .path()
             .join("artifacts/tool-results/session/largest/largest.txt")
+            .exists());
+    }
+
+    #[tokio::test]
+    async fn aggregate_forces_budget_when_envelope_has_no_savings() {
+        let tmp = tempfile::tempdir().unwrap();
+        let store = ToolResultArtifactStore::new(tmp.path().to_path_buf(), "session");
+        let mut results = vec![
+            ToolExecutionResult {
+                name: "one".into(),
+                output: "a".repeat(350),
+                success: true,
+                tool_call_id: Some("one".into()),
+            },
+            ToolExecutionResult {
+                name: "two".into(),
+                output: "b".repeat(350),
+                success: true,
+                tool_call_id: Some("two".into()),
+            },
+            ToolExecutionResult {
+                name: "three".into(),
+                output: "c".repeat(350),
+                success: true,
+                tool_call_id: Some("three".into()),
+            },
+        ];
+
+        spill_aggregate_tool_results(&mut results, Some(&store), 500).await;
+
+        let total: usize = results.iter().map(|result| result.output.len()).sum();
+        assert!(total <= 500, "total={total}");
+        assert!(tmp
+            .path()
+            .join("artifacts/tool-results/session/one/one.txt")
             .exists());
     }
 }

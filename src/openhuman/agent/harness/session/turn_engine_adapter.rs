@@ -176,6 +176,7 @@ impl ToolSource for AgentToolSource {
 /// management, usage accounting, and transcript persistence.
 pub(super) struct AgentObserver<'a> {
     pub agent: &'a mut Agent,
+    pub artifact_store: Option<ToolResultArtifactStore>,
     pub effective_model: String,
     pub cumulative_input: u64,
     pub cumulative_output: u64,
@@ -367,13 +368,9 @@ impl TurnObserver for AgentObserver<'_> {
                     .map(ToString::to_string),
             });
         let mut results = std::mem::take(&mut self.pending_results);
-        let artifact_store = ToolResultArtifactStore::new(
-            self.agent.action_dir.clone(),
-            self.agent.session_key.clone(),
-        );
         spill_aggregate_tool_results(
             &mut results,
-            Some(&artifact_store),
+            self.artifact_store.as_ref(),
             self.agent.context.tool_result_budget_bytes(),
         )
         .await;
