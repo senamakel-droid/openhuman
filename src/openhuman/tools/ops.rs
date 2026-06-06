@@ -467,6 +467,11 @@ pub fn all_tools_with_runtime(
         Box::new(WorkspaceInitTool),
     ];
 
+    log::debug!(
+        "[tools::ops][memory_search] registered memory_vector_search, memory_chunk_context, \
+         memory_hybrid_search, memory_store_raw_search, memory_store_raw_chunks, memory_store_kinds"
+    );
+
     // Presentation generation (#2778). Native-Rust engine (ppt-rs
     // backed) as of the #2780-follow-up rust-engine refactor — no
     // managed Python venv, no first-call install latency. Always

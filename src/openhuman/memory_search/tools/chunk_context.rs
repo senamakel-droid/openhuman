@@ -10,7 +10,7 @@ use serde_json::json;
 use std::fmt::Write;
 
 use crate::openhuman::config::rpc as config_rpc;
-use crate::openhuman::memory_store::chunks::store::{list_chunks, ListChunksQuery};
+use crate::openhuman::memory_store::chunks::store::{get_chunk, list_chunks, ListChunksQuery};
 use crate::openhuman::tools::traits::{Tool, ToolResult};
 
 pub struct MemoryChunkContextTool;
@@ -80,18 +80,9 @@ impl Tool for MemoryChunkContextTool {
             .await
             .map_err(|e| anyhow::anyhow!("memory_chunk_context: load config failed: {e}"))?;
 
-        // Load a large window of chunks — we'll filter to find the target's source
-        let all_query = ListChunksQuery {
-            limit: Some(1000),
-            ..Default::default()
-        };
-        let all_chunks = list_chunks(&config, &all_query)
-            .map_err(|e| anyhow::anyhow!("memory_chunk_context: list chunks failed: {e}"))?;
-
-        // Find the target chunk
-        let target = all_chunks
-            .iter()
-            .find(|c| c.id == parsed.chunk_id)
+        // Look up the target chunk directly by ID
+        let target = get_chunk(&config, &parsed.chunk_id)
+            .map_err(|e| anyhow::anyhow!("memory_chunk_context: get_chunk failed: {e}"))?
             .ok_or_else(|| anyhow::anyhow!("memory_chunk_context: chunk_id not found"))?;
 
         let source_id = target.metadata.source_id.clone();
@@ -114,7 +105,9 @@ impl Tool for MemoryChunkContextTool {
         let target_pos = source_chunks
             .iter()
             .position(|c| c.id == parsed.chunk_id)
-            .unwrap_or(0);
+            .ok_or_else(|| anyhow::anyhow!(
+                "memory_chunk_context: target chunk not found in source (source may have >500 chunks)"
+            ))?;
 
         // Compute window bounds
         let start = target_pos.saturating_sub(window);
