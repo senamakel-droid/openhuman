@@ -312,6 +312,7 @@ async fn composio_connected_integrations_public_helpers_handle_empty_auth_and_id
         tools: Vec::new(),
         gated_tools: Vec::new(),
         connected: true,
+        connections: Vec::new(),
         non_active_status: None,
     };
     let second = ConnectedIntegration {
@@ -320,6 +321,7 @@ async fn composio_connected_integrations_public_helpers_handle_empty_auth_and_id
         tools: Vec::new(),
         gated_tools: Vec::new(),
         connected: true,
+        connections: Vec::new(),
         non_active_status: None,
     };
     let disconnected = ConnectedIntegration {
@@ -328,6 +330,7 @@ async fn composio_connected_integrations_public_helpers_handle_empty_auth_and_id
         tools: Vec::new(),
         gated_tools: Vec::new(),
         connected: false,
+        connections: Vec::new(),
         non_active_status: Some("EXPIRED".into()),
     };
     assert_eq!(
@@ -342,6 +345,7 @@ async fn composio_connected_integrations_public_helpers_handle_empty_auth_and_id
             tools: Vec::new(),
             gated_tools: Vec::new(),
             connected: true,
+            connections: Vec::new(),
             non_active_status: None,
         }])
     );
