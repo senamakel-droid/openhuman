@@ -171,10 +171,14 @@ pub fn connected_set_hash(integrations: &[ConnectedIntegration]) -> u64 {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
-    let mut pairs: Vec<(&str, usize)> = integrations
+    let mut pairs: Vec<(&str, Vec<&str>)> = integrations
         .iter()
         .filter(|i| i.connected)
-        .map(|i| (i.toolkit.as_str(), i.connections.len()))
+        .map(|i| {
+            let mut ids: Vec<&str> = i.connections.iter().map(|c| c.connection_id.as_str()).collect();
+            ids.sort();
+            (i.toolkit.as_str(), ids)
+        })
         .collect();
     pairs.sort_by(|a, b| a.0.cmp(b.0));
 
@@ -215,16 +219,19 @@ pub(crate) fn sync_cache_with_connections(connections: &[super::types::ComposioC
         .filter(|toolkit| !toolkit.is_empty())
         .collect();
 
-    // Count active connections per toolkit to detect multi-account changes
-    let live_counts: std::collections::HashMap<String, usize> = {
-        let mut counts = std::collections::HashMap::new();
+    // Collect active connection IDs per toolkit to detect multi-account changes
+    let live_ids: std::collections::HashMap<String, Vec<String>> = {
+        let mut ids: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
         for c in connections.iter().filter(|c| c.is_active()) {
             let tk = c.normalized_toolkit();
             if !tk.is_empty() {
-                *counts.entry(tk).or_insert(0) += 1;
+                ids.entry(tk).or_default().push(c.id.clone());
             }
         }
-        counts
+        for v in ids.values_mut() {
+            v.sort();
+        }
+        ids
     };
 
     // Read once to decide whether any cache entry is out of sync. We
@@ -238,12 +245,15 @@ pub(crate) fn sync_cache_with_connections(connections: &[super::types::ComposioC
             .iter()
             .filter_map(|(key, cached)| {
                 let cached_set = connected_toolkit_set(&cached.entries);
-                // Also check per-toolkit connection counts
-                let counts_match = cached.entries.iter().all(|i| {
-                    let live_count = live_counts.get(&i.toolkit).copied().unwrap_or(0);
-                    i.connections.len() == live_count
+                // Also check per-toolkit connection IDs (not just counts)
+                let ids_match = cached.entries.iter().all(|i| {
+                    let mut cached_ids: Vec<&str> = i.connections.iter().map(|c| c.connection_id.as_str()).collect();
+                    cached_ids.sort();
+                    let empty = Vec::new();
+                    let live = live_ids.get(&i.toolkit).unwrap_or(&empty);
+                    cached_ids.len() == live.len() && cached_ids.iter().zip(live.iter()).all(|(a, b)| *a == b.as_str())
                 });
-                if cached_set != live_active || !counts_match {
+                if cached_set != live_active || !ids_match {
                     Some((key.clone(), cached_set, live_active.clone()))
                 } else {
                     None
@@ -775,14 +785,16 @@ async fn fetch_connected_integrations_uncached(
                     .iter()
                     .enumerate()
                     .map(|(idx, c)| {
-                        let label = c
-                            .account_email
-                            .as_deref()
-                            .or(c.workspace.as_deref())
-                            .or(c.username.as_deref())
-                            .map(|s| s.trim())
-                            .filter(|s| !s.is_empty())
-                            .map(String::from);
+                        let label = [
+                            c.account_email.as_deref(),
+                            c.workspace.as_deref(),
+                            c.username.as_deref(),
+                        ]
+                        .into_iter()
+                        .flatten()
+                        .map(str::trim)
+                        .find(|s| !s.is_empty())
+                        .map(str::to_string);
                         crate::openhuman::context::prompt::IntegrationConnection {
                             connection_id: c.id.clone(),
                             label,

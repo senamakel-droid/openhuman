@@ -164,15 +164,19 @@ export function deriveComposioState(
   return 'disconnected';
 }
 
-/**
- * Derive composite state from multiple connections for the same toolkit.
- * Uses the best (highest-priority) connection's state as primary, and
- * reports the total count.
- */
-export function deriveComposioStates(connections: ComposioConnection[] | undefined): {
+export interface ComposioConnectionsState {
   primary: ComposioConnectionState;
   count: number;
-} {
+}
+
+/**
+ * Derive composite state from multiple connections for a toolkit.
+ * Uses the first connection's state as primary (caller must ensure
+ * connections are sorted by priority/age), and reports the total count.
+ */
+export function deriveComposioStates(
+  connections: ComposioConnection[] | undefined,
+): ComposioConnectionsState {
   if (!connections || connections.length === 0) return { primary: 'disconnected', count: 0 };
   return { primary: deriveComposioState(connections[0]), count: connections.length };
 }

@@ -411,7 +411,7 @@ impl ProviderContext {
                     action,
                     arguments,
                     &live_config.composio.entity_id,
-                    None,
+                    self.connection_id.as_deref(),
                 )
                 .await
             }
