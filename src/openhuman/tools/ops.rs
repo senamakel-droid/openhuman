@@ -472,6 +472,9 @@ pub fn all_tools_with_runtime(
          memory_hybrid_search, memory_store_raw_search, memory_store_raw_chunks, memory_store_kinds"
     );
 
+    // Subconscious scratchpad tools — persistent working memory across ticks.
+    tools.extend(crate::openhuman::subconscious::scratchpad::tools::all_scratchpad_tools());
+
     // Presentation generation (#2778). Native-Rust engine (ppt-rs
     // backed) as of the #2780-follow-up rust-engine refactor — no
     // managed Python venv, no first-call install latency. Always
