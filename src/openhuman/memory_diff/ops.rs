@@ -155,6 +155,13 @@ pub async fn compute_diff(
                 Some(fid) => {
                     let s = store::get_snapshot(conn, fid)?
                         .ok_or_else(|| anyhow::anyhow!("snapshot not found: {fid}"))?;
+                    if s.source_id != to_snap.source_id {
+                        anyhow::bail!(
+                            "cross-source diff not allowed: from={} to={}",
+                            s.source_id,
+                            to_snap.source_id
+                        );
+                    }
                     let items = store::get_snapshot_items(conn, fid)?;
                     (Some(s), items)
                 }

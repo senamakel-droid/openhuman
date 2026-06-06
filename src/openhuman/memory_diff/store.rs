@@ -349,7 +349,7 @@ pub fn cleanup_old_snapshots(
         params![older_than_ms],
     )? as i64;
 
-    conn.execute(
+    let trim_deleted: i64 = conn.execute(
         "DELETE FROM mem_diff_snapshots WHERE id IN (
             SELECT id FROM (
                 SELECT id, ROW_NUMBER() OVER (
@@ -358,9 +358,9 @@ pub fn cleanup_old_snapshots(
             ) WHERE rn > ?1
         )",
         params![max_per_source],
-    )?;
+    )? as i64;
 
-    Ok(age_deleted.max(0) as u64)
+    Ok((age_deleted + trim_deleted).max(0) as u64)
 }
 
 fn parse_trigger(s: &str) -> SnapshotTrigger {

@@ -1,5 +1,6 @@
 //! RPC request/response types and handler implementations.
 
+use log::debug;
 use serde::{Deserialize, Serialize};
 
 use crate::openhuman::config::rpc as config_rpc;
@@ -108,18 +109,30 @@ pub struct CleanupResponse {
 pub async fn take_snapshot_rpc(
     req: TakeSnapshotRequest,
 ) -> Result<RpcOutcome<TakeSnapshotResponse>, String> {
+    debug!(
+        "[memory_diff][rpc] take_snapshot source_id={}",
+        req.source_id
+    );
     let config = config_rpc::load_config_with_timeout().await?;
     let source = crate::openhuman::memory_sources::get_source(&req.source_id)
         .await?
         .ok_or_else(|| format!("source not found: {}", req.source_id))?;
 
     let snapshot = ops::take_snapshot(&source, &config, SnapshotTrigger::Manual).await?;
+    debug!(
+        "[memory_diff][rpc] take_snapshot done snapshot_id={} item_count={}",
+        snapshot.id, snapshot.item_count
+    );
     Ok(RpcOutcome::new(TakeSnapshotResponse { snapshot }, vec![]))
 }
 
 pub async fn list_snapshots_rpc(
     req: ListSnapshotsRequest,
 ) -> Result<RpcOutcome<ListSnapshotsResponse>, String> {
+    debug!(
+        "[memory_diff][rpc] list_snapshots source_id={:?} limit={:?}",
+        req.source_id, req.limit
+    );
     let config = config_rpc::load_config_with_timeout().await?;
     let workspace_dir = config.workspace_dir.clone();
     let limit = req.limit.unwrap_or(50) as u32;
@@ -134,10 +147,18 @@ pub async fn list_snapshots_rpc(
     .map_err(|e| format!("list_snapshots join: {e}"))?
     .map_err(|e: anyhow::Error| format!("list_snapshots: {e:#}"))?;
 
+    debug!(
+        "[memory_diff][rpc] list_snapshots returned {} snapshots",
+        snapshots.len()
+    );
     Ok(RpcOutcome::new(ListSnapshotsResponse { snapshots }, vec![]))
 }
 
 pub async fn diff_rpc(req: DiffRequest) -> Result<RpcOutcome<DiffResponse>, String> {
+    debug!(
+        "[memory_diff][rpc] diff from={:?} to={}",
+        req.from_snapshot_id, req.to_snapshot_id
+    );
     let config = config_rpc::load_config_with_timeout().await?;
     let diff = ops::compute_diff(
         &config,
@@ -146,12 +167,20 @@ pub async fn diff_rpc(req: DiffRequest) -> Result<RpcOutcome<DiffResponse>, Stri
         req.include_text_diff.unwrap_or(false),
     )
     .await?;
+    debug!(
+        "[memory_diff][rpc] diff done added={} removed={} modified={}",
+        diff.summary.added, diff.summary.removed, diff.summary.modified
+    );
     Ok(RpcOutcome::new(DiffResponse { diff }, vec![]))
 }
 
 pub async fn diff_since_last_rpc(
     req: DiffSinceLastRequest,
 ) -> Result<RpcOutcome<DiffSinceLastResponse>, String> {
+    debug!(
+        "[memory_diff][rpc] diff_since_last source_id={}",
+        req.source_id
+    );
     let config = config_rpc::load_config_with_timeout().await?;
     let source = crate::openhuman::memory_sources::get_source(&req.source_id)
         .await?
@@ -159,14 +188,24 @@ pub async fn diff_since_last_rpc(
 
     let diff =
         ops::diff_since_last(&source, &config, req.include_text_diff.unwrap_or(false)).await?;
+    debug!(
+        "[memory_diff][rpc] diff_since_last done added={} removed={} modified={}",
+        diff.summary.added, diff.summary.removed, diff.summary.modified
+    );
     Ok(RpcOutcome::new(DiffSinceLastResponse { diff }, vec![]))
 }
 
 pub async fn create_checkpoint_rpc(
     req: CreateCheckpointRequest,
 ) -> Result<RpcOutcome<CreateCheckpointResponse>, String> {
+    debug!("[memory_diff][rpc] create_checkpoint label={}", req.label);
     let config = config_rpc::load_config_with_timeout().await?;
     let checkpoint = ops::create_checkpoint(&req.label, &config).await?;
+    debug!(
+        "[memory_diff][rpc] create_checkpoint done id={} snapshots={}",
+        checkpoint.id,
+        checkpoint.snapshot_ids.len()
+    );
     Ok(RpcOutcome::new(
         CreateCheckpointResponse { checkpoint },
         vec![],
@@ -176,6 +215,7 @@ pub async fn create_checkpoint_rpc(
 pub async fn list_checkpoints_rpc(
     req: ListCheckpointsRequest,
 ) -> Result<RpcOutcome<ListCheckpointsResponse>, String> {
+    debug!("[memory_diff][rpc] list_checkpoints limit={:?}", req.limit);
     let config = config_rpc::load_config_with_timeout().await?;
     let workspace_dir = config.workspace_dir.clone();
     let limit = req.limit.unwrap_or(20) as u32;
@@ -187,6 +227,10 @@ pub async fn list_checkpoints_rpc(
     .map_err(|e| format!("list_checkpoints join: {e}"))?
     .map_err(|e: anyhow::Error| format!("list_checkpoints: {e:#}"))?;
 
+    debug!(
+        "[memory_diff][rpc] list_checkpoints returned {} checkpoints",
+        checkpoints.len()
+    );
     Ok(RpcOutcome::new(
         ListCheckpointsResponse { checkpoints },
         vec![],
@@ -196,6 +240,10 @@ pub async fn list_checkpoints_rpc(
 pub async fn diff_since_checkpoint_rpc(
     req: DiffSinceCheckpointRequest,
 ) -> Result<RpcOutcome<DiffSinceCheckpointResponse>, String> {
+    debug!(
+        "[memory_diff][rpc] diff_since_checkpoint checkpoint_id={}",
+        req.checkpoint_id
+    );
     let config = config_rpc::load_config_with_timeout().await?;
     let diff = ops::diff_since_checkpoint(
         &req.checkpoint_id,
@@ -203,6 +251,10 @@ pub async fn diff_since_checkpoint_rpc(
         req.include_text_diff.unwrap_or(false),
     )
     .await?;
+    debug!(
+        "[memory_diff][rpc] diff_since_checkpoint done sources={}",
+        diff.per_source.len()
+    );
     Ok(RpcOutcome::new(
         DiffSinceCheckpointResponse { diff },
         vec![],
@@ -210,8 +262,13 @@ pub async fn diff_since_checkpoint_rpc(
 }
 
 pub async fn cleanup_rpc(req: CleanupRequest) -> Result<RpcOutcome<CleanupResponse>, String> {
+    debug!(
+        "[memory_diff][rpc] cleanup older_than_days={}",
+        req.older_than_days
+    );
     let config = config_rpc::load_config_with_timeout().await?;
     let deleted = ops::cleanup(&config, req.older_than_days as u32).await?;
+    debug!("[memory_diff][rpc] cleanup done deleted={}", deleted);
     Ok(RpcOutcome::new(
         CleanupResponse {
             deleted_snapshots: deleted,

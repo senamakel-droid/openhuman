@@ -4,6 +4,7 @@
 //! or a named checkpoint, formatted as concise markdown.
 
 use async_trait::async_trait;
+use log::debug;
 use serde_json::{json, Value};
 
 use crate::openhuman::config::rpc as config_rpc;
@@ -61,11 +62,17 @@ impl Tool for MemoryDiffTool {
             .and_then(|v| v.as_bool())
             .unwrap_or(false);
 
+        debug!(
+            "[memory_diff][tool] execute source_id={:?} checkpoint_id={:?} include_text_diff={}",
+            source_id, checkpoint_id, include_text_diff
+        );
+
         let config = config_rpc::load_config_with_timeout()
             .await
             .map_err(|e| anyhow::anyhow!(e))?;
 
         if let Some(ckpt_id) = checkpoint_id {
+            debug!("[memory_diff][tool] branch=checkpoint_diff checkpoint_id={ckpt_id}");
             let diff = ops::diff_since_checkpoint(ckpt_id, &config, include_text_diff)
                 .await
                 .map_err(|e| anyhow::anyhow!(e))?;
@@ -74,6 +81,7 @@ impl Tool for MemoryDiffTool {
         }
 
         if let Some(sid) = source_id {
+            debug!("[memory_diff][tool] branch=source_diff source_id={sid}");
             let source = crate::openhuman::memory_sources::get_source(sid)
                 .await
                 .map_err(|e| anyhow::anyhow!(e))?
@@ -86,6 +94,7 @@ impl Tool for MemoryDiffTool {
             return Ok(ToolResult::success(md));
         }
 
+        debug!("[memory_diff][tool] branch=list_sources");
         // No source_id or checkpoint_id: list sources with snapshot counts
         let sources = crate::openhuman::memory_sources::list_sources()
             .await
