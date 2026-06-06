@@ -175,7 +175,11 @@ pub fn connected_set_hash(integrations: &[ConnectedIntegration]) -> u64 {
         .iter()
         .filter(|i| i.connected)
         .map(|i| {
-            let mut ids: Vec<&str> = i.connections.iter().map(|c| c.connection_id.as_str()).collect();
+            let mut ids: Vec<&str> = i
+                .connections
+                .iter()
+                .map(|c| c.connection_id.as_str())
+                .collect();
             ids.sort();
             (i.toolkit.as_str(), ids)
         })
@@ -221,7 +225,8 @@ pub(crate) fn sync_cache_with_connections(connections: &[super::types::ComposioC
 
     // Collect active connection IDs per toolkit to detect multi-account changes
     let live_ids: std::collections::HashMap<String, Vec<String>> = {
-        let mut ids: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
+        let mut ids: std::collections::HashMap<String, Vec<String>> =
+            std::collections::HashMap::new();
         for c in connections.iter().filter(|c| c.is_active()) {
             let tk = c.normalized_toolkit();
             if !tk.is_empty() {
@@ -247,11 +252,19 @@ pub(crate) fn sync_cache_with_connections(connections: &[super::types::ComposioC
                 let cached_set = connected_toolkit_set(&cached.entries);
                 // Also check per-toolkit connection IDs (not just counts)
                 let ids_match = cached.entries.iter().all(|i| {
-                    let mut cached_ids: Vec<&str> = i.connections.iter().map(|c| c.connection_id.as_str()).collect();
+                    let mut cached_ids: Vec<&str> = i
+                        .connections
+                        .iter()
+                        .map(|c| c.connection_id.as_str())
+                        .collect();
                     cached_ids.sort();
                     let empty = Vec::new();
                     let live = live_ids.get(&i.toolkit).unwrap_or(&empty);
-                    cached_ids.len() == live.len() && cached_ids.iter().zip(live.iter()).all(|(a, b)| *a == b.as_str())
+                    cached_ids.len() == live.len()
+                        && cached_ids
+                            .iter()
+                            .zip(live.iter())
+                            .all(|(a, b)| *a == b.as_str())
                 });
                 if cached_set != live_active || !ids_match {
                     Some((key.clone(), cached_set, live_active.clone()))

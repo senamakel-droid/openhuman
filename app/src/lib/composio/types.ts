@@ -175,7 +175,7 @@ export interface ComposioConnectionsState {
  * connections are sorted by priority/age), and reports the total count.
  */
 export function deriveComposioStates(
-  connections: ComposioConnection[] | undefined,
+  connections: ComposioConnection[] | undefined
 ): ComposioConnectionsState {
   if (!connections || connections.length === 0) return { primary: 'disconnected', count: 0 };
   return { primary: deriveComposioState(connections[0]), count: connections.length };
