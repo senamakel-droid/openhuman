@@ -2028,6 +2028,7 @@ const messages: TranslationMap = {
   'memorySources.cssSelectorPlaceholder': 'article',
   'memorySources.searchQueryPlaceholder': 'অজানা সংযোগ',
   'memorySources.kind.composio': 'অবধি',
+  'memorySources.kind.conversation': 'কথোপকথন',
   'memorySources.kind.folder': 'স্থানীয় ফোল্ডার',
   'memorySources.kind.github_repo': 'xqxqxRox',
   'memorySources.kind.twitter_query': 'Xqxqx অনুসন্ধান',

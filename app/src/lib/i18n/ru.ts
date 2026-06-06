@@ -2042,6 +2042,7 @@ const messages: TranslationMap = {
   'memorySources.cssSelectorPlaceholder': 'article',
   'memorySources.searchQueryPlaceholder': 'от:пользователь AI безопасность',
   'memorySources.kind.composio': 'Интеграция',
+  'memorySources.kind.conversation': 'Разговоры',
   'memorySources.kind.folder': 'Локальная папка',
   'memorySources.kind.github_repo': 'Репо GitHub',
   'memorySources.kind.twitter_query': 'Поиск в Твиттере',

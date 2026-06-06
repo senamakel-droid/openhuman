@@ -23,6 +23,7 @@ vi.mock('../../services/memorySourcesService', () => ({
   SOURCE_KIND_ICONS: {
     folder: '📁',
     composio: '🔗',
+    conversation: '💬',
     github_repo: '🐙',
     rss_feed: '📡',
     web_page: '🌐',
@@ -31,6 +32,7 @@ vi.mock('../../services/memorySourcesService', () => ({
   SOURCE_KIND_LABEL_KEYS: {
     folder: 'memorySources.kind.folder',
     composio: 'memorySources.kind.composio',
+    conversation: 'memorySources.kind.conversation',
     github_repo: 'memorySources.kind.github_repo',
     rss_feed: 'memorySources.kind.rss_feed',
     web_page: 'memorySources.kind.web_page',
