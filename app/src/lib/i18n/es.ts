@@ -3932,12 +3932,14 @@ const messages: TranslationMap = {
   'settings.sandbox.envPassthroughDesc': 'Variables de entorno reenviadas al sandbox.',
   'settings.sandbox.noEnvVars': 'No hay variables de entorno configuradas.',
   'settings.approvalHistory.title': 'Historial de aprobaciones',
-  'settings.approvalHistory.subtitle': 'Decisiones recientes de aprobación de herramientas, las más nuevas primero.',
+  'settings.approvalHistory.subtitle':
+    'Decisiones recientes de aprobación de herramientas, las más nuevas primero.',
   'settings.approvalHistory.refresh': 'Actualizar',
   'settings.approvalHistory.loading': 'Cargando historial de aprobaciones…',
   'settings.approvalHistory.retry': 'Reintentar',
   'settings.approvalHistory.emptyState': 'Aún no hay decisiones de aprobación registradas.',
-  'settings.approvalHistory.errorGeneric': 'No se pudo cargar el historial de aprobaciones. Inténtalo de nuevo.',
+  'settings.approvalHistory.errorGeneric':
+    'No se pudo cargar el historial de aprobaciones. Inténtalo de nuevo.',
   'settings.approvalHistory.decidedAt': 'Decidido el {date}',
   'settings.approvalHistory.decision.approveOnce': 'Aprobado una vez',
   'settings.approvalHistory.decision.approveAlways': 'Siempre permitido',
@@ -4634,7 +4636,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'Guardando…',
   'nav.workflows': 'Workflows',
   'workflows.title': 'Flujos de trabajo',
-  'workflows.subtitle': 'Procedimientos reutilizables y ejecutables — un objetivo y los pasos para alcanzarlo. Crea uno, instala desde una URL o abre un flujo de trabajo para ejecutarlo.',
+  'workflows.subtitle':
+    'Procedimientos reutilizables y ejecutables — un objetivo y los pasos para alcanzarlo. Crea uno, instala desde una URL o abre un flujo de trabajo para ejecutarlo.',
   'workflows.createNew': 'Nuevo flujo de trabajo',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'Eliminar flujo de trabajo',
@@ -4644,7 +4647,8 @@ const messages: TranslationMap = {
   'workflows.empty.body':
     'Crea un flujo de trabajo para definir reglas y scripts para las fases del ciclo de vida de tareas.',
   'workflows.create.title': 'Nuevo flujo de trabajo',
-  'workflows.create.subtitle': 'Define un conjunto de reglas vinculado al ciclo de vida del agente.',
+  'workflows.create.subtitle':
+    'Define un conjunto de reglas vinculado al ciclo de vida del agente.',
   'workflows.create.name': 'Name',
   'workflows.create.namePlaceholder': 'ej. Flujo de trabajo de proyecto Python',
   'workflows.create.description': 'Description',
@@ -4800,7 +4804,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Descripcion',
   'modelCouncil.councilDescriptionPlaceholder': 'Cuándo usar este consejo',
   'modelCouncil.selectModel': 'Seleccionar',
-  'modelCouncil.modelPickerHelp': 'Selecciona una pista de enrutamiento o fija un modelo de proveedor exacto.',
+  'modelCouncil.modelPickerHelp':
+    'Selecciona una pista de enrutamiento o fija un modelo de proveedor exacto.',
   'modelCouncil.closeModelPicker': 'Cerrar',
   'modelCouncil.modelPickerHints': 'Sugerencias',
   'modelCouncil.modelPickerProviderModel': 'Proveedor + modelo',
@@ -4855,7 +4860,8 @@ const messages: TranslationMap = {
   'modelCouncil.scratchpadNoResponse': 'Sin respuesta',
   'modelCouncil.chairLabel': 'Modelo presidente',
   'modelCouncil.chairPlaceholder': 'ej. claude-opus-4-8',
-  'modelCouncil.chairHelp': 'El presidente lee cada respuesta de los miembros y redacta la síntesis.',
+  'modelCouncil.chairHelp':
+    'El presidente lee cada respuesta de los miembros y redacta la síntesis.',
   'modelCouncil.run': 'Convocar consejo',
   'modelCouncil.running': 'Convocando…',
   'modelCouncil.runningHint': 'Consultando miembros en paralelo, luego sintetizando…',

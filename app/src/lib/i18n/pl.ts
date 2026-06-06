@@ -311,8 +311,7 @@ const messages: TranslationMap = {
   'memoryTimeline.namespaceLabel': 'Namespace',
   'memoryTimeline.namespaceAll': 'Wszystkie przestrzenie nazw',
   'memoryTimeline.empty': 'Brak grafu wiedzy.',
-  'memoryTimeline.emptyHint':
-    'Gdy asystent zapisze fakty o Tobie, oś czasu pojawi się tutaj.',
+  'memoryTimeline.emptyHint': 'Gdy asystent zapisze fakty o Tobie, oś czasu pojawi się tutaj.',
   'memoryTimeline.metricTotal': 'Facts',
   'memoryTimeline.metricMonths': 'Aktywne miesiące',
   'memoryTimeline.metricRecent': 'Ostatnie 30 dni',
@@ -3924,12 +3923,14 @@ const messages: TranslationMap = {
   'settings.sandbox.envPassthroughDesc': 'Zmienne środowiskowe przekazywane do piaskownicy.',
   'settings.sandbox.noEnvVars': 'Nie skonfigurowano żadnych zmiennych środowiskowych.',
   'settings.approvalHistory.title': 'Historia zatwierdzeń',
-  'settings.approvalHistory.subtitle': 'Ostatnie decyzje o zatwierdzeniu narzędzi, najnowsze najpierw.',
+  'settings.approvalHistory.subtitle':
+    'Ostatnie decyzje o zatwierdzeniu narzędzi, najnowsze najpierw.',
   'settings.approvalHistory.refresh': 'Refresh',
   'settings.approvalHistory.loading': 'Ładowanie historii zatwierdzeń…',
   'settings.approvalHistory.retry': 'Retry',
   'settings.approvalHistory.emptyState': 'Brak zarejestrowanych decyzji o zatwierdzeniu.',
-  'settings.approvalHistory.errorGeneric': 'Nie udało się załadować historii zatwierdzeń. Spróbuj ponownie.',
+  'settings.approvalHistory.errorGeneric':
+    'Nie udało się załadować historii zatwierdzeń. Spróbuj ponownie.',
   'settings.approvalHistory.decidedAt': 'Zdecydowano {date}',
   'settings.approvalHistory.decision.approveOnce': 'Zatwierdzone raz',
   'settings.approvalHistory.decision.approveAlways': 'Zawsze dozwolone',
@@ -4620,7 +4621,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'Zapisywanie…',
   'nav.workflows': 'Workflows',
   'workflows.title': 'Przepływy pracy',
-  'workflows.subtitle': 'Wielokrotnego użytku, uruchamialne procedury — cel i kroki do jego osiągnięcia. Utwórz jeden, zainstaluj z URL-a lub otwórz przepływ pracy, aby go uruchomić.',
+  'workflows.subtitle':
+    'Wielokrotnego użytku, uruchamialne procedury — cel i kroki do jego osiągnięcia. Utwórz jeden, zainstaluj z URL-a lub otwórz przepływ pracy, aby go uruchomić.',
   'workflows.createNew': 'Nowy przepływ pracy',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'Usuń przepływ pracy',
@@ -4753,7 +4755,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Description',
   'modelCouncil.councilDescriptionPlaceholder': 'Kiedy używać tej rady',
   'modelCouncil.selectModel': 'Select',
-  'modelCouncil.modelPickerHelp': 'Wybierz wskazówkę routingu lub przypnij dokładny model dostawcy.',
+  'modelCouncil.modelPickerHelp':
+    'Wybierz wskazówkę routingu lub przypnij dokładny model dostawcy.',
   'modelCouncil.closeModelPicker': 'Close',
   'modelCouncil.modelPickerHints': 'Hints',
   'modelCouncil.modelPickerProviderModel': 'Dostawca + model',
@@ -4825,9 +4828,9 @@ const messages: TranslationMap = {
   'modelCouncil.thinkingWithBrief': 'Praca z tej perspektywy: {brief}',
   'modelCouncil.thought.evidence':
     'Sprawdzanie dowodów, założeń i tego, co wspólny plik rozumowania już zawiera.',
-  'modelCouncil.thought.plan': 'Szkicowanie praktycznej ścieżki i miejsc, gdzie realizacja może utknąć.',
-  'modelCouncil.thought.risk':
-    'Szukanie trybów awarii, brakującego kontekstu i kruchych wniosków.',
+  'modelCouncil.thought.plan':
+    'Szkicowanie praktycznej ścieżki i miejsc, gdzie realizacja może utknąć.',
+  'modelCouncil.thought.risk': 'Szukanie trybów awarii, brakującego kontekstu i kruchych wniosków.',
   'modelCouncil.thought.tradeoffs':
     'Porównywanie kompromisów przed przekazaniem sędziemu zwięzłego stanowiska.',
   'modelCouncil.thought.synthesis':

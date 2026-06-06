@@ -306,8 +306,7 @@ const messages: TranslationMap = {
   'memoryTimeline.namespaceLabel': 'Namespace',
   'memoryTimeline.namespaceAll': '모든 네임스페이스',
   'memoryTimeline.empty': '아직 지식 그래프가 없습니다.',
-  'memoryTimeline.emptyHint':
-    '어시스턴트가 사실을 기록하면 타임라인이 여기에 표시됩니다.',
+  'memoryTimeline.emptyHint': '어시스턴트가 사실을 기록하면 타임라인이 여기에 표시됩니다.',
   'memoryTimeline.metricTotal': 'Facts',
   'memoryTimeline.metricMonths': '활성 월',
   'memoryTimeline.metricRecent': '최근 30일',
@@ -376,8 +375,7 @@ const messages: TranslationMap = {
   'entityAssociations.linkedBadge': 'linked',
   'entityAssociations.inferredBadge': 'inferred',
   'entityAssociations.linkedTitle': '이 엔티티들은 직접 연결되어 있습니다.',
-  'entityAssociations.inferredTitle':
-    '직접적인 링크 없음 — 공유된 연결을 통해서만 연관됨.',
+  'entityAssociations.inferredTitle': '직접적인 링크 없음 — 공유된 연결을 통해서만 연관됨.',
   'entityAssociations.sharedLabel': '{shared}개 공유',
   'entityAssociations.pairTitle': '{jaccard}% 유사 · {shared}/{union} 연결 공유',
   'entityAssociations.truncated': '{shown}/{total} 표시 — 가장 강한 것 먼저.',
@@ -389,8 +387,7 @@ const messages: TranslationMap = {
   'memoryFreshness.errorPrefix': '그래프를 로드할 수 없습니다:',
   'memoryFreshness.retry': 'Retry',
   'memoryFreshness.empty': '아직 지식 그래프가 없습니다.',
-  'memoryFreshness.emptyHint':
-    '어시스턴트가 사실을 기록하면 신선도가 여기에서 추적됩니다.',
+  'memoryFreshness.emptyHint': '어시스턴트가 사실을 기록하면 신선도가 여기에서 추적됩니다.',
   'memoryFreshness.namespaceLabel': 'Namespace',
   'memoryFreshness.namespaceAll': '모든 네임스페이스',
   'memoryFreshness.metricFresh': 'Fresh',
@@ -3781,8 +3778,7 @@ const messages: TranslationMap = {
   'settings.agentAccess.actionDirEnvOverrideNote':
     'OPENHUMAN_ACTION_DIR에 의해 재정의됨 — 설정에서 관리하려면 환경 변수를 해제하세요.',
   'settings.agentAccess.approvalHistory': '승인 이력',
-  'settings.agentAccess.approvalHistoryDesc':
-    '에이전트가 요청한 이전 승인/거부 결정을 검토합니다.',
+  'settings.agentAccess.approvalHistoryDesc': '에이전트가 요청한 이전 승인/거부 결정을 검토합니다.',
   'settings.agentAccess.viewApprovalHistory': '승인 기록 보기',
   'settings.sandbox.title': '샌드박스 실행',
   'settings.sandbox.menuDesc': '에이전트 도구 격리를 위한 샌드박스 백엔드를 구성합니다.',
@@ -4500,7 +4496,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': '저장 중…',
   'nav.workflows': 'Workflows',
   'workflows.title': '워크플로',
-  'workflows.subtitle': '재사용 가능하고 실행 가능한 절차 — 목표와 그에 도달하는 단계. 새로 만들거나, URL에서 설치하거나, 워크플로를 열어 실행하세요.',
+  'workflows.subtitle':
+    '재사용 가능하고 실행 가능한 절차 — 목표와 그에 도달하는 단계. 새로 만들거나, URL에서 설치하거나, 워크플로를 열어 실행하세요.',
   'workflows.createNew': '새 워크플로',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': '워크플로 삭제',
@@ -4734,18 +4731,15 @@ const messages: TranslationMap = {
   'modelCouncil.currentRoundThinking': '다음 라운드 진행 중…',
   'modelCouncil.thinkingBadge': 'Thinking',
   'modelCouncil.thinkingWithBrief': '이 관점에서 작업 중: {brief}',
-  'modelCouncil.thought.evidence':
-    '증거, 가정 및 공유 추론 파일에 이미 담긴 내용을 확인 중입니다.',
+  'modelCouncil.thought.evidence': '증거, 가정 및 공유 추론 파일에 이미 담긴 내용을 확인 중입니다.',
   'modelCouncil.thought.plan': '실질적인 경로와 실행이 막힐 수 있는 지점을 구상 중입니다.',
-  'modelCouncil.thought.risk':
-    '실패 모드, 누락된 맥락, 취약한 결론을 탐색 중입니다.',
+  'modelCouncil.thought.risk': '실패 모드, 누락된 맥락, 취약한 결론을 탐색 중입니다.',
   'modelCouncil.thought.tradeoffs':
     '판사에게 간결한 입장을 전달하기 전에 트레이드오프를 비교 중입니다.',
   'modelCouncil.thought.synthesis':
     '판사가 실제 이견을 비교할 수 있도록 고유한 견해를 준비 중입니다.',
   'modelCouncil.judgeWaitingBadge': 'Judge',
-  'modelCouncil.judgeWaitingThought':
-    '배심원 답변을 기다린 후 공유 추론 파일을 읽어 종합합니다.',
+  'modelCouncil.judgeWaitingThought': '배심원 답변을 기다린 후 공유 추론 파일을 읽어 종합합니다.',
   'modelCouncil.judgeSynthesizingBadge': 'Synthesizing',
   'modelCouncil.judgeSynthesizingThought':
     '배심원의 실시간 사고를 읽고 최종 평의회 종합 의견을 작성 중입니다.',

@@ -388,7 +388,8 @@ const messages: TranslationMap = {
   'entityAssociations.inferredTitle':
     'Aucun lien direct — associées uniquement par des connexions partagées.',
   'entityAssociations.sharedLabel': '{shared} partagées',
-  'entityAssociations.pairTitle': '{jaccard} % similaires · {shared} sur {union} connexions partagées',
+  'entityAssociations.pairTitle':
+    '{jaccard} % similaires · {shared} sur {union} connexions partagées',
   'entityAssociations.truncated': "Affichage de {shown} sur {total} — les plus fortes d'abord.",
   'memory.tab.freshness': 'Freshness',
   'memoryFreshness.title': 'Fraîcheur des connaissances',
@@ -407,7 +408,8 @@ const messages: TranslationMap = {
   'memoryFreshness.metricStale': 'Stale',
   'memoryFreshness.recallCaption': 'Rappel moyen {recall} % sur {total} faits',
   'memoryFreshness.queueHeading': 'File de reconfirmation',
-  'memoryFreshness.queueTruncated': 'Affichage de {shown} sur {total} — traitez ceux-ci en priorité.',
+  'memoryFreshness.queueTruncated':
+    'Affichage de {shown} sur {total} — traitez ceux-ci en priorité.',
   'memoryFreshness.allFresh': 'Tous les faits sont encore frais — rien à reconfirmer.',
   'memoryFreshness.statusFading': 'fading',
   'memoryFreshness.statusStale': 'stale',
@@ -3945,12 +3947,14 @@ const messages: TranslationMap = {
   'settings.sandbox.envPassthroughDesc': "Variables d'environnement transmises dans le sandbox.",
   'settings.sandbox.noEnvVars': "Aucune variable d'environnement configurée.",
   'settings.approvalHistory.title': 'Historique des approbations',
-  'settings.approvalHistory.subtitle': "Décisions récentes d'approbation d'outils, les plus récentes en premier.",
+  'settings.approvalHistory.subtitle':
+    "Décisions récentes d'approbation d'outils, les plus récentes en premier.",
   'settings.approvalHistory.refresh': 'Refresh',
   'settings.approvalHistory.loading': "Chargement de l'historique des approbations…",
   'settings.approvalHistory.retry': 'Retry',
   'settings.approvalHistory.emptyState': "Aucune décision d'approbation enregistrée.",
-  'settings.approvalHistory.errorGeneric': "Impossible de charger l'historique des approbations. Réessayez.",
+  'settings.approvalHistory.errorGeneric':
+    "Impossible de charger l'historique des approbations. Réessayez.",
   'settings.approvalHistory.decidedAt': 'Décidé le {date}',
   'settings.approvalHistory.decision.approveOnce': 'Approuvé une fois',
   'settings.approvalHistory.decision.approveAlways': 'Toujours autorisé',
@@ -4647,7 +4651,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'Enregistrement…',
   'nav.workflows': 'Workflows',
   'workflows.title': 'Workflows',
-  'workflows.subtitle': "Procédures réutilisables et exécutables — un objectif et les étapes pour l'atteindre. Créez-en un, installez depuis une URL ou ouvrez un workflow pour l'exécuter.",
+  'workflows.subtitle':
+    "Procédures réutilisables et exécutables — un objectif et les étapes pour l'atteindre. Créez-en un, installez depuis une URL ou ouvrez un workflow pour l'exécuter.",
   'workflows.createNew': 'Nouveau workflow',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'Supprimer le workflow',
@@ -4815,7 +4820,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Description',
   'modelCouncil.councilDescriptionPlaceholder': 'Quand utiliser ce conseil',
   'modelCouncil.selectModel': 'Select',
-  'modelCouncil.modelPickerHelp': 'Sélectionnez un indice de routage ou épinglez un modèle fournisseur exact.',
+  'modelCouncil.modelPickerHelp':
+    'Sélectionnez un indice de routage ou épinglez un modèle fournisseur exact.',
   'modelCouncil.closeModelPicker': 'Close',
   'modelCouncil.modelPickerHints': 'Hints',
   'modelCouncil.modelPickerProviderModel': 'Fournisseur + modèle',

@@ -304,8 +304,7 @@ const messages: TranslationMap = {
   'memoryTimeline.namespaceLabel': 'مساحة الاسم',
   'memoryTimeline.namespaceAll': 'جميع مساحات الأسماء',
   'memoryTimeline.empty': 'لا يوجد رسم بياني للمعرفة بعد.',
-  'memoryTimeline.emptyHint':
-    'عندما يسجّل المساعد حقائق عنك، سيظهر الجدول الزمني هنا.',
+  'memoryTimeline.emptyHint': 'عندما يسجّل المساعد حقائق عنك، سيظهر الجدول الزمني هنا.',
   'memoryTimeline.metricTotal': 'الحقائق',
   'memoryTimeline.metricMonths': 'الأشهر النشطة',
   'memoryTimeline.metricRecent': 'آخر 30 يومًا',
@@ -362,8 +361,7 @@ const messages: TranslationMap = {
   'entityAssociations.errorPrefix': 'تعذّر تحميل الرسم البياني:',
   'entityAssociations.retry': 'إعادة المحاولة',
   'entityAssociations.empty': 'لا توجد ارتباطات بعد.',
-  'entityAssociations.emptyHint':
-    'عندما تبدأ الكيانات بمشاركة الروابط، ستظهر أقوى الارتباطات هنا.',
+  'entityAssociations.emptyHint': 'عندما تبدأ الكيانات بمشاركة الروابط، ستظهر أقوى الارتباطات هنا.',
   'entityAssociations.namespaceLabel': 'مساحة الاسم',
   'entityAssociations.namespaceAll': 'جميع مساحات الأسماء',
   'entityAssociations.metricEntities': 'الكيانات',
@@ -372,8 +370,7 @@ const messages: TranslationMap = {
   'entityAssociations.linkedBadge': 'مرتبط',
   'entityAssociations.inferredBadge': 'مُستنتج',
   'entityAssociations.linkedTitle': 'هذه الكيانات متصلة مباشرة.',
-  'entityAssociations.inferredTitle':
-    'لا رابط مباشر — مرتبطة فقط من خلال روابط مشتركة.',
+  'entityAssociations.inferredTitle': 'لا رابط مباشر — مرتبطة فقط من خلال روابط مشتركة.',
   'entityAssociations.sharedLabel': '{shared} مشترك',
   'entityAssociations.pairTitle': '{jaccard}% تشابه · {shared} من {union} رابط مشترك',
   'entityAssociations.truncated': 'عرض {shown} من {total} — الأقوى أولاً.',
@@ -385,8 +382,7 @@ const messages: TranslationMap = {
   'memoryFreshness.errorPrefix': 'تعذّر تحميل الرسم البياني:',
   'memoryFreshness.retry': 'إعادة المحاولة',
   'memoryFreshness.empty': 'لا يوجد رسم بياني للمعرفة بعد.',
-  'memoryFreshness.emptyHint':
-    'عندما يسجّل المساعد حقائق عنك، سيتم تتبع حداثتها هنا.',
+  'memoryFreshness.emptyHint': 'عندما يسجّل المساعد حقائق عنك، سيتم تتبع حداثتها هنا.',
   'memoryFreshness.namespaceLabel': 'مساحة الاسم',
   'memoryFreshness.namespaceAll': 'جميع مساحات الأسماء',
   'memoryFreshness.metricFresh': 'حديثة',
@@ -4456,15 +4452,15 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'إنقاذ...',
   'nav.workflows': 'Workflows',
   'workflows.title': 'سير العمل',
-  'workflows.subtitle': 'إجراءات قابلة لإعادة الاستخدام والتشغيل — هدف مع خطوات تحقيقه. أنشئ واحدة، أو ثبّتها من رابط، أو افتح سير عمل لتشغيله.',
+  'workflows.subtitle':
+    'إجراءات قابلة لإعادة الاستخدام والتشغيل — هدف مع خطوات تحقيقه. أنشئ واحدة، أو ثبّتها من رابط، أو افتح سير عمل لتشغيله.',
   'workflows.createNew': 'سير عمل جديد',
   'workflows.listHeading': 'مسارات العمل',
   'workflows.delete': 'حذف سير العمل',
   'workflows.deleteError': 'فشل حذف سير العمل',
   'workflows.warnings': '{count} تحذير(ات)',
   'workflows.empty.title': 'لا توجد سير عمل بعد',
-  'workflows.empty.body':
-    'أنشئ سير عمل لتحديد القواعد والنصوص البرمجية لمراحل دورة حياة المهام.',
+  'workflows.empty.body': 'أنشئ سير عمل لتحديد القواعد والنصوص البرمجية لمراحل دورة حياة المهام.',
   'workflows.create.title': 'سير عمل جديد',
   'workflows.create.subtitle': 'حدد مجموعة قواعد مرتبطة بدورة الحياة للوكيل.',
   'workflows.create.name': 'الاسم',
@@ -4693,12 +4689,9 @@ const messages: TranslationMap = {
   'modelCouncil.thought.evidence':
     'فحص الأدلة والافتراضات وما يحتويه ملف الاستدلال المشترك بالفعل.',
   'modelCouncil.thought.plan': 'رسم المسار العملي وأين قد يتعثر التنفيذ.',
-  'modelCouncil.thought.risk':
-    'البحث عن أنماط الفشل والسياق المفقود والاستنتاجات الهشة.',
-  'modelCouncil.thought.tradeoffs':
-    'مقارنة المفاضلات قبل تقديم موقف موجز للقاضي.',
-  'modelCouncil.thought.synthesis':
-    'إعداد رؤية مميزة ليتمكن القاضي من مقارنة الخلافات الحقيقية.',
+  'modelCouncil.thought.risk': 'البحث عن أنماط الفشل والسياق المفقود والاستنتاجات الهشة.',
+  'modelCouncil.thought.tradeoffs': 'مقارنة المفاضلات قبل تقديم موقف موجز للقاضي.',
+  'modelCouncil.thought.synthesis': 'إعداد رؤية مميزة ليتمكن القاضي من مقارنة الخلافات الحقيقية.',
   'modelCouncil.judgeWaitingBadge': 'Judge',
   'modelCouncil.judgeWaitingThought':
     'بانتظار إجابات المحلّفين، ثم قراءة ملف الاستدلال المشترك للتوليف.',

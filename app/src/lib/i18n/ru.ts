@@ -308,8 +308,7 @@ const messages: TranslationMap = {
   'memoryTimeline.namespaceLabel': 'Namespace',
   'memoryTimeline.namespaceAll': 'Все пространства имён',
   'memoryTimeline.empty': 'Граф знаний пока отсутствует.',
-  'memoryTimeline.emptyHint':
-    'Когда ассистент запишет факты о вас, хронология появится здесь.',
+  'memoryTimeline.emptyHint': 'Когда ассистент запишет факты о вас, хронология появится здесь.',
   'memoryTimeline.metricTotal': 'Facts',
   'memoryTimeline.metricMonths': 'Активные месяцы',
   'memoryTimeline.metricRecent': 'Последние 30 дней',
@@ -379,8 +378,7 @@ const messages: TranslationMap = {
   'entityAssociations.linkedBadge': 'linked',
   'entityAssociations.inferredBadge': 'inferred',
   'entityAssociations.linkedTitle': 'Эти сущности связаны напрямую.',
-  'entityAssociations.inferredTitle':
-    'Нет прямой связи — ассоциированы только через общие связи.',
+  'entityAssociations.inferredTitle': 'Нет прямой связи — ассоциированы только через общие связи.',
   'entityAssociations.sharedLabel': '{shared} общих',
   'entityAssociations.pairTitle': '{jaccard}% сходства · {shared} из {union} общих связей',
   'entityAssociations.truncated': 'Показано {shown} из {total} — сильнейшие первыми.',
@@ -401,7 +399,8 @@ const messages: TranslationMap = {
   'memoryFreshness.metricStale': 'Stale',
   'memoryFreshness.recallCaption': 'Средний отзыв {recall}% по {total} фактам',
   'memoryFreshness.queueHeading': 'Очередь повторного подтверждения',
-  'memoryFreshness.queueTruncated': 'Показано {shown} из {total} — обработайте эти в первую очередь.',
+  'memoryFreshness.queueTruncated':
+    'Показано {shown} из {total} — обработайте эти в первую очередь.',
   'memoryFreshness.allFresh': 'Все факты ещё свежие — ничего не нужно подтверждать повторно.',
   'memoryFreshness.statusFading': 'fading',
   'memoryFreshness.statusStale': 'stale',
@@ -3891,12 +3890,14 @@ const messages: TranslationMap = {
   'settings.sandbox.envPassthroughDesc': 'Переменные окружения, передаваемые в песочницу.',
   'settings.sandbox.noEnvVars': 'Переменные окружения не настроены.',
   'settings.approvalHistory.title': 'История одобрений',
-  'settings.approvalHistory.subtitle': 'Последние решения об одобрении инструментов, новейшие первыми.',
+  'settings.approvalHistory.subtitle':
+    'Последние решения об одобрении инструментов, новейшие первыми.',
   'settings.approvalHistory.refresh': 'Обновить',
   'settings.approvalHistory.loading': 'Загрузка истории одобрений…',
   'settings.approvalHistory.retry': 'Повторить',
   'settings.approvalHistory.emptyState': 'Решения об одобрении ещё не записаны.',
-  'settings.approvalHistory.errorGeneric': 'Не удалось загрузить историю одобрений. Попробуйте снова.',
+  'settings.approvalHistory.errorGeneric':
+    'Не удалось загрузить историю одобрений. Попробуйте снова.',
   'settings.approvalHistory.decidedAt': 'Решено {date}',
   'settings.approvalHistory.decision.approveOnce': 'Одобрено однократно',
   'settings.approvalHistory.decision.approveAlways': 'Всегда разрешено',
@@ -4753,7 +4754,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Description',
   'modelCouncil.councilDescriptionPlaceholder': 'Когда использовать этот совет',
   'modelCouncil.selectModel': 'Select',
-  'modelCouncil.modelPickerHelp': 'Выберите подсказку маршрутизации или закрепите точную модель провайдера.',
+  'modelCouncil.modelPickerHelp':
+    'Выберите подсказку маршрутизации или закрепите точную модель провайдера.',
   'modelCouncil.closeModelPicker': 'Close',
   'modelCouncil.modelPickerHints': 'Hints',
   'modelCouncil.modelPickerProviderModel': 'Провайдер + модель',
@@ -4825,11 +4827,10 @@ const messages: TranslationMap = {
   'modelCouncil.thinkingWithBrief': 'Работа с данной перспективы: {brief}',
   'modelCouncil.thought.evidence':
     'Проверка доказательств, допущений и того, что общий файл рассуждений уже содержит.',
-  'modelCouncil.thought.plan': 'Набросок практического пути и возможных затруднений при реализации.',
-  'modelCouncil.thought.risk':
-    'Поиск режимов сбоя, недостающего контекста и хрупких выводов.',
-  'modelCouncil.thought.tradeoffs':
-    'Сравнение компромиссов перед передачей судье краткой позиции.',
+  'modelCouncil.thought.plan':
+    'Набросок практического пути и возможных затруднений при реализации.',
+  'modelCouncil.thought.risk': 'Поиск режимов сбоя, недостающего контекста и хрупких выводов.',
+  'modelCouncil.thought.tradeoffs': 'Сравнение компромиссов перед передачей судье краткой позиции.',
   'modelCouncil.thought.synthesis':
     'Подготовка отдельной точки зрения, чтобы судья мог сравнить реальные разногласия.',
   'modelCouncil.judgeWaitingBadge': 'Judge',

@@ -4541,7 +4541,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'ইনস্টল করা হয়েছে...',
   'nav.workflows': 'Workflows',
   'workflows.title': 'ওয়ার্কফ্লো',
-  'workflows.subtitle': 'পুনর্ব্যবহারযোগ্য, চালানোযোগ্য প্রক্রিয়া — একটি লক্ষ্য এবং তা অর্জনের ধাপগুলো। একটি তৈরি করুন, URL থেকে ইনস্টল করুন, বা চালানোর জন্য ওয়ার্কফ্লো খুলুন।',
+  'workflows.subtitle':
+    'পুনর্ব্যবহারযোগ্য, চালানোযোগ্য প্রক্রিয়া — একটি লক্ষ্য এবং তা অর্জনের ধাপগুলো। একটি তৈরি করুন, URL থেকে ইনস্টল করুন, বা চালানোর জন্য ওয়ার্কফ্লো খুলুন।',
   'workflows.createNew': 'নতুন ওয়ার্কফ্লো',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'ওয়ার্কফ্লো মুছুন',
@@ -4705,7 +4706,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Description',
   'modelCouncil.councilDescriptionPlaceholder': 'এই পরিষদ কখন ব্যবহার করবেন',
   'modelCouncil.selectModel': 'Select',
-  'modelCouncil.modelPickerHelp': 'রাউটিং ইঙ্গিত নির্বাচন করুন বা সুনির্দিষ্ট প্রদানকারী মডেল পিন করুন।',
+  'modelCouncil.modelPickerHelp':
+    'রাউটিং ইঙ্গিত নির্বাচন করুন বা সুনির্দিষ্ট প্রদানকারী মডেল পিন করুন।',
   'modelCouncil.closeModelPicker': 'Close',
   'modelCouncil.modelPickerHints': 'Hints',
   'modelCouncil.modelPickerProviderModel': 'প্রদানকারী + মডেল',
@@ -4777,11 +4779,11 @@ const messages: TranslationMap = {
   'modelCouncil.thinkingWithBrief': 'এই দৃষ্টিভঙ্গি থেকে কাজ করছে: {brief}',
   'modelCouncil.thought.evidence':
     'প্রমাণ, অনুমান এবং ভাগ করা যুক্তি ফাইলে ইতোমধ্যে কী আছে তা পরীক্ষা করছে।',
-  'modelCouncil.thought.plan': 'ব্যবহারিক পথ এবং কোথায় কার্যকরণ আটকে যেতে পারে তার রূপরেখা তৈরি করছে।',
+  'modelCouncil.thought.plan':
+    'ব্যবহারিক পথ এবং কোথায় কার্যকরণ আটকে যেতে পারে তার রূপরেখা তৈরি করছে।',
   'modelCouncil.thought.risk':
     'ব্যর্থতার ধরন, অনুপস্থিত প্রসঙ্গ এবং ভঙ্গুর সিদ্ধান্তের সন্ধান করছে।',
-  'modelCouncil.thought.tradeoffs':
-    'বিচারককে সংক্ষিপ্ত অবস্থান দেওয়ার আগে ট্রেডঅফ তুলনা করছে।',
+  'modelCouncil.thought.tradeoffs': 'বিচারককে সংক্ষিপ্ত অবস্থান দেওয়ার আগে ট্রেডঅফ তুলনা করছে।',
   'modelCouncil.thought.synthesis':
     'বিচারক প্রকৃত মতানৈক্য তুলনা করতে পারে এমন একটি স্বতন্ত্র দৃষ্টিভঙ্গি প্রস্তুত করছে।',
   'modelCouncil.judgeWaitingBadge': 'Judge',

@@ -306,8 +306,7 @@ const messages: TranslationMap = {
   'memoryTimeline.namespaceLabel': 'Namespace',
   'memoryTimeline.namespaceAll': 'सभी नेमस्पेस',
   'memoryTimeline.empty': 'अभी तक कोई ज्ञान ग्राफ़ नहीं।',
-  'memoryTimeline.emptyHint':
-    'जब सहायक आपके बारे में तथ्य दर्ज करेगा, तो समयरेखा यहाँ दिखेगी।',
+  'memoryTimeline.emptyHint': 'जब सहायक आपके बारे में तथ्य दर्ज करेगा, तो समयरेखा यहाँ दिखेगी।',
   'memoryTimeline.metricTotal': 'Facts',
   'memoryTimeline.metricMonths': 'सक्रिय महीने',
   'memoryTimeline.metricRecent': 'पिछले 30 दिन',
@@ -4551,7 +4550,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'बचत',
   'nav.workflows': 'Workflows',
   'workflows.title': 'वर्कफ़्लो',
-  'workflows.subtitle': 'पुन: प्रयोज्य, चलाने योग्य प्रक्रियाएँ — एक लक्ष्य और उसे प्राप्त करने के चरण। एक बनाएँ, URL से इंस्टॉल करें, या चलाने के लिए वर्कफ़्लो खोलें।',
+  'workflows.subtitle':
+    'पुन: प्रयोज्य, चलाने योग्य प्रक्रियाएँ — एक लक्ष्य और उसे प्राप्त करने के चरण। एक बनाएँ, URL से इंस्टॉल करें, या चलाने के लिए वर्कफ़्लो खोलें।',
   'workflows.createNew': 'नया वर्कफ़्लो',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'वर्कफ़्लो हटाएँ',

@@ -391,8 +391,7 @@ const messages: TranslationMap = {
   'entityAssociations.inferredTitle':
     'Keine direkte Verbindung — nur über gemeinsame Verbindungen assoziiert.',
   'entityAssociations.sharedLabel': '{shared} geteilt',
-  'entityAssociations.pairTitle':
-    '{jaccard} % ähnlich · {shared} von {union} Verbindungen geteilt',
+  'entityAssociations.pairTitle': '{jaccard} % ähnlich · {shared} von {union} Verbindungen geteilt',
   'entityAssociations.truncated': '{shown} von {total} angezeigt — stärkste zuerst.',
   'memory.tab.freshness': 'Freshness',
   'memoryFreshness.title': 'Wissensfrische',
@@ -4676,7 +4675,8 @@ const messages: TranslationMap = {
   'workflows.empty.body':
     'Erstellen Sie einen Workflow, um Regeln und Skripte für Aufgaben-Lebenszyklusphasen zu definieren.',
   'workflows.create.title': 'Neuer Workflow',
-  'workflows.create.subtitle': 'Definieren Sie ein lebenszyklus-gebundenes Regelwerk für den Agenten.',
+  'workflows.create.subtitle':
+    'Definieren Sie ein lebenszyklus-gebundenes Regelwerk für den Agenten.',
   'workflows.create.name': 'Name',
   'workflows.create.namePlaceholder': 'z. B. Python-Projekt-Workflow',
   'workflows.create.description': 'Description',

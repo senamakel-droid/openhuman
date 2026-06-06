@@ -295,8 +295,7 @@ const messages: TranslationMap = {
   'memoryTimeline.namespaceLabel': 'Namespace',
   'memoryTimeline.namespaceAll': '所有命名空间',
   'memoryTimeline.empty': '尚无知识图谱。',
-  'memoryTimeline.emptyHint':
-    '当助手记录关于您的事实时，时间线将在此显示。',
+  'memoryTimeline.emptyHint': '当助手记录关于您的事实时，时间线将在此显示。',
   'memoryTimeline.metricTotal': 'Facts',
   'memoryTimeline.metricMonths': '活跃月份',
   'memoryTimeline.metricRecent': '最近 30 天',
@@ -353,8 +352,7 @@ const messages: TranslationMap = {
   'entityAssociations.errorPrefix': '无法加载图谱：',
   'entityAssociations.retry': 'Retry',
   'entityAssociations.empty': '暂无关联。',
-  'entityAssociations.emptyHint':
-    '当实体开始共享连接时，最强的关联将在此显示。',
+  'entityAssociations.emptyHint': '当实体开始共享连接时，最强的关联将在此显示。',
   'entityAssociations.namespaceLabel': 'Namespace',
   'entityAssociations.namespaceAll': '所有命名空间',
   'entityAssociations.metricEntities': 'Entities',
@@ -363,8 +361,7 @@ const messages: TranslationMap = {
   'entityAssociations.linkedBadge': 'linked',
   'entityAssociations.inferredBadge': 'inferred',
   'entityAssociations.linkedTitle': '这些实体直接相连。',
-  'entityAssociations.inferredTitle':
-    '无直接关联——仅通过共享连接推断。',
+  'entityAssociations.inferredTitle': '无直接关联——仅通过共享连接推断。',
   'entityAssociations.sharedLabel': '{shared} 个共享',
   'entityAssociations.pairTitle': '{jaccard}% 相似 · 共享 {shared}/{union} 个连接',
   'entityAssociations.truncated': '显示 {shown}/{total}——最强优先。',
@@ -376,8 +373,7 @@ const messages: TranslationMap = {
   'memoryFreshness.errorPrefix': '无法加载图谱：',
   'memoryFreshness.retry': 'Retry',
   'memoryFreshness.empty': '尚无知识图谱。',
-  'memoryFreshness.emptyHint':
-    '当助手记录关于您的事实时，其新鲜度将在此跟踪。',
+  'memoryFreshness.emptyHint': '当助手记录关于您的事实时，其新鲜度将在此跟踪。',
   'memoryFreshness.namespaceLabel': 'Namespace',
   'memoryFreshness.namespaceAll': '所有命名空间',
   'memoryFreshness.metricFresh': 'Fresh',
@@ -3635,8 +3631,7 @@ const messages: TranslationMap = {
   'settings.agentAccess.actionDirEnvOverrideNote':
     '已被 OPENHUMAN_ACTION_DIR 覆盖 — 请取消该环境变量以在设置中管理。',
   'settings.agentAccess.approvalHistory': '审批历史',
-  'settings.agentAccess.approvalHistoryDesc':
-    '查看智能体请求的历次批准/拒绝决定。',
+  'settings.agentAccess.approvalHistoryDesc': '查看智能体请求的历次批准/拒绝决定。',
   'settings.agentAccess.viewApprovalHistory': '查看审批历史',
   'settings.sandbox.title': '沙盒执行',
   'settings.sandbox.menuDesc': '配置沙盒后端以隔离代理工具。',
@@ -4321,15 +4316,15 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': '保存中…',
   'nav.workflows': 'Workflows',
   'workflows.title': '工作流',
-  'workflows.subtitle': '可复用的可运行流程——目标加上实现步骤。创建一个、从 URL 安装或打开工作流来运行。',
+  'workflows.subtitle':
+    '可复用的可运行流程——目标加上实现步骤。创建一个、从 URL 安装或打开工作流来运行。',
   'workflows.createNew': '新建工作流',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': '删除工作流',
   'workflows.deleteError': '删除工作流失败',
   'workflows.warnings': '{count} 个警告',
   'workflows.empty.title': '暂无工作流',
-  'workflows.empty.body':
-    '创建工作流以为任务生命周期阶段定义规则和脚本。',
+  'workflows.empty.body': '创建工作流以为任务生命周期阶段定义规则和脚本。',
   'workflows.create.title': '新建工作流',
   'workflows.create.subtitle': '为智能体定义生命周期绑定的规则集。',
   'workflows.create.name': 'Name',
@@ -4461,8 +4456,7 @@ const messages: TranslationMap = {
   'modelCouncil.intro':
     '提出一个问题，同时从多个模型获取独立回答，然后由主席模型综合各方共识、分歧以及各自的独特贡献。',
   'modelCouncil.listTitle': 'Councils',
-  'modelCouncil.listIntro':
-    '选择已保存的委员会，编辑其智能体和法官，或创建新委员会用于特定决策。',
+  'modelCouncil.listIntro': '选择已保存的委员会，编辑其智能体和法官，或创建新委员会用于特定决策。',
   'modelCouncil.addCouncil': '新建委员会',
   'modelCouncil.openCouncil': '打开委员会',
   'modelCouncil.editCouncil': '编辑委员会',
@@ -4500,8 +4494,7 @@ const messages: TranslationMap = {
   'modelCouncil.settingsSummary': '{count} 名陪审员 · 法官：{judge}',
   'modelCouncil.juryCountLabel': '陪审员数量',
   'modelCouncil.debateRoundsLabel': '辩论轮次',
-  'modelCouncil.debateRoundsHelp':
-    '每位陪审员在法官撰写最终综合意见前进行多轮辩论。',
+  'modelCouncil.debateRoundsHelp': '每位陪审员在法官撰写最终综合意见前进行多轮辩论。',
   'modelCouncil.judgeAgentLabel': '法官代理',
   'modelCouncil.defaultJudge': '默认法官',
   'modelCouncil.savedProfile': '已保存配置',
@@ -4528,8 +4521,7 @@ const messages: TranslationMap = {
   'modelCouncil.jurorFallback': '陪审员',
   'modelCouncil.sharedReasoningLabel': '共享推理文件',
   'modelCouncil.sharedReasoningHelp': '委员会先围绕这个共享草稿工作，再由法官撰写综合结论。',
-  'modelCouncil.liveScratchpadHelp':
-    '每轮结束后陪审员的更新会追加到此处，然后作为下一轮的输入。',
+  'modelCouncil.liveScratchpadHelp': '每轮结束后陪审员的更新会追加到此处，然后作为下一轮的输入。',
   'modelCouncil.liveScratchpadBadge': 'Live',
   'modelCouncil.scratchpadRoundHeading': '第 {round} 轮更新',
   'modelCouncil.scratchpadNoResponse': '无回复',
@@ -4540,8 +4532,7 @@ const messages: TranslationMap = {
   'modelCouncil.running': 'Convening…',
   'modelCouncil.runningHint': '正在并行查询成员，然后综合…',
   'modelCouncil.deliberationHeading': '委员会审议',
-  'modelCouncil.deliberationHelp':
-    '头像显示每个智能体在共享推理文件使用期间的思考状态。',
+  'modelCouncil.deliberationHelp': '头像显示每个智能体在共享推理文件使用期间的思考状态。',
   'modelCouncil.debateRoundInstruction':
     '回应其他陪审员的观点。保留分歧，在有根据时修正您的观点，并明确表达您当前的结论。',
   'modelCouncil.debateFinalInstruction':
@@ -4550,21 +4541,15 @@ const messages: TranslationMap = {
   'modelCouncil.currentRoundThinking': '正在继续下一轮…',
   'modelCouncil.thinkingBadge': 'Thinking',
   'modelCouncil.thinkingWithBrief': '基于此视角工作：{brief}',
-  'modelCouncil.thought.evidence':
-    '正在检查证据、假设以及共享推理文件中已有的内容。',
+  'modelCouncil.thought.evidence': '正在检查证据、假设以及共享推理文件中已有的内容。',
   'modelCouncil.thought.plan': '正在规划实际路径以及可能遇到的障碍。',
-  'modelCouncil.thought.risk':
-    '正在寻找失败模式、缺失的上下文和脆弱的结论。',
-  'modelCouncil.thought.tradeoffs':
-    '在向法官给出简明立场前比较权衡。',
-  'modelCouncil.thought.synthesis':
-    '正在准备独特观点，以便法官比较真正的分歧。',
+  'modelCouncil.thought.risk': '正在寻找失败模式、缺失的上下文和脆弱的结论。',
+  'modelCouncil.thought.tradeoffs': '在向法官给出简明立场前比较权衡。',
+  'modelCouncil.thought.synthesis': '正在准备独特观点，以便法官比较真正的分歧。',
   'modelCouncil.judgeWaitingBadge': 'Judge',
-  'modelCouncil.judgeWaitingThought':
-    '正在等待陪审员回答，然后阅读共享推理文件进行综合。',
+  'modelCouncil.judgeWaitingThought': '正在等待陪审员回答，然后阅读共享推理文件进行综合。',
   'modelCouncil.judgeSynthesizingBadge': 'Synthesizing',
-  'modelCouncil.judgeSynthesizingThought':
-    '正在阅读陪审员的实时想法并撰写最终委员会综合意见。',
+  'modelCouncil.judgeSynthesizingThought': '正在阅读陪审员的实时想法并撰写最终委员会综合意见。',
   'modelCouncil.errorPrefix': '委员会失败：',
   'modelCouncil.resultsHeading': '委员会结果',
   'modelCouncil.memberAnswered': 'Answered',

@@ -4558,7 +4558,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'Menyimpan...',
   'nav.workflows': 'Workflows',
   'workflows.title': 'Alur Kerja',
-  'workflows.subtitle': 'Prosedur yang dapat digunakan ulang dan dijalankan — sebuah tujuan beserta langkah-langkah untuk mencapainya. Buat satu, instal dari URL, atau buka alur kerja untuk menjalankannya.',
+  'workflows.subtitle':
+    'Prosedur yang dapat digunakan ulang dan dijalankan — sebuah tujuan beserta langkah-langkah untuk mencapainya. Buat satu, instal dari URL, atau buka alur kerja untuk menjalankannya.',
   'workflows.createNew': 'Alur kerja baru',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'Hapus Alur Kerja',

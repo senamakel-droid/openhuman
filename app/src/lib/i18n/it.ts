@@ -407,7 +407,8 @@ const messages: TranslationMap = {
   'memoryFreshness.metricStale': 'Stale',
   'memoryFreshness.recallCaption': 'Richiamo medio {recall}% su {total} fatti',
   'memoryFreshness.queueHeading': 'Coda di riconferma',
-  'memoryFreshness.queueTruncated': 'Visualizzazione di {shown} su {total} — affronta questi per primi.',
+  'memoryFreshness.queueTruncated':
+    'Visualizzazione di {shown} su {total} — affronta questi per primi.',
   'memoryFreshness.allFresh': 'Tutti i fatti sono ancora freschi — nulla da riconfermare.',
   'memoryFreshness.statusFading': 'fading',
   'memoryFreshness.statusStale': 'stale',
@@ -3924,12 +3925,14 @@ const messages: TranslationMap = {
   'settings.sandbox.envPassthroughDesc': "Variabili d'ambiente inoltrate nella sandbox.",
   'settings.sandbox.noEnvVars': "Nessuna variabile d'ambiente configurata.",
   'settings.approvalHistory.title': 'Cronologia approvazioni',
-  'settings.approvalHistory.subtitle': 'Decisioni recenti di approvazione degli strumenti, le più recenti per prime.',
+  'settings.approvalHistory.subtitle':
+    'Decisioni recenti di approvazione degli strumenti, le più recenti per prime.',
   'settings.approvalHistory.refresh': 'Refresh',
   'settings.approvalHistory.loading': 'Caricamento cronologia approvazioni…',
   'settings.approvalHistory.retry': 'Retry',
   'settings.approvalHistory.emptyState': 'Nessuna decisione di approvazione registrata.',
-  'settings.approvalHistory.errorGeneric': 'Impossibile caricare la cronologia delle approvazioni. Riprova.',
+  'settings.approvalHistory.errorGeneric':
+    'Impossibile caricare la cronologia delle approvazioni. Riprova.',
   'settings.approvalHistory.decidedAt': 'Deciso il {date}',
   'settings.approvalHistory.decision.approveOnce': 'Approvato una volta',
   'settings.approvalHistory.decision.approveAlways': 'Sempre consentito',
@@ -4625,7 +4628,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'Salvataggio…',
   'nav.workflows': 'Workflows',
   'workflows.title': 'Workflow',
-  'workflows.subtitle': 'Procedure riutilizzabili ed eseguibili — un obiettivo e i passaggi per raggiungerlo. Creane uno, installa da un URL o apri un workflow per eseguirlo.',
+  'workflows.subtitle':
+    'Procedure riutilizzabili ed eseguibili — un obiettivo e i passaggi per raggiungerlo. Creane uno, installa da un URL o apri un workflow per eseguirlo.',
   'workflows.createNew': 'Nuovo workflow',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'Elimina Workflow',
@@ -4635,7 +4639,8 @@ const messages: TranslationMap = {
   'workflows.empty.body':
     'Crea un workflow per definire regole e script per le fasi del ciclo di vita delle attività.',
   'workflows.create.title': 'Nuovo Workflow',
-  'workflows.create.subtitle': "Definisci un insieme di regole legate al ciclo di vita dell'agente.",
+  'workflows.create.subtitle':
+    "Definisci un insieme di regole legate al ciclo di vita dell'agente.",
   'workflows.create.name': 'Name',
   'workflows.create.namePlaceholder': 'es. Workflow progetto Python',
   'workflows.create.description': 'Description',
@@ -4791,7 +4796,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Description',
   'modelCouncil.councilDescriptionPlaceholder': 'Quando usare questo consiglio',
   'modelCouncil.selectModel': 'Select',
-  'modelCouncil.modelPickerHelp': 'Seleziona un suggerimento di routing o fissa un modello fornitore esatto.',
+  'modelCouncil.modelPickerHelp':
+    'Seleziona un suggerimento di routing o fissa un modello fornitore esatto.',
   'modelCouncil.closeModelPicker': 'Close',
   'modelCouncil.modelPickerHints': 'Hints',
   'modelCouncil.modelPickerProviderModel': 'Fornitore + modello',

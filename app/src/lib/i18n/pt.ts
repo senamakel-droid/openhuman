@@ -389,7 +389,8 @@ const messages: TranslationMap = {
   'entityAssociations.inferredTitle':
     'Sem link direto — associadas apenas por conexões compartilhadas.',
   'entityAssociations.sharedLabel': '{shared} compartilhadas',
-  'entityAssociations.pairTitle': '{jaccard}% similar · {shared} de {union} conexões compartilhadas',
+  'entityAssociations.pairTitle':
+    '{jaccard}% similar · {shared} de {union} conexões compartilhadas',
   'entityAssociations.truncated': 'Exibindo {shown} de {total} — as mais fortes primeiro.',
   'memory.tab.freshness': 'Freshness',
   'memoryFreshness.title': 'Frescura do Conhecimento',
@@ -3924,12 +3925,14 @@ const messages: TranslationMap = {
   'settings.sandbox.envPassthroughDesc': 'Variáveis de ambiente encaminhadas para o sandbox.',
   'settings.sandbox.noEnvVars': 'Nenhuma variável de ambiente configurada.',
   'settings.approvalHistory.title': 'Histórico de aprovações',
-  'settings.approvalHistory.subtitle': 'Decisões recentes de aprovação de ferramentas, as mais recentes primeiro.',
+  'settings.approvalHistory.subtitle':
+    'Decisões recentes de aprovação de ferramentas, as mais recentes primeiro.',
   'settings.approvalHistory.refresh': 'Refresh',
   'settings.approvalHistory.loading': 'Carregando histórico de aprovações…',
   'settings.approvalHistory.retry': 'Retry',
   'settings.approvalHistory.emptyState': 'Nenhuma decisão de aprovação registrada ainda.',
-  'settings.approvalHistory.errorGeneric': 'Não foi possível carregar o histórico de aprovações. Tente novamente.',
+  'settings.approvalHistory.errorGeneric':
+    'Não foi possível carregar o histórico de aprovações. Tente novamente.',
   'settings.approvalHistory.decidedAt': 'Decidido em {date}',
   'settings.approvalHistory.decision.approveOnce': 'Aprovado uma vez',
   'settings.approvalHistory.decision.approveAlways': 'Sempre permitido',
@@ -4620,7 +4623,8 @@ const messages: TranslationMap = {
   'settings.agents.editor.saving': 'Salvando…',
   'nav.workflows': 'Workflows',
   'workflows.title': 'Fluxos de Trabalho',
-  'workflows.subtitle': 'Procedimentos reutilizáveis e executáveis — um objetivo e os passos para alcançá-lo. Crie um, instale a partir de uma URL ou abra um fluxo de trabalho para executá-lo.',
+  'workflows.subtitle':
+    'Procedimentos reutilizáveis e executáveis — um objetivo e os passos para alcançá-lo. Crie um, instale a partir de uma URL ou abra um fluxo de trabalho para executá-lo.',
   'workflows.createNew': 'Novo fluxo de trabalho',
   'workflows.listHeading': 'Workflows',
   'workflows.delete': 'Excluir Fluxo de Trabalho',
@@ -4785,7 +4789,8 @@ const messages: TranslationMap = {
   'modelCouncil.councilDescriptionLabel': 'Description',
   'modelCouncil.councilDescriptionPlaceholder': 'Quando usar este conselho',
   'modelCouncil.selectModel': 'Select',
-  'modelCouncil.modelPickerHelp': 'Selecione uma dica de roteamento ou fixe um modelo de provedor exato.',
+  'modelCouncil.modelPickerHelp':
+    'Selecione uma dica de roteamento ou fixe um modelo de provedor exato.',
   'modelCouncil.closeModelPicker': 'Close',
   'modelCouncil.modelPickerHints': 'Hints',
   'modelCouncil.modelPickerProviderModel': 'Provedor + modelo',
@@ -4858,8 +4863,7 @@ const messages: TranslationMap = {
   'modelCouncil.thought.evidence':
     'Verificando evidências, suposições e o que o arquivo de raciocínio compartilhado já contém.',
   'modelCouncil.thought.plan': 'Esboçando o caminho prático e onde a execução pode travar.',
-  'modelCouncil.thought.risk':
-    'Procurando modos de falha, contexto ausente e conclusões frágeis.',
+  'modelCouncil.thought.risk': 'Procurando modos de falha, contexto ausente e conclusões frágeis.',
   'modelCouncil.thought.tradeoffs':
     'Comparando compensações antes de entregar ao juiz uma posição concisa.',
   'modelCouncil.thought.synthesis':
