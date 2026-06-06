@@ -43,6 +43,7 @@ function setComposioState(opts: { connected?: boolean; error?: string | null }):
   useComposioIntegrationsMock.mockReturnValue({
     toolkits: ['gmail'],
     connectionByToolkit: map,
+    connectionsByToolkit: new Map(),
     loading: false,
     error,
     refresh: vi.fn(),

@@ -902,7 +902,7 @@ export default function Skills() {
                             gridAutoRows: '6.5rem',
                           }}>
                           {composioSortedEntries.map(({ meta, connection }) => {
-                            const allConns = composioConnectionsByToolkit.get(meta.slug);
+                            const allConns = composioConnectionsByToolkit?.get(meta.slug);
                             const activeCount =
                               allConns?.filter(c => deriveComposioState(c) === 'connected')
                                 .length ?? 0;
@@ -994,7 +994,7 @@ export default function Skills() {
       {composioModalToolkit && (
         <ComposioConnectModal
           toolkit={composioModalToolkit}
-          connections={composioConnectionsByToolkit.get(composioModalToolkit.slug)}
+          connections={composioConnectionsByToolkit?.get(composioModalToolkit.slug)}
           agentUnsupported={
             agentReadinessKnown && !agentReadyComposioToolkits.has(composioModalToolkit.slug)
           }
