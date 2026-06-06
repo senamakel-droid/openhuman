@@ -231,10 +231,15 @@ async fn retries_once_only_even_when_second_call_still_errors() {
     let base = start_mock_backend(app).await;
     let client = build_client_for(base);
 
-    let resp =
-        execute_with_auth_retry_inner(&client, "NOTION_PAGES_LIST", None, Duration::from_millis(0), None)
-            .await
-            .unwrap();
+    let resp = execute_with_auth_retry_inner(
+        &client,
+        "NOTION_PAGES_LIST",
+        None,
+        Duration::from_millis(0),
+        None,
+    )
+    .await
+    .unwrap();
 
     assert!(!resp.successful);
     assert_eq!(

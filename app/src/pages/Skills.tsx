@@ -903,27 +903,29 @@ export default function Skills() {
                           }}>
                           {composioSortedEntries.map(({ meta, connection }) => {
                             const allConns = composioConnectionsByToolkit.get(meta.slug);
-                            const activeCount = allConns?.filter(c => deriveComposioState(c) === 'connected').length ?? 0;
+                            const activeCount =
+                              allConns?.filter(c => deriveComposioState(c) === 'connected')
+                                .length ?? 0;
                             return (
-                            <div
-                              key={meta.slug}
-                              data-testid={`skill-row-composio-${meta.slug}`}
-                              className="overflow-hidden">
-                              <ComposioConnectorTile
-                                meta={meta}
-                                connection={connection}
-                                activeConnectionCount={activeCount}
-                                hasComposioError={Boolean(composioError)}
-                                agentUnsupported={
-                                  agentReadinessKnown &&
-                                  deriveComposioState(connection) === 'connected' &&
-                                  !agentReadyComposioToolkits.has(meta.slug)
-                                }
-                                testId={`skill-install-composio-${meta.slug}`}
-                                onOpen={() => setComposioModalToolkit(meta)}
-                                onRetryGlobal={() => void refreshComposio()}
-                              />
-                            </div>
+                              <div
+                                key={meta.slug}
+                                data-testid={`skill-row-composio-${meta.slug}`}
+                                className="overflow-hidden">
+                                <ComposioConnectorTile
+                                  meta={meta}
+                                  connection={connection}
+                                  activeConnectionCount={activeCount}
+                                  hasComposioError={Boolean(composioError)}
+                                  agentUnsupported={
+                                    agentReadinessKnown &&
+                                    deriveComposioState(connection) === 'connected' &&
+                                    !agentReadyComposioToolkits.has(meta.slug)
+                                  }
+                                  testId={`skill-install-composio-${meta.slug}`}
+                                  onOpen={() => setComposioModalToolkit(meta)}
+                                  onRetryGlobal={() => void refreshComposio()}
+                                />
+                              </div>
                             );
                           })}
                         </div>

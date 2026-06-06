@@ -109,7 +109,10 @@ fn render_delegation_guide(integrations: &[ConnectedIntegration]) -> String {
             let _ = writeln!(
                 out,
                 "- **{}** (`toolkit: \"{}\"`, {} accounts connected): {}",
-                ci.toolkit, slug, ci.connections.len(), ci.description
+                ci.toolkit,
+                slug,
+                ci.connections.len(),
+                ci.description
             );
             for conn in &ci.connections {
                 let label = conn.label.as_deref().unwrap_or("(unlabeled)");

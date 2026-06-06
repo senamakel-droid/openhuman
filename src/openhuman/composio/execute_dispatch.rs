@@ -175,14 +175,14 @@ pub async fn execute_composio_action_kind_with_connection(
                 connection_id = ?connection_id,
                 "[composio][dispatch] backend variant"
             );
-            let resp =
-                match execute_with_retries(&client, tool_trim, prepared, connection_id).await {
-                    Ok(resp) => resp,
-                    Err(e) => {
-                        tracing::debug!(tool = %tool_trim, "[composio][dispatch] transport failure");
-                        return Err(remap_transport_error(tool_trim, &e.to_string()));
-                    }
-                };
+            let resp = match execute_with_retries(&client, tool_trim, prepared, connection_id).await
+            {
+                Ok(resp) => resp,
+                Err(e) => {
+                    tracing::debug!(tool = %tool_trim, "[composio][dispatch] transport failure");
+                    return Err(remap_transport_error(tool_trim, &e.to_string()));
+                }
+            };
             Ok(format_response(tool_trim, resp))
         }
         ComposioClientKind::Direct(direct) => {
@@ -191,8 +191,7 @@ pub async fn execute_composio_action_kind_with_connection(
                 connection_id = ?connection_id,
                 "[composio][dispatch] direct variant"
             );
-            match direct_execute(&direct, tool_trim, Some(prepared), entity_id, connection_id)
-                .await
+            match direct_execute(&direct, tool_trim, Some(prepared), entity_id, connection_id).await
             {
                 Ok(resp) => Ok(format_response(tool_trim, resp)),
                 Err(e) => Err(remap_transport_error(tool_trim, &e.to_string())),

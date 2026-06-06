@@ -280,9 +280,10 @@ export default function ComposioConnectModal({
         const allForToolkit = resp.connections.filter(
           c => c.toolkit.toLowerCase() === toolkit.slug.toLowerCase()
         );
-        const hit = allForToolkit.find(
-          c => deriveComposioState(c) !== 'connected' && deriveComposioState(c) !== 'disconnected'
-        ) ?? allForToolkit[0];
+        const hit =
+          allForToolkit.find(
+            c => deriveComposioState(c) !== 'connected' && deriveComposioState(c) !== 'disconnected'
+          ) ?? allForToolkit[0];
         if (hit) {
           setActiveConnection(hit);
           setActiveConnections(allForToolkit.filter(c => deriveComposioState(c) === 'connected'));
@@ -515,32 +516,35 @@ export default function ComposioConnectModal({
     [savingScope, scopes, t, toolkit.slug]
   );
 
-  const handleDisconnect = useCallback(async (targetConnection?: ComposioConnection) => {
-    const conn = targetConnection ?? activeConnection;
-    if (!conn) return;
-    setPhase('disconnecting');
-    setError(null);
-    try {
-      await deleteConnection(conn.id, { clearMemory: clearMemoryOnDisconnect });
-      const remaining = activeConnections.filter(c => c.id !== conn.id);
-      setActiveConnections(remaining);
-      if (remaining.length > 0) {
-        setActiveConnection(remaining[0]);
+  const handleDisconnect = useCallback(
+    async (targetConnection?: ComposioConnection) => {
+      const conn = targetConnection ?? activeConnection;
+      if (!conn) return;
+      setPhase('disconnecting');
+      setError(null);
+      try {
+        await deleteConnection(conn.id, { clearMemory: clearMemoryOnDisconnect });
+        const remaining = activeConnections.filter(c => c.id !== conn.id);
+        setActiveConnections(remaining);
+        if (remaining.length > 0) {
+          setActiveConnection(remaining[0]);
+          setClearMemoryOnDisconnect(false);
+          setPhase('connected');
+        } else {
+          setActiveConnection(undefined);
+          setClearMemoryOnDisconnect(false);
+          setPhase('idle');
+        }
+        onChanged?.();
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        setPhase('error');
+        setError(`${t('composio.connect.disconnectFailed')}: ${msg}`);
         setClearMemoryOnDisconnect(false);
-        setPhase('connected');
-      } else {
-        setActiveConnection(undefined);
-        setClearMemoryOnDisconnect(false);
-        setPhase('idle');
       }
-      onChanged?.();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setPhase('error');
-      setError(`${t('composio.connect.disconnectFailed')}: ${msg}`);
-      setClearMemoryOnDisconnect(false);
-    }
-  }, [activeConnection, activeConnections, clearMemoryOnDisconnect, onChanged, t]);
+    },
+    [activeConnection, activeConnections, clearMemoryOnDisconnect, onChanged, t]
+  );
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();

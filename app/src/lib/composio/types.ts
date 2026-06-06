@@ -169,9 +169,10 @@ export function deriveComposioState(
  * Uses the best (highest-priority) connection's state as primary, and
  * reports the total count.
  */
-export function deriveComposioStates(
-  connections: ComposioConnection[] | undefined
-): { primary: ComposioConnectionState; count: number } {
+export function deriveComposioStates(connections: ComposioConnection[] | undefined): {
+  primary: ComposioConnectionState;
+  count: number;
+} {
   if (!connections || connections.length === 0) return { primary: 'disconnected', count: 0 };
   return { primary: deriveComposioState(connections[0]), count: connections.length };
 }

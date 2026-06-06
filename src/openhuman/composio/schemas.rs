@@ -809,13 +809,8 @@ fn handle_execute(params: Map<String, Value>) -> ControllerFuture {
         let arguments = read_optional::<Value>(&params, "arguments")?;
         let connection_id = read_optional::<String>(&params, "connection_id")?;
         to_json(
-            super::ops::composio_execute(
-                &config,
-                &tool,
-                arguments,
-                connection_id.as_deref(),
-            )
-            .await?,
+            super::ops::composio_execute(&config, &tool, arguments, connection_id.as_deref())
+                .await?,
         )
     })
 }

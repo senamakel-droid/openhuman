@@ -92,7 +92,9 @@ fn render_connected_integrations(integrations: &[ConnectedIntegration]) -> Strin
             let _ = writeln!(
                 out,
                 "- **{}** ({} accounts) — {}",
-                ci.toolkit, ci.connections.len(), ci.description
+                ci.toolkit,
+                ci.connections.len(),
+                ci.description
             );
             for conn in &ci.connections {
                 let label = conn.label.as_deref().unwrap_or("(unlabeled)");

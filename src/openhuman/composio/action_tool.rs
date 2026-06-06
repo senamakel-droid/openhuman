@@ -233,7 +233,8 @@ impl Tool for ComposioActionTool {
             .map(|s| s.trim())
             .filter(|s| !s.is_empty())
             .map(String::from);
-        let effective_connection_id = runtime_connection_id.as_deref()
+        let effective_connection_id = runtime_connection_id
+            .as_deref()
             .or(self.connection_id.as_deref());
         let res = super::execute_dispatch::execute_composio_action_kind_with_connection(
             kind,
