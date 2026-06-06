@@ -4801,7 +4801,7 @@ const messages: TranslationMap = {
   'modelCouncil.noCouncilDescription': 'Sin descripción',
   'modelCouncil.registryErrorPrefix': 'El registro del consejo falló:',
   'modelCouncil.councilNameLabel': 'Nombre del consejo',
-  'modelCouncil.councilDescriptionLabel': 'Descripcion',
+  'modelCouncil.councilDescriptionLabel': 'Descripción',
   'modelCouncil.councilDescriptionPlaceholder': 'Cuándo usar este consejo',
   'modelCouncil.selectModel': 'Seleccionar',
   'modelCouncil.modelPickerHelp':
@@ -4895,7 +4895,7 @@ const messages: TranslationMap = {
   'modelCouncil.resultsHeading': 'Resultados del consejo',
   'modelCouncil.memberAnswered': 'Respondido',
   'modelCouncil.memberFailed': 'Fallido',
-  'modelCouncil.synthesisHeading': 'Sintesis',
+  'modelCouncil.synthesisHeading': 'Síntesis',
   'modelCouncil.synthesisBy': 'por {model}',
   'modelCouncil.usageHeading': 'Uso del debate',
   'modelCouncil.usageEstimated':
