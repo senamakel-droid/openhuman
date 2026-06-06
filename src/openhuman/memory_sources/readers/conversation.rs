@@ -97,8 +97,8 @@ impl SourceReader for ConversationReader {
         let raw = std::fs::read_to_string(&thread_path)
             .map_err(|e| format!("failed to read thread file: {e}"))?;
 
-        let parsed: serde_json::Value = serde_json::from_str(&raw)
-            .map_err(|e| format!("failed to parse thread JSON: {e}"))?;
+        let parsed: serde_json::Value =
+            serde_json::from_str(&raw).map_err(|e| format!("failed to parse thread JSON: {e}"))?;
 
         let title = parsed
             .get("title")
@@ -139,10 +139,7 @@ fn format_thread_as_markdown(thread: &serde_json::Value) -> String {
             .get("role")
             .and_then(|v| v.as_str())
             .unwrap_or("unknown");
-        let content = msg
-            .get("content")
-            .and_then(|v| v.as_str())
-            .unwrap_or("");
+        let content = msg.get("content").and_then(|v| v.as_str()).unwrap_or("");
 
         if content.is_empty() {
             continue;
@@ -276,7 +273,10 @@ mod tests {
 
         let source = conversation_source();
         let reader = ConversationReader;
-        let content = reader.read_item(&source, "conv_123", &config).await.unwrap();
+        let content = reader
+            .read_item(&source, "conv_123", &config)
+            .await
+            .unwrap();
 
         assert_eq!(content.id, "conv_123");
         assert_eq!(content.title, "Test Conversation");

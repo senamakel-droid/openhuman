@@ -10930,13 +10930,8 @@ async fn json_rpc_memory_sources_conversation_crud() {
     assert_eq!(source.get("enabled").and_then(Value::as_bool), Some(true));
 
     // 2. List sources — should contain our conversation source
-    let list_resp = post_json_rpc(
-        &rpc_base,
-        9502,
-        "openhuman.memory_sources_list",
-        json!({}),
-    )
-    .await;
+    let list_resp =
+        post_json_rpc(&rpc_base, 9502, "openhuman.memory_sources_list", json!({})).await;
     let list_result = assert_no_jsonrpc_error(&list_resp, "memory_sources_list");
     let sources = list_result
         .get("sources")
@@ -11002,13 +10997,8 @@ async fn json_rpc_memory_sources_conversation_crud() {
     );
 
     // 6. List again — empty
-    let list2_resp = post_json_rpc(
-        &rpc_base,
-        9506,
-        "openhuman.memory_sources_list",
-        json!({}),
-    )
-    .await;
+    let list2_resp =
+        post_json_rpc(&rpc_base, 9506, "openhuman.memory_sources_list", json!({})).await;
     let list2_result = assert_no_jsonrpc_error(&list2_resp, "memory_sources_list after remove");
     let sources2 = list2_result
         .get("sources")
