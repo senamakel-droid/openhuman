@@ -308,10 +308,13 @@ const en: TranslationMap = {
   'memory.empty': 'No memories yet. Memories are created automatically as you interact.',
   'memory.tab.memory': 'Memory',
   'memory.tab.memoryTree': 'Memory Tree',
-  'memory.tab.tasks': 'Agent Tasks',
+  'memory.tab.tasks': 'Tasks',
   'memory.tab.tasksDescription':
     'Create and track tasks — your own to-dos plus the boards your agents build across conversations.',
   'memory.tab.subconscious': 'Subconscious',
+  'memory.tab.agents': 'Library',
+  'memory.tab.agentsDescription':
+    'Browse and run your available agents — each with its own tools, capabilities, and focus area.',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Reusable, runnable procedures — a goal plus the steps to reach it. Create one, install from a URL, or open a workflow to run it.',
@@ -2486,6 +2489,7 @@ const en: TranslationMap = {
   'memorySources.cssSelectorPlaceholder': 'article',
   'memorySources.searchQueryPlaceholder': 'from:user AI safety',
   'memorySources.kind.composio': 'Integration',
+  'memorySources.kind.conversation': 'Conversation',
   'memorySources.kind.folder': 'Local Folder',
   'memorySources.kind.github_repo': 'GitHub Repo',
   'memorySources.kind.twitter_query': 'Twitter Search',
@@ -2579,6 +2583,8 @@ const en: TranslationMap = {
   'subconscious.runNow': 'Run Now',
   'subconscious.providerUnavailableTitle': 'Subconscious is paused',
   'subconscious.providerSettings': 'AI settings',
+  'subconscious.scratchpadInfo':
+    'The subconscious maintains a persistent scratchpad of observations across ticks. Check Settings → Agent access to configure mode and frequency.',
   'subconscious.approvalNeeded': 'Approval Needed',
   'subconscious.requiresApproval': 'Requires approval',
   'subconscious.fixInConnections': 'Fix in Connections',
