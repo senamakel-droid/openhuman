@@ -887,7 +887,7 @@ fn composio_controller_schema_catalog_covers_all_declared_functions() {
         ("authorize", 2, "connectUrl"),
         ("delete_connection", 2, "deleted"),
         ("list_tools", 2, "tools"),
-        ("execute", 2, "result"),
+        ("execute", 3, "result"),
         ("list_github_repos", 1, "result"),
         ("create_trigger", 3, "result"),
         ("get_user_profile", 1, "profile"),

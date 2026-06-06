@@ -1,4 +1,5 @@
 use super::*;
+use crate::openhuman::context::prompt::IntegrationConnection;
 
 #[test]
 fn parse_sync_reason_accepts_known_values() {
@@ -1406,7 +1407,15 @@ fn integration(toolkit: &str, connected: bool) -> ConnectedIntegration {
         tools: Vec::new(),
         gated_tools: Vec::new(),
         connected,
-        connections: Vec::new(),
+        connections: if connected {
+            vec![IntegrationConnection {
+                connection_id: format!("c-1"),
+                label: None,
+                is_default: true,
+            }]
+        } else {
+            Vec::new()
+        },
         non_active_status: None,
     }
 }

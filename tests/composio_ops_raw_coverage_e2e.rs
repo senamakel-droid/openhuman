@@ -415,7 +415,7 @@ async fn composio_controller_registry_validates_params_without_backend_network()
         ("authorize", 2),
         ("delete_connection", 2),
         ("list_tools", 2),
-        ("execute", 2),
+        ("execute", 3),
         ("list_github_repos", 1),
         ("create_trigger", 3),
         ("get_user_profile", 1),
