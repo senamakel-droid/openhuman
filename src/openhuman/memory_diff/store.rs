@@ -106,9 +106,7 @@ fn open_and_init(db_path: &Path) -> Result<Connection> {
 }
 
 fn apply_journal_mode(conn: &Connection) {
-    match conn.pragma_update_and_check(None, "journal_mode", "WAL", |r| {
-        r.get::<_, String>(0)
-    }) {
+    match conn.pragma_update_and_check(None, "journal_mode", "WAL", |r| r.get::<_, String>(0)) {
         Ok(mode) if mode.eq_ignore_ascii_case("wal") => {}
         Ok(_mode) => {
             let _ = conn.pragma_update_and_check(None, "journal_mode", "TRUNCATE", |r| {
@@ -268,10 +266,7 @@ pub fn latest_snapshots_for_source(
 
 // ── Checkpoint CRUD ───────────────────────────────────────────────────
 
-pub fn insert_checkpoint(
-    conn: &Connection,
-    checkpoint: &Checkpoint,
-) -> Result<()> {
+pub fn insert_checkpoint(conn: &Connection, checkpoint: &Checkpoint) -> Result<()> {
     let tx = conn.unchecked_transaction()?;
     tx.execute(
         "INSERT INTO mem_diff_checkpoints (id, label, created_at_ms) VALUES (?1, ?2, ?3)",
@@ -339,8 +334,7 @@ fn checkpoint_snapshot_ids(conn: &Connection, checkpoint_id: &str) -> Result<Vec
         "SELECT snapshot_id FROM mem_diff_checkpoint_snapshots WHERE checkpoint_id = ?1",
     )?;
     let rows = stmt.query_map([checkpoint_id], |r| r.get(0))?;
-    rows.collect::<Result<Vec<String>, _>>()
-        .map_err(Into::into)
+    rows.collect::<Result<Vec<String>, _>>().map_err(Into::into)
 }
 
 // ── Cleanup ───────────────────────────────────────────────────────────

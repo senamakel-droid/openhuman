@@ -173,11 +173,10 @@ pub async fn sync_source(source: MemorySourceEntry, config: Config) -> Result<()
                     check_and_rebuild_tree(&source, &config).await;
 
                     // Auto-snapshot: capture post-sync state for diff tracking.
-                    if let Err(e) =
-                        crate::openhuman::memory_diff::ops::auto_snapshot_after_sync(
-                            &source, &config,
-                        )
-                        .await
+                    if let Err(e) = crate::openhuman::memory_diff::ops::auto_snapshot_after_sync(
+                        &source, &config,
+                    )
+                    .await
                     {
                         tracing::warn!(
                             source_id = %source.id,

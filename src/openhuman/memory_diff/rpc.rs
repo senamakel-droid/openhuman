@@ -114,10 +114,7 @@ pub async fn take_snapshot_rpc(
         .ok_or_else(|| format!("source not found: {}", req.source_id))?;
 
     let snapshot = ops::take_snapshot(&source, &config, SnapshotTrigger::Manual).await?;
-    Ok(RpcOutcome::new(
-        TakeSnapshotResponse { snapshot },
-        vec![],
-    ))
+    Ok(RpcOutcome::new(TakeSnapshotResponse { snapshot }, vec![]))
 }
 
 pub async fn list_snapshots_rpc(
@@ -137,10 +134,7 @@ pub async fn list_snapshots_rpc(
     .map_err(|e| format!("list_snapshots join: {e}"))?
     .map_err(|e: anyhow::Error| format!("list_snapshots: {e:#}"))?;
 
-    Ok(RpcOutcome::new(
-        ListSnapshotsResponse { snapshots },
-        vec![],
-    ))
+    Ok(RpcOutcome::new(ListSnapshotsResponse { snapshots }, vec![]))
 }
 
 pub async fn diff_rpc(req: DiffRequest) -> Result<RpcOutcome<DiffResponse>, String> {
@@ -163,8 +157,8 @@ pub async fn diff_since_last_rpc(
         .await?
         .ok_or_else(|| format!("source not found: {}", req.source_id))?;
 
-    let diff = ops::diff_since_last(&source, &config, req.include_text_diff.unwrap_or(false))
-        .await?;
+    let diff =
+        ops::diff_since_last(&source, &config, req.include_text_diff.unwrap_or(false)).await?;
     Ok(RpcOutcome::new(DiffSinceLastResponse { diff }, vec![]))
 }
 
@@ -187,9 +181,7 @@ pub async fn list_checkpoints_rpc(
     let limit = req.limit.unwrap_or(20) as u32;
 
     let checkpoints = tokio::task::spawn_blocking(move || {
-        store::with_connection(&workspace_dir, |conn| {
-            store::list_checkpoints(conn, limit)
-        })
+        store::with_connection(&workspace_dir, |conn| store::list_checkpoints(conn, limit))
     })
     .await
     .map_err(|e| format!("list_checkpoints join: {e}"))?
@@ -217,9 +209,7 @@ pub async fn diff_since_checkpoint_rpc(
     ))
 }
 
-pub async fn cleanup_rpc(
-    req: CleanupRequest,
-) -> Result<RpcOutcome<CleanupResponse>, String> {
+pub async fn cleanup_rpc(req: CleanupRequest) -> Result<RpcOutcome<CleanupResponse>, String> {
     let config = config_rpc::load_config_with_timeout().await?;
     let deleted = ops::cleanup(&config, req.older_than_days as u32).await?;
     Ok(RpcOutcome::new(

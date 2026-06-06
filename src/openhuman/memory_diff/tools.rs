@@ -98,26 +98,19 @@ impl Tool for MemoryDiffTool {
             .map(|s| (s.id.clone(), s.label.clone(), s.kind.as_str().to_string()))
             .collect();
 
-        let counts: Vec<(String, String, String, usize)> =
-            tokio::task::spawn_blocking(move || {
-                super::store::with_connection(&workspace_dir, |conn| {
-                    let mut out = Vec::new();
-                    for (sid, label, kind) in &source_ids {
-                        let snaps =
-                            super::store::list_snapshots(conn, Some(sid), 1000)?;
-                        out.push((
-                            sid.clone(),
-                            label.clone(),
-                            kind.clone(),
-                            snaps.len(),
-                        ));
-                    }
-                    Ok(out)
-                })
+        let counts: Vec<(String, String, String, usize)> = tokio::task::spawn_blocking(move || {
+            super::store::with_connection(&workspace_dir, |conn| {
+                let mut out = Vec::new();
+                for (sid, label, kind) in &source_ids {
+                    let snaps = super::store::list_snapshots(conn, Some(sid), 1000)?;
+                    out.push((sid.clone(), label.clone(), kind.clone(), snaps.len()));
+                }
+                Ok(out)
             })
-            .await
-            .map_err(|e| anyhow::anyhow!("join: {e}"))?
-            .map_err(|e: anyhow::Error| anyhow::anyhow!("{e:#}"))?;
+        })
+        .await
+        .map_err(|e| anyhow::anyhow!("join: {e}"))?
+        .map_err(|e: anyhow::Error| anyhow::anyhow!("{e:#}"))?;
 
         let mut md = String::from("## Memory Sources (snapshot status)\n\n");
         if counts.is_empty() {
@@ -218,10 +211,7 @@ fn format_cross_source_diff(diff: &CrossSourceDiff) -> String {
     let mut md = format!(
         "## Cross-Source Memory Changes\n\n\
          **Total: {} added, {} modified, {} removed** ({} unchanged)\n",
-        diff.summary.added,
-        diff.summary.modified,
-        diff.summary.removed,
-        diff.summary.unchanged,
+        diff.summary.added, diff.summary.modified, diff.summary.removed, diff.summary.unchanged,
     );
 
     if diff.per_source.is_empty() {
@@ -236,9 +226,7 @@ fn format_cross_source_diff(diff: &CrossSourceDiff) -> String {
         ));
         md.push_str(&format!(
             "{} added, {} modified, {} removed\n",
-            source_diff.summary.added,
-            source_diff.summary.modified,
-            source_diff.summary.removed,
+            source_diff.summary.added, source_diff.summary.modified, source_diff.summary.removed,
         ));
         for c in &source_diff.changes {
             let label = if c.title.is_empty() {

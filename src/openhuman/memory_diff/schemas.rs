@@ -113,7 +113,8 @@ fn schemas(function: &str) -> ControllerSchema {
                 FieldSchema {
                     name: "from_snapshot_id",
                     ty: TypeSchema::Option(Box::new(TypeSchema::String)),
-                    comment: "Base snapshot id. Omit to diff against empty (all items show as added).",
+                    comment:
+                        "Base snapshot id. Omit to diff against empty (all items show as added).",
                     required: false,
                 },
                 FieldSchema {
@@ -165,7 +166,8 @@ fn schemas(function: &str) -> ControllerSchema {
         "create_checkpoint" => ControllerSchema {
             namespace: NAMESPACE,
             function: "create_checkpoint",
-            description: "Create a named checkpoint grouping the latest snapshot per enabled source. \
+            description:
+                "Create a named checkpoint grouping the latest snapshot per enabled source. \
                           Use for cross-source 'what changed since X' queries.",
             inputs: vec![FieldSchema {
                 name: "label",
@@ -200,7 +202,8 @@ fn schemas(function: &str) -> ControllerSchema {
         "diff_since_checkpoint" => ControllerSchema {
             namespace: NAMESPACE,
             function: "diff_since_checkpoint",
-            description: "Cross-source diff: compute changes across all sources since a checkpoint.",
+            description:
+                "Cross-source diff: compute changes across all sources since a checkpoint.",
             inputs: vec![
                 FieldSchema {
                     name: "checkpoint_id",

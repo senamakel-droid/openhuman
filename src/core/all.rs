@@ -220,8 +220,7 @@ fn build_registered_controllers() -> Vec<RegisteredController> {
     controllers
         .extend(crate::openhuman::memory_sources::all_memory_sources_registered_controllers());
     // Memory diff — snapshot-based change tracking for memory sources
-    controllers
-        .extend(crate::openhuman::memory_diff::all_memory_diff_registered_controllers());
+    controllers.extend(crate::openhuman::memory_diff::all_memory_diff_registered_controllers());
     // Link shortener for long tracking URLs — saves LLM tokens
     controllers
         .extend(crate::openhuman::redirect_links::all_redirect_links_registered_controllers());

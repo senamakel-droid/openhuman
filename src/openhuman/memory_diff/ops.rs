@@ -291,10 +291,7 @@ pub async fn diff_since_last(
 }
 
 /// Create a checkpoint that groups the latest snapshot per enabled source.
-pub async fn create_checkpoint(
-    label: &str,
-    config: &Config,
-) -> Result<Checkpoint, String> {
+pub async fn create_checkpoint(label: &str, config: &Config) -> Result<Checkpoint, String> {
     let sources = crate::openhuman::memory_sources::registry::list_sources()
         .await
         .map_err(|e| format!("list sources: {e}"))?;
@@ -535,10 +532,7 @@ mod tests {
 
     #[test]
     fn extract_item_id_reader_backed() {
-        assert_eq!(
-            extract_item_id("mem_src:src_abc:readme.md"),
-            "readme.md"
-        );
+        assert_eq!(extract_item_id("mem_src:src_abc:readme.md"), "readme.md");
         assert_eq!(
             extract_item_id("mem_src:src_abc:path/to/file.md"),
             "path/to/file.md"
