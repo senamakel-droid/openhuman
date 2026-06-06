@@ -692,7 +692,7 @@ async fn composio_backend_client_local_validation_rejects_bad_inputs_before_http
         Some("entity-1"),
         Arc::new(SecurityPolicy::default()),
     ));
-    let blank_direct_execute = direct_execute(&direct_tool, " ", None, "entity-1")
+    let blank_direct_execute = direct_execute(&direct_tool, " ", None, "entity-1", None)
         .await
         .expect_err("blank direct tool should fail before HTTP");
     assert!(blank_direct_execute.to_string().contains("tool slug"));
