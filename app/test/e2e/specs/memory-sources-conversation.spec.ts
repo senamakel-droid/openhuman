@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Memory sources — Conversation kind CRUD via RPC.
  *
@@ -22,6 +21,13 @@ import { resetApp } from '../helpers/reset-app';
 const LOG_PREFIX = '[memory-sources-conversation]';
 const USER_ID = 'e2e-memory-sources-conversation';
 
+interface MemorySource {
+  id: string;
+  kind: string;
+  label: string;
+  enabled: boolean;
+}
+
 describe('Memory sources — conversation kind', () => {
   let sourceId: string;
 
@@ -33,59 +39,72 @@ describe('Memory sources — conversation kind', () => {
   });
 
   it('adds a conversation source via RPC', async () => {
-    const resp = await callOpenhumanRpc('openhuman.memory_sources_add', {
+    const resp = await callOpenhumanRpc<{ source: MemorySource }>('openhuman.memory_sources_add', {
       kind: 'conversation',
       label: 'Agent Conversations',
       enabled: true,
     });
-    const result = expectRpcOk(resp, 'memory_sources_add');
-    expect(result.source).toBeDefined();
-    expect(result.source.kind).toBe('conversation');
-    expect(result.source.label).toBe('Agent Conversations');
-    expect(result.source.enabled).toBe(true);
-    expect(result.source.id).toBeTruthy();
-    sourceId = result.source.id;
+    expectRpcOk('openhuman.memory_sources_add', resp);
+    const data = resp.result!;
+    expect(data.source).toBeDefined();
+    expect(data.source.kind).toBe('conversation');
+    expect(data.source.label).toBe('Agent Conversations');
+    expect(data.source.enabled).toBe(true);
+    expect(data.source.id).toBeTruthy();
+    sourceId = data.source.id;
     console.log(`${LOG_PREFIX} Added source: ${sourceId}`);
   });
 
   it('lists sources including the conversation source', async () => {
-    const resp = await callOpenhumanRpc('openhuman.memory_sources_list', {});
-    const result = expectRpcOk(resp, 'memory_sources_list');
-    const sources = result.sources ?? [];
-    const convSources = sources.filter((s: { kind: string }) => s.kind === 'conversation');
+    const resp = await callOpenhumanRpc<{ sources: MemorySource[] }>(
+      'openhuman.memory_sources_list',
+      {}
+    );
+    expectRpcOk('openhuman.memory_sources_list', resp);
+    const sources = resp.result!.sources ?? [];
+    const convSources = sources.filter(s => s.kind === 'conversation');
     expect(convSources.length).toBeGreaterThanOrEqual(1);
     expect(convSources[0].id).toBe(sourceId);
   });
 
   it('gets the source by id', async () => {
-    const resp = await callOpenhumanRpc('openhuman.memory_sources_get', { id: sourceId });
-    const result = expectRpcOk(resp, 'memory_sources_get');
-    expect(result.source).toBeDefined();
-    expect(result.source.kind).toBe('conversation');
-    expect(result.source.id).toBe(sourceId);
+    const resp = await callOpenhumanRpc<{ source: MemorySource }>('openhuman.memory_sources_get', {
+      id: sourceId,
+    });
+    expectRpcOk('openhuman.memory_sources_get', resp);
+    const data = resp.result!;
+    expect(data.source).toBeDefined();
+    expect(data.source.kind).toBe('conversation');
+    expect(data.source.id).toBe(sourceId);
   });
 
   it('updates the source to disabled', async () => {
-    const resp = await callOpenhumanRpc('openhuman.memory_sources_update', {
-      id: sourceId,
-      enabled: false,
-    });
-    const result = expectRpcOk(resp, 'memory_sources_update');
-    expect(result.source.enabled).toBe(false);
-    expect(result.source.kind).toBe('conversation');
+    const resp = await callOpenhumanRpc<{ source: MemorySource }>(
+      'openhuman.memory_sources_update',
+      { id: sourceId, enabled: false }
+    );
+    expectRpcOk('openhuman.memory_sources_update', resp);
+    const data = resp.result!;
+    expect(data.source.enabled).toBe(false);
+    expect(data.source.kind).toBe('conversation');
   });
 
   it('removes the conversation source', async () => {
-    const resp = await callOpenhumanRpc('openhuman.memory_sources_remove', { id: sourceId });
-    const result = expectRpcOk(resp, 'memory_sources_remove');
-    expect(result.removed).toBe(true);
+    const resp = await callOpenhumanRpc<{ removed: boolean }>('openhuman.memory_sources_remove', {
+      id: sourceId,
+    });
+    expectRpcOk('openhuman.memory_sources_remove', resp);
+    expect(resp.result!.removed).toBe(true);
   });
 
   it('list confirms source is removed', async () => {
-    const resp = await callOpenhumanRpc('openhuman.memory_sources_list', {});
-    const result = expectRpcOk(resp, 'memory_sources_list');
-    const sources = result.sources ?? [];
-    const convSources = sources.filter((s: { kind: string }) => s.kind === 'conversation');
+    const resp = await callOpenhumanRpc<{ sources: MemorySource[] }>(
+      'openhuman.memory_sources_list',
+      {}
+    );
+    expectRpcOk('openhuman.memory_sources_list', resp);
+    const sources = resp.result!.sources ?? [];
+    const convSources = sources.filter(s => s.kind === 'conversation');
     expect(convSources.length).toBe(0);
   });
 });

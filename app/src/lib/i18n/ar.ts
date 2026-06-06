@@ -1987,7 +1987,7 @@ const messages: TranslationMap = {
   'memorySources.cssSelectorPlaceholder': 'article',
   'memorySources.searchQueryPlaceholder': 'من:',
   'memorySources.kind.composio': 'التكامل',
-  'memorySources.kind.conversation': 'المحادثات',
+  'memorySources.kind.conversation': 'محادثة',
   'memorySources.kind.folder': 'محلي',
   'memorySources.kind.github_repo': 'Xqx0x',
   'memorySources.kind.twitter_query': 'Xqx0x',

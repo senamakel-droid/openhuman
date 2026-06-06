@@ -34,36 +34,50 @@ impl SourceReader for ConversationReader {
         }
 
         let mut items = Vec::new();
-        let entries = std::fs::read_dir(&threads_dir)
+        let mut entries = tokio::fs::read_dir(&threads_dir)
+            .await
             .map_err(|e| format!("failed to read threads dir: {e}"))?;
 
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.extension().and_then(|e| e.to_str()) != Some("json") {
-                continue;
+        loop {
+            match entries.next_entry().await {
+                Ok(Some(entry)) => {
+                    let path = entry.path();
+                    if path.extension().and_then(|e| e.to_str()) != Some("json") {
+                        continue;
+                    }
+                    let id = path
+                        .file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or_default()
+                        .to_string();
+
+                    let modified_ms = entry
+                        .metadata()
+                        .await
+                        .ok()
+                        .and_then(|m| m.modified().ok())
+                        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+                        .map(|d| d.as_millis() as i64);
+
+                    items.push(SourceItem {
+                        id,
+                        title: path
+                            .file_stem()
+                            .and_then(|s| s.to_str())
+                            .unwrap_or("conversation")
+                            .to_string(),
+                        updated_at_ms: modified_ms,
+                    });
+                }
+                Ok(None) => break,
+                Err(err) => {
+                    tracing::warn!(
+                        error = %err,
+                        "[memory_sources:conversation] failed to read directory entry, skipping"
+                    );
+                    continue;
+                }
             }
-            let id = path
-                .file_stem()
-                .and_then(|s| s.to_str())
-                .unwrap_or_default()
-                .to_string();
-
-            let modified_ms = entry
-                .metadata()
-                .ok()
-                .and_then(|m| m.modified().ok())
-                .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
-                .map(|d| d.as_millis() as i64);
-
-            items.push(SourceItem {
-                id,
-                title: path
-                    .file_stem()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or("conversation")
-                    .to_string(),
-                updated_at_ms: modified_ms,
-            });
         }
 
         tracing::debug!(
@@ -85,16 +99,28 @@ impl SourceReader for ConversationReader {
             "[memory_sources:conversation] read_item"
         );
 
-        let thread_path = config
-            .workspace_dir
-            .join("threads")
-            .join(format!("{item_id}.json"));
+        // Validate item_id to prevent path traversal
+        if item_id.contains("..") || item_id.contains('/') || item_id.contains('\\') {
+            return Err("invalid item_id: path traversal denied".to_string());
+        }
 
+        let threads_dir = config.workspace_dir.join("threads");
+        let thread_path = threads_dir.join(format!("{item_id}.json"));
+
+        // Canonicalize and verify containment within threads directory
         if !thread_path.exists() {
             return Err(format!("thread '{item_id}' not found"));
         }
+        let canonical_base = std::fs::canonicalize(&threads_dir)
+            .map_err(|e| format!("cannot resolve threads dir: {e}"))?;
+        let canonical_file = std::fs::canonicalize(&thread_path)
+            .map_err(|e| format!("cannot resolve thread path: {e}"))?;
+        if !canonical_file.starts_with(&canonical_base) {
+            return Err("path traversal denied".to_string());
+        }
 
-        let raw = std::fs::read_to_string(&thread_path)
+        let raw = tokio::fs::read_to_string(&canonical_file)
+            .await
             .map_err(|e| format!("failed to read thread file: {e}"))?;
 
         let parsed: serde_json::Value =
@@ -299,6 +325,29 @@ mod tests {
         let result = reader.read_item(&source, "nonexistent", &config).await;
         assert!(result.is_err());
         assert!(result.unwrap_err().contains("not found"));
+    }
+
+    #[tokio::test]
+    async fn read_item_rejects_path_traversal() {
+        let tmp = tempdir().unwrap();
+        let threads_dir = tmp.path().join("threads");
+        fs::create_dir_all(&threads_dir).unwrap();
+
+        let mut config = Config::default();
+        config.workspace_dir = tmp.path().to_path_buf();
+
+        let source = conversation_source();
+        let reader = ConversationReader;
+
+        let result = reader.read_item(&source, "../config", &config).await;
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("path traversal denied"));
+
+        let result = reader
+            .read_item(&source, "foo/../../etc/passwd", &config)
+            .await;
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("path traversal denied"));
     }
 
     fn conversation_source() -> MemorySourceEntry {
