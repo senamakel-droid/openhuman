@@ -100,7 +100,9 @@ impl Tool for MemoryVectorSearchTool {
             .map_err(|e| anyhow::anyhow!("invalid arguments for memory_vector_search: {e}"))?;
 
         if parsed.query.trim().is_empty() {
-            return Err(anyhow::anyhow!("memory_vector_search: query cannot be empty"));
+            return Err(anyhow::anyhow!(
+                "memory_vector_search: query cannot be empty"
+            ));
         }
 
         let limit = parsed.limit.clamp(1, 50);
@@ -130,8 +132,7 @@ impl Tool for MemoryVectorSearchTool {
 
         let source_kind = match parsed.source_kind.as_deref() {
             Some(s) => Some(
-                SourceKind::parse(s)
-                    .map_err(|e| anyhow::anyhow!("memory_vector_search: {e}"))?,
+                SourceKind::parse(s).map_err(|e| anyhow::anyhow!("memory_vector_search: {e}"))?,
             ),
             None => None,
         };
@@ -198,19 +199,31 @@ impl Tool for MemoryVectorSearchTool {
             let mmr_results = mmr_select(&query_vec, &candidates, limit, 0.7);
             mmr_results
                 .into_iter()
-                .map(|r| (r.index, scored.iter().find(|(i, _, _)| *i == r.index).unwrap().1))
+                .map(|r| {
+                    (
+                        r.index,
+                        scored.iter().find(|(i, _, _)| *i == r.index).unwrap().1,
+                    )
+                })
                 .collect::<Vec<_>>()
         } else {
             scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
             scored.truncate(limit);
-            scored.iter().map(|(idx, score, _)| (*idx, *score)).collect()
+            scored
+                .iter()
+                .map(|(idx, score, _)| (*idx, *score))
+                .collect()
         };
 
         let mut output = format!("Found {} results:\n\n", results.len());
         for (chunk_idx, score) in &results {
             let chunk = &chunks[*chunk_idx];
             let preview: String = chunk.content.chars().take(300).collect();
-            let truncated = if chunk.content.chars().count() > 300 { "..." } else { "" };
+            let truncated = if chunk.content.chars().count() > 300 {
+                "..."
+            } else {
+                ""
+            };
             let _ = writeln!(
                 output,
                 "- [{:.0}%] source={}:{} id={}\n  {}{}",

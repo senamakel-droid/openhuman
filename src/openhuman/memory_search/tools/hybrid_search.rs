@@ -100,10 +100,14 @@ impl Tool for MemoryHybridSearchTool {
             .map_err(|e| anyhow::anyhow!("invalid arguments for memory_hybrid_search: {e}"))?;
 
         if parsed.query.trim().is_empty() {
-            return Err(anyhow::anyhow!("memory_hybrid_search: query cannot be empty"));
+            return Err(anyhow::anyhow!(
+                "memory_hybrid_search: query cannot be empty"
+            ));
         }
         if parsed.namespace.trim().is_empty() {
-            return Err(anyhow::anyhow!("memory_hybrid_search: namespace cannot be empty"));
+            return Err(anyhow::anyhow!(
+                "memory_hybrid_search: namespace cannot be empty"
+            ));
         }
 
         let profile = WeightProfile::from_name(&parsed.mode).unwrap_or(WeightProfile::BALANCED);
@@ -171,7 +175,11 @@ impl Tool for MemoryHybridSearchTool {
         for (hit_idx, score) in &rescored {
             let hit = &hits[*hit_idx];
             let preview: String = hit.content.chars().take(200).collect();
-            let truncated = if hit.content.chars().count() > 200 { "..." } else { "" };
+            let truncated = if hit.content.chars().count() > 200 {
+                "..."
+            } else {
+                ""
+            };
             let _ = writeln!(
                 output,
                 "- [{:.0}%] [{}] {}: {}{}",
@@ -187,10 +195,7 @@ impl Tool for MemoryHybridSearchTool {
                 let _ = writeln!(
                     output,
                     "  scores: graph={:.2} vector={:.2} keyword={:.2} freshness={:.2}",
-                    bd.graph_relevance,
-                    bd.vector_similarity,
-                    bd.keyword_relevance,
-                    bd.freshness,
+                    bd.graph_relevance, bd.vector_similarity, bd.keyword_relevance, bd.freshness,
                 );
             }
         }

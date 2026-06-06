@@ -65,8 +65,7 @@ pub fn mmr_select(
                     .fold(0.0_f64, f64::max)
             };
 
-            let mmr_score =
-                lambda * candidate.relevance - (1.0 - lambda) * max_sim_to_selected;
+            let mmr_score = lambda * candidate.relevance - (1.0 - lambda) * max_sim_to_selected;
 
             if mmr_score > best_mmr {
                 best_mmr = mmr_score;
@@ -130,11 +129,31 @@ mod tests {
         let distinct2 = make_vec(&[0.0, 0.0, 1.0]);
 
         let candidates = vec![
-            MmrCandidate { index: 0, embedding: &dup1, relevance: 0.99 },
-            MmrCandidate { index: 1, embedding: &dup2, relevance: 0.98 },
-            MmrCandidate { index: 2, embedding: &dup3, relevance: 0.97 },
-            MmrCandidate { index: 3, embedding: &distinct1, relevance: 0.50 },
-            MmrCandidate { index: 4, embedding: &distinct2, relevance: 0.45 },
+            MmrCandidate {
+                index: 0,
+                embedding: &dup1,
+                relevance: 0.99,
+            },
+            MmrCandidate {
+                index: 1,
+                embedding: &dup2,
+                relevance: 0.98,
+            },
+            MmrCandidate {
+                index: 2,
+                embedding: &dup3,
+                relevance: 0.97,
+            },
+            MmrCandidate {
+                index: 3,
+                embedding: &distinct1,
+                relevance: 0.50,
+            },
+            MmrCandidate {
+                index: 4,
+                embedding: &distinct2,
+                relevance: 0.45,
+            },
         ];
 
         let result = mmr_select(&query, &candidates, 3, 0.5);
@@ -147,7 +166,10 @@ mod tests {
         assert!(dup_count <= 2, "MMR should diversify away from duplicates");
         // At least one distinct vector should be picked
         let distinct_count = selected_indices.iter().filter(|&&i| i >= 3).count();
-        assert!(distinct_count >= 1, "MMR should select at least one distinct vector");
+        assert!(
+            distinct_count >= 1,
+            "MMR should select at least one distinct vector"
+        );
     }
 
     #[test]
@@ -157,8 +179,16 @@ mod tests {
         let emb2 = make_vec(&[0.0, 1.0, 0.0]);
 
         let candidates = vec![
-            MmrCandidate { index: 0, embedding: &emb1, relevance: 0.99 },
-            MmrCandidate { index: 1, embedding: &emb2, relevance: 0.50 },
+            MmrCandidate {
+                index: 0,
+                embedding: &emb1,
+                relevance: 0.99,
+            },
+            MmrCandidate {
+                index: 1,
+                embedding: &emb2,
+                relevance: 0.50,
+            },
         ];
 
         let result = mmr_select(&query, &candidates, 2, 1.0);
@@ -169,11 +199,17 @@ mod tests {
     #[test]
     fn limit_caps_output() {
         let query = make_vec(&[1.0, 0.0]);
-        let embs: Vec<Vec<f32>> = (0..10).map(|i| make_vec(&[1.0 - i as f32 * 0.1, i as f32 * 0.1])).collect();
+        let embs: Vec<Vec<f32>> = (0..10)
+            .map(|i| make_vec(&[1.0 - i as f32 * 0.1, i as f32 * 0.1]))
+            .collect();
         let candidates: Vec<MmrCandidate> = embs
             .iter()
             .enumerate()
-            .map(|(i, e)| MmrCandidate { index: i, embedding: e, relevance: 1.0 - i as f64 * 0.1 })
+            .map(|(i, e)| MmrCandidate {
+                index: i,
+                embedding: e,
+                relevance: 1.0 - i as f64 * 0.1,
+            })
             .collect();
 
         let result = mmr_select(&query, &candidates, 3, 0.7);

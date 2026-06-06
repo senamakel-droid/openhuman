@@ -63,7 +63,9 @@ impl Tool for MemoryChunkContextTool {
             .map_err(|e| anyhow::anyhow!("invalid arguments for memory_chunk_context: {e}"))?;
 
         if parsed.chunk_id.trim().is_empty() {
-            return Err(anyhow::anyhow!("memory_chunk_context: chunk_id cannot be empty"));
+            return Err(anyhow::anyhow!(
+                "memory_chunk_context: chunk_id cannot be empty"
+            ));
         }
 
         let window = parsed.window.clamp(1, 5);

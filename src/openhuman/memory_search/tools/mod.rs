@@ -18,13 +18,13 @@ pub use crate::openhuman::memory_store::tools::{
 };
 
 // Re-export existing tools from memory::query
+pub use crate::openhuman::memory::query::smart_walk::run_smart_walk;
+pub use crate::openhuman::memory::query::walk::{
+    run_walk, WalkOptions, WalkOutcome, WalkStep, WalkStopReason,
+};
 pub use crate::openhuman::memory::query::{
     MemoryQueryWalkTool, MemoryTreeDrillDownTool, MemoryTreeFetchLeavesTool,
     MemoryTreeIngestDocumentTool, MemoryTreeQuerySourceTool, MemoryTreeSearchEntitiesTool,
     MemoryTreeWalkTool, SmartMemoryWalkTool, SmartWalkOptions, SmartWalkOutcome, SmartWalkStep,
     SmartWalkStopReason,
 };
-pub use crate::openhuman::memory::query::walk::{
-    run_walk, WalkOptions, WalkOutcome, WalkStep, WalkStopReason,
-};
-pub use crate::openhuman::memory::query::smart_walk::run_smart_walk;

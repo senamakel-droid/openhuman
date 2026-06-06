@@ -12,6 +12,6 @@ pub mod vector;
 // ── Public re-exports ───────────────────────────────────────────────────────
 
 pub use tools::{
-    MemoryChunkContextTool, MemoryHybridSearchTool, MemoryStoreKindsTool,
-    MemoryStoreRawChunksTool, MemoryStoreRawSearchTool, MemoryVectorSearchTool,
+    MemoryChunkContextTool, MemoryHybridSearchTool, MemoryStoreKindsTool, MemoryStoreRawChunksTool,
+    MemoryStoreRawSearchTool, MemoryVectorSearchTool,
 };
