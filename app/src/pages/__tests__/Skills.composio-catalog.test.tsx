@@ -37,7 +37,9 @@ vi.mock('../../lib/composio/hooks', () => ({
   useComposioIntegrations: () => ({
     toolkits: composioToolkits,
     connectionByToolkit: composioConnectionByToolkit,
-    connectionsByToolkit: new Map(),
+    connectionsByToolkit: new Map(
+      Array.from(composioConnectionByToolkit.entries()).map(([k, v]) => [k, [v]])
+    ),
     refresh: composioRefresh,
     loading: false,
     error: composioError,
