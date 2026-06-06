@@ -150,7 +150,7 @@ describe('<ComposioConnectModal>', () => {
     const connection: ComposioConnection = { id: 'ca_xyz', toolkit: 'gmail', status: 'ACTIVE' };
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     // Should be in 'connected' phase because connection.status is 'ACTIVE'
@@ -168,7 +168,7 @@ describe('<ComposioConnectModal>', () => {
     };
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     expect(screen.getByText('(foo@bar.com)')).toBeInTheDocument();
@@ -183,7 +183,7 @@ describe('<ComposioConnectModal>', () => {
     };
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     expect(screen.getByText('(Acme)')).toBeInTheDocument();
@@ -198,7 +198,7 @@ describe('<ComposioConnectModal>', () => {
     };
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     expect(screen.getByText('(oxox)')).toBeInTheDocument();
@@ -215,7 +215,7 @@ describe('<ComposioConnectModal>', () => {
     };
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     expect(screen.getByText('(foo@bar.com)')).toBeInTheDocument();
@@ -231,7 +231,7 @@ describe('<ComposioConnectModal>', () => {
     });
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     fireEvent.click(screen.getByLabelText(/also delete memory/i));
@@ -247,7 +247,7 @@ describe('<ComposioConnectModal>', () => {
     vi.mocked(composioApi.deleteConnection).mockRejectedValueOnce(new Error('backend down'));
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     const checkbox = screen.getByLabelText(/also delete memory/i);
@@ -272,7 +272,7 @@ describe('<ComposioConnectModal>', () => {
     };
 
     render(
-      <ComposioConnectModal toolkit={mockToolkit} connection={connection} onClose={() => {}} />
+      <ComposioConnectModal toolkit={mockToolkit} connections={[connection]} onClose={() => {}} />
     );
 
     expect(screen.getByText(/Gmail authorization expired/i)).toBeInTheDocument();

@@ -445,7 +445,7 @@ fn handle_composio_execute(params: Map<String, Value>) -> ControllerFuture {
             }
             ComposioClientKind::Direct(direct) => {
                 tracing::debug!(action = %action, "[tools][composio_execute] branch=direct");
-                direct_execute(&direct, &action, action_args, &config.composio.entity_id)
+                direct_execute(&direct, &action, action_args, &config.composio.entity_id, None)
                     .await
                     .map_err(|e| format!("composio execute_tool (direct) failed: {e:#}"))?
             }

@@ -1406,6 +1406,7 @@ fn integration(toolkit: &str, connected: bool) -> ConnectedIntegration {
         tools: Vec::new(),
         gated_tools: Vec::new(),
         connected,
+        connections: Vec::new(),
         non_active_status: None,
     }
 }

@@ -171,15 +171,15 @@ pub fn connected_set_hash(integrations: &[ConnectedIntegration]) -> u64 {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
-    let mut slugs: Vec<&str> = integrations
+    let mut pairs: Vec<(&str, usize)> = integrations
         .iter()
         .filter(|i| i.connected)
-        .map(|i| i.toolkit.as_str())
+        .map(|i| (i.toolkit.as_str(), i.connections.len()))
         .collect();
-    slugs.sort();
+    pairs.sort_by(|a, b| a.0.cmp(b.0));
 
     let mut hasher = DefaultHasher::new();
-    slugs.hash(&mut hasher);
+    pairs.hash(&mut hasher);
     hasher.finish()
 }
 
@@ -215,6 +215,18 @@ pub(crate) fn sync_cache_with_connections(connections: &[super::types::ComposioC
         .filter(|toolkit| !toolkit.is_empty())
         .collect();
 
+    // Count active connections per toolkit to detect multi-account changes
+    let live_counts: std::collections::HashMap<String, usize> = {
+        let mut counts = std::collections::HashMap::new();
+        for c in connections.iter().filter(|c| c.is_active()) {
+            let tk = c.normalized_toolkit();
+            if !tk.is_empty() {
+                *counts.entry(tk).or_insert(0) += 1;
+            }
+        }
+        counts
+    };
+
     // Read once to decide whether any cache entry is out of sync. We
     // clone out the keys + connected sets so we can release the read
     // lock before taking the write lock.
@@ -226,7 +238,12 @@ pub(crate) fn sync_cache_with_connections(connections: &[super::types::ComposioC
             .iter()
             .filter_map(|(key, cached)| {
                 let cached_set = connected_toolkit_set(&cached.entries);
-                if cached_set != live_active {
+                // Also check per-toolkit connection counts
+                let counts_match = cached.entries.iter().all(|i| {
+                    let live_count = live_counts.get(&i.toolkit).copied().unwrap_or(0);
+                    i.connections.len() == live_count
+                });
+                if cached_set != live_active || !counts_match {
                     Some((key.clone(), cached_set, live_active.clone()))
                 } else {
                     None
@@ -747,12 +764,43 @@ async fn fetch_connected_integrations_uncached(
                 (Vec::new(), Vec::new())
             };
 
+        let integration_connections: Vec<crate::openhuman::context::prompt::IntegrationConnection> =
+            if connected {
+                let mut conns: Vec<_> = connections
+                    .iter()
+                    .filter(|c| c.is_active() && c.normalized_toolkit() == *slug)
+                    .collect();
+                conns.sort_by(|a, b| a.created_at.cmp(&b.created_at));
+                conns
+                    .iter()
+                    .enumerate()
+                    .map(|(idx, c)| {
+                        let label = c
+                            .account_email
+                            .as_deref()
+                            .or(c.workspace.as_deref())
+                            .or(c.username.as_deref())
+                            .map(|s| s.trim())
+                            .filter(|s| !s.is_empty())
+                            .map(String::from);
+                        crate::openhuman::context::prompt::IntegrationConnection {
+                            connection_id: c.id.clone(),
+                            label,
+                            is_default: idx == 0,
+                        }
+                    })
+                    .collect()
+            } else {
+                Vec::new()
+            };
+
         integrations.push(ConnectedIntegration {
             toolkit: slug.clone(),
             description: toolkit_description(slug).to_string(),
             tools,
             gated_tools,
             connected,
+            connections: integration_connections,
             non_active_status: if connected {
                 None
             } else {
