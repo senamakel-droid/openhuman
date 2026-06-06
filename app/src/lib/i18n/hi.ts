@@ -282,10 +282,13 @@ const messages: TranslationMap = {
   'memory.empty': 'अभी कोई मेमोरी नहीं है। बातचीत के दौरान मेमोरी अपने आप बनती है।',
   'memory.tab.memory': 'मेमोरी',
   'memory.tab.memoryTree': 'मेमोरी ट्री',
-  'memory.tab.tasks': 'एजेंट कार्य',
+  'memory.tab.tasks': 'कार्य',
   'memory.tab.tasksDescription':
     'कार्य बनाएं और ट्रैक करें — आपके अपने टू-डू और साथ ही वे बोर्ड जो आपके एजेंट वार्तालापों में बनाते हैं।',
   'memory.tab.subconscious': 'सबकॉन्शस',
+  'memory.tab.agents': 'लाइब्रेरी',
+  'memory.tab.agentsDescription':
+    'अपने उपलब्ध एजेंट ब्राउज़ करें और चलाएं — प्रत्येक के पास अपने टूल, क्षमताएं और फोकस क्षेत्र हैं।',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2115,6 +2118,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': 'अभी चलाएं',
   'subconscious.providerUnavailableTitle': 'Subconscious रुका हुआ है',
   'subconscious.providerSettings': 'AI सेटिंग्स',
+  'subconscious.scratchpadInfo':
+    'सबकॉन्शस टिक्स में अवलोकनों का एक स्थायी स्क्रैचपैड बनाए रखता है। मोड और आवृत्ति कॉन्फ़िगर करने के लिए सेटिंग्स → एजेंट एक्सेस देखें।',
   'subconscious.approvalNeeded': 'अनुमति चाहिए',
   'subconscious.requiresApproval': 'अनुमति ज़रूरी है',
   'subconscious.fixInConnections': 'Connections में ठीक करें',

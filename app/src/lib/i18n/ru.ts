@@ -284,10 +284,13 @@ const messages: TranslationMap = {
   'memory.empty': 'Воспоминаний пока нет. Они создаются автоматически в процессе общения.',
   'memory.tab.memory': 'Память',
   'memory.tab.memoryTree': 'Дерево памяти',
-  'memory.tab.tasks': 'Задачи агента',
+  'memory.tab.tasks': 'Задачи',
   'memory.tab.tasksDescription':
     'Создавайте и отслеживайте задачи — ваши личные дела и доски, которые агенты формируют в ходе разговоров.',
   'memory.tab.subconscious': 'Подсознание',
+  'memory.tab.agents': 'Библиотека',
+  'memory.tab.agentsDescription':
+    'Просматривайте и запускайте доступных агентов — у каждого свои инструменты, возможности и область специализации.',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2133,6 +2136,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': 'Запустить сейчас',
   'subconscious.providerUnavailableTitle': 'Подсознание приостановлено',
   'subconscious.providerSettings': 'Настройки ИИ',
+  'subconscious.scratchpadInfo':
+    'Подсознание ведёт постоянный блокнот наблюдений между циклами. Проверьте Настройки → Доступ агента для настройки режима и частоты.',
   'subconscious.approvalNeeded': 'Требуется подтверждение',
   'subconscious.requiresApproval': 'Требует подтверждения',
   'subconscious.fixInConnections': 'Исправить в подключениях',

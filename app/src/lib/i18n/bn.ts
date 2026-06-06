@@ -283,10 +283,13 @@ const messages: TranslationMap = {
     'এখনো কোনো মেমোরি নেই। আপনি যত ইন্টারঅ্যাক্ট করবেন, মেমোরি স্বয়ংক্রিয়ভাবে তৈরি হবে।',
   'memory.tab.memory': 'মেমোরি',
   'memory.tab.memoryTree': 'মেমোরি ট্রি',
-  'memory.tab.tasks': 'এজেন্ট টাস্ক',
+  'memory.tab.tasks': 'টাস্ক',
   'memory.tab.tasksDescription':
     'টাস্ক তৈরি করুন এবং ট্র্যাক করুন — আপনার নিজের কাজের তালিকা এবং এজেন্টরা কথোপকথন জুড়ে যে বোর্ডগুলি তৈরি করে।',
   'memory.tab.subconscious': 'সাবকনশাস',
+  'memory.tab.agents': 'লাইব্রেরি',
+  'memory.tab.agentsDescription':
+    'আপনার উপলব্ধ এজেন্টগুলি ব্রাউজ করুন এবং চালান — প্রতিটির নিজস্ব টুল, ক্ষমতা এবং ফোকাস এলাকা রয়েছে।',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2116,6 +2119,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': 'এখনই চালান',
   'subconscious.providerUnavailableTitle': 'Subconscious বিরত আছে',
   'subconscious.providerSettings': 'AI সেটিংস',
+  'subconscious.scratchpadInfo':
+    'সাবকনশাস টিক জুড়ে পর্যবেক্ষণের একটি স্থায়ী স্ক্র্যাচপ্যাড বজায় রাখে। মোড এবং ফ্রিকোয়েন্সি কনফিগার করতে সেটিংস → এজেন্ট অ্যাক্সেস দেখুন।',
   'subconscious.approvalNeeded': 'অনুমোদন প্রয়োজন',
   'subconscious.requiresApproval': 'অনুমোদন প্রয়োজন',
   'subconscious.fixInConnections': 'সংযোগে ঠিক করুন',

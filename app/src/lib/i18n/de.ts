@@ -292,10 +292,13 @@ const messages: TranslationMap = {
     'Noch keine Erinnerungen. Erinnerungen werden automatisch erstellt, während du interagierst.',
   'memory.tab.memory': 'Erinnerung',
   'memory.tab.memoryTree': 'Erinnerungsbaum',
-  'memory.tab.tasks': 'Agent-Aufgaben',
+  'memory.tab.tasks': 'Aufgaben',
   'memory.tab.tasksDescription':
     'Aufgaben erstellen und verfolgen – eigene To-dos sowie die Boards, die Agenten in Gesprächen anlegen.',
   'memory.tab.subconscious': 'Unterbewusstsein',
+  'memory.tab.agents': 'Bibliothek',
+  'memory.tab.agentsDescription':
+    'Verfügbare Agenten durchsuchen und starten — jeder mit eigenen Werkzeugen, Fähigkeiten und Schwerpunkten.',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2168,6 +2171,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': 'Jetzt ausführen',
   'subconscious.providerUnavailableTitle': 'Unterbewusstsein ist pausiert',
   'subconscious.providerSettings': 'KI-Einstellungen',
+  'subconscious.scratchpadInfo':
+    'Das Unterbewusstsein führt ein dauerhaftes Notizbuch mit Beobachtungen über Ticks hinweg. Überprüfen Sie Einstellungen → Agentenzugriff, um Modus und Häufigkeit zu konfigurieren.',
   'subconscious.approvalNeeded': 'Genehmigung erforderlich',
   'subconscious.requiresApproval': 'Erfordert eine Genehmigung',
   'subconscious.fixInConnections': 'Fix in Verbindungen',

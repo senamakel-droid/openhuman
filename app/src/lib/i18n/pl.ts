@@ -287,10 +287,13 @@ const messages: TranslationMap = {
     'Brak wspomnień. Wspomnienia powstają automatycznie podczas korzystania z aplikacji.',
   'memory.tab.memory': 'Pamięć',
   'memory.tab.memoryTree': 'Drzewo pamięci',
-  'memory.tab.tasks': 'Zadania agenta',
+  'memory.tab.tasks': 'Zadania',
   'memory.tab.tasksDescription':
     'Twórz i śledź zadania — własne listy do zrobienia oraz tablice, które Twoi agenci budują w rozmowach.',
   'memory.tab.subconscious': 'Podświadomość',
+  'memory.tab.agents': 'Biblioteka',
+  'memory.tab.agentsDescription':
+    'Przeglądaj i uruchamiaj dostępnych agentów — każdy z własnymi narzędziami, możliwościami i obszarem specjalizacji.',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2139,6 +2142,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': 'Uruchom teraz',
   'subconscious.providerUnavailableTitle': 'Podświadomość wstrzymana',
   'subconscious.providerSettings': 'Ustawienia AI',
+  'subconscious.scratchpadInfo':
+    'Podświadomość utrzymuje trwały notatnik obserwacji między cyklami. Sprawdź Ustawienia → Dostęp agenta, aby skonfigurować tryb i częstotliwość.',
   'subconscious.approvalNeeded': 'Wymagana zgoda',
   'subconscious.requiresApproval': 'Wymaga zgody',
   'subconscious.fixInConnections': 'Napraw w Połączeniach',
@@ -4718,7 +4723,7 @@ const messages: TranslationMap = {
   'intelligence.agents.allTools': 'Wszystkie narzędzia',
   'intelligence.agents.toolCountOne': '{count} narzędzie',
   'intelligence.agents.toolCountOther': '{count} narzędzi',
-  'intelligence.agents.subagentCountOne': '{count} subagent',
+  'intelligence.agents.subagentCountOne': '{count} podagent',
   'intelligence.agents.subagentCountOther': '{count} subagentów',
   'intelligence.agents.startChat': 'Rozpocznij czat',
   'intelligence.agents.startChatPrompt':

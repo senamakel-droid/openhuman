@@ -271,10 +271,13 @@ const messages: TranslationMap = {
   'memory.empty': '暂无记忆。记忆将在你交互时自动创建。',
   'memory.tab.memory': '记忆',
   'memory.tab.memoryTree': '记忆树',
-  'memory.tab.tasks': '智能体任务',
+  'memory.tab.tasks': '任务',
   'memory.tab.tasksDescription':
     '创建并跟踪任务——包括您自己的待办事项以及智能体在对话中创建的看板。',
   'memory.tab.subconscious': '潜意识',
+  'memory.tab.agents': '资料库',
+  'memory.tab.agentsDescription':
+    '浏览并运行可用的智能体——每个智能体都有自己的工具、能力和专注领域。',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2011,6 +2014,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': '立即运行',
   'subconscious.providerUnavailableTitle': '潜意识已暂停',
   'subconscious.providerSettings': 'AI 设置',
+  'subconscious.scratchpadInfo':
+    '潜意识在每次循环中维护一个持久的观察记事本。请查看设置 → 代理访问来配置模式和频率。',
   'subconscious.approvalNeeded': '需要审批',
   'subconscious.requiresApproval': '需要审批',
   'subconscious.fixInConnections': '在连接中修复',

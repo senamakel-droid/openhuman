@@ -289,10 +289,13 @@ const messages: TranslationMap = {
     'Nessuna memoria ancora. Le memorie vengono create automaticamente mentre interagisci.',
   'memory.tab.memory': 'Memoria',
   'memory.tab.memoryTree': 'Albero della memoria',
-  'memory.tab.tasks': 'Attività agente',
+  'memory.tab.tasks': 'Attività',
   'memory.tab.tasksDescription':
     'Crea e monitora le attività — i tuoi to-do personali e le board create dagli agenti nelle conversazioni.',
   'memory.tab.subconscious': 'Subconscio',
+  'memory.tab.agents': 'Libreria',
+  'memory.tab.agentsDescription':
+    'Sfoglia e avvia gli agenti disponibili — ognuno con i propri strumenti, capacità e area di specializzazione.',
   'memory.tab.workflows': 'Workflows',
   'memory.tab.workflowsDescription':
     'Lifecycle-bound rule sets that guide how the agent behaves during tasks.',
@@ -2152,6 +2155,8 @@ const messages: TranslationMap = {
   'subconscious.runNow': 'Esegui ora',
   'subconscious.providerUnavailableTitle': 'Subconscio in pausa',
   'subconscious.providerSettings': 'Impostazioni IA',
+  'subconscious.scratchpadInfo':
+    'Il subconscio mantiene un blocco appunti persistente di osservazioni attraverso i cicli. Controlla Impostazioni → Accesso agente per configurare modalità e frequenza.',
   'subconscious.approvalNeeded': 'Approvazione necessaria',
   'subconscious.requiresApproval': 'Richiede approvazione',
   'subconscious.fixInConnections': 'Correggi in Connessioni',
