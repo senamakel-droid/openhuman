@@ -205,6 +205,47 @@ describe('deduplicateConnections', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Component tests: Conversation kind
+// ---------------------------------------------------------------------------
+
+describe('AddMemorySourceDialog — Conversation kind', () => {
+  beforeEach(() => {
+    mockListConnections.mockReset();
+    mockGetSupportedToolkits.mockReset();
+    mockGetSupportedToolkits.mockResolvedValue(DEFAULT_SUPPORTED);
+  });
+
+  it('shows no extra fields and submits with just a label', async () => {
+    const { addMemorySource } = await import('../../services/memorySourcesService');
+    const mockAdd = addMemorySource as ReturnType<typeof vi.fn>;
+    mockAdd.mockResolvedValue({
+      id: 'src_conv',
+      kind: 'conversation',
+      label: 'Chats',
+      enabled: true,
+    });
+
+    const { onAdded } = renderDialog();
+
+    const conversationBtn = screen.getByText('Conversation');
+    fireEvent.click(conversationBtn);
+
+    const labelInput = screen.getByPlaceholderText('My research notes');
+    fireEvent.change(labelInput, { target: { value: 'Chats' } });
+
+    const submitBtn = screen.getByRole('button', { name: 'Add' });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockAdd).toHaveBeenCalledWith(
+        expect.objectContaining({ kind: 'conversation', label: 'Chats', enabled: true })
+      );
+    });
+    await waitFor(() => expect(onAdded).toHaveBeenCalled());
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Component tests: ComposioPicker inside the dialog
 // ---------------------------------------------------------------------------
 
