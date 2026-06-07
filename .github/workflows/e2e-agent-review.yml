@@ -19,7 +19,7 @@ jobs:
   e2e-agent-review:
     name: E2E agent-review (Linux / Appium Chromium)
     runs-on: ubuntu-22.04
-    timeout-minutes: 60
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
