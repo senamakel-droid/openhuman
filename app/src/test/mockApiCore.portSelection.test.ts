@@ -43,13 +43,7 @@ it('falls back to an available local port when the preferred Vitest mock port is
   try {
     blocker = await listenOn(preferredPort);
   } catch (err: unknown) {
-    if (
-      !(
-        err &&
-        typeof err === 'object' &&
-        (err as NodeJS.ErrnoException).code === 'EADDRINUSE'
-      )
-    ) {
+    if (!(err && typeof err === 'object' && (err as NodeJS.ErrnoException).code === 'EADDRINUSE')) {
       throw err;
     }
     // Port already occupied externally — the precondition is already met,
