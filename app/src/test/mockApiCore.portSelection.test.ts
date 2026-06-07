@@ -39,13 +39,21 @@ afterEach(async () => {
 it('falls back to an available local port when the preferred Vitest mock port is occupied', async () => {
   await stopMockServer();
 
-  let blocker: net.Server;
+  let blocker: net.Server | null = null;
   try {
     blocker = await listenOn(preferredPort);
-  } catch {
+  } catch (err: unknown) {
+    if (
+      !(
+        err &&
+        typeof err === 'object' &&
+        (err as NodeJS.ErrnoException).code === 'EADDRINUSE'
+      )
+    ) {
+      throw err;
+    }
     // Port already occupied externally — the precondition is already met,
     // proceed without our own blocker.
-    blocker = null as unknown as net.Server;
   }
 
   try {
