@@ -667,8 +667,17 @@ async fn auto_save_stores_messages_in_memory() {
 
     let _ = agent.turn("Remember this fact").await.unwrap();
 
-    // Both user message and assistant response should be saved
-    let count = mem.count().await.unwrap();
+    // The user-message auto-save is fire-and-forget (tokio::spawn), so it
+    // may still be in-flight when turn() returns. Poll briefly to let the
+    // spawned task complete before asserting.
+    let mut count = 0usize;
+    for _ in 0..20 {
+        count = mem.count().await.unwrap();
+        if count >= 2 {
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+    }
     assert!(
         count >= 2,
         "Expected at least 2 memory entries, got {count}"
