@@ -667,16 +667,18 @@ async fn auto_save_stores_messages_in_memory() {
 
     let _ = agent.turn("Remember this fact").await.unwrap();
 
-    // The user-message auto-save is fire-and-forget (tokio::spawn), so it
-    // may still be in-flight when turn() returns. Poll briefly to let the
-    // spawned task complete before asserting.
-    let mut count = 0usize;
-    for _ in 0..20 {
+    // Both user message and assistant response should be saved. The assistant
+    // reply is persisted synchronously, but the user message is saved
+    // fire-and-forget (tokio::spawn in turn/core.rs, #3610), so it may land a
+    // moment after `turn()` returns — poll briefly instead of reading once,
+    // which otherwise races on a loaded CI runner under llvm-cov instrumentation.
+    let mut count = 0;
+    for _ in 0..50 {
         count = mem.count().await.unwrap();
         if count >= 2 {
             break;
         }
-        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
     }
     assert!(
         count >= 2,

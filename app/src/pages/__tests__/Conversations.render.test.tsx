@@ -545,8 +545,9 @@ describe('Conversations — smoke render (#1123 welcome-lock removal)', () => {
   // CycleUsagePill moved into ChatComposer toolbar (#3611) — quota-pill
   // loading test removed; the "Loading…" text no longer renders here.
 
-  // Covers budget banner (lines 2080-2125): budget-exhausted banner + OpenRouter CTA
+  // Covers budget banner: budget-exhausted banner + OpenRouter CTA
   it('renders budget-limit banner when teamUsage is present', async () => {
+    // cycleBudgetUsd: 0 → renders "Your included budget is complete" branch
     const teamUsage = { cycleBudgetUsd: 0, remainingUsd: 0, cycleSpentUsd: 0, cycleEndsAt: null };
 
     mockUseUsageState.mockReturnValue({
