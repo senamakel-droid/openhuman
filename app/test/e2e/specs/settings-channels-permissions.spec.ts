@@ -53,7 +53,11 @@ describe('Settings - Channels & Permissions', () => {
           };
           return win.__OPENHUMAN_STORE__?.getState?.().channelConnections?.defaultMessagingChannel;
         })) === 'discord',
-      { timeout: 10_000, interval: 500, timeoutMsg: 'default messaging channel did not switch to discord' }
+      {
+        timeout: 10_000,
+        interval: 500,
+        timeoutMsg: 'default messaging channel did not switch to discord',
+      }
     );
   });
 

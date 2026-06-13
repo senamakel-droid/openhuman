@@ -195,7 +195,10 @@ describe('Settings - Feature Preferences', () => {
     await navigateViaHash('/settings/mascot');
     await browser
       .$('[data-testid="mascot-voice-select"]')
-      .waitForExist({ timeout: 15_000, timeoutMsg: 'mascot-voice-select did not render after reload' });
+      .waitForExist({
+        timeout: 15_000,
+        timeoutMsg: 'mascot-voice-select did not render after reload',
+      });
 
     await browser.waitUntil(async () => (await mascotVoiceIdFromStore()) === 'voice-e2e-custom', {
       timeout: 15_000,

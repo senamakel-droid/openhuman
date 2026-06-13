@@ -46,9 +46,9 @@ export async function clickByTitle(title: string, timeoutMs = 6_000): Promise<bo
       }
       // Exact title match, then prefix match (handles " (/new)" style suffixes).
       if (click(document.querySelector(`button[title=${JSON.stringify(t)}]`))) return true;
-      const prefixMatch = Array.from(document.querySelectorAll<HTMLButtonElement>('button[title]')).find(
-        b => (b.getAttribute('title') ?? '').startsWith(t)
-      );
+      const prefixMatch = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('button[title]')
+      ).find(b => (b.getAttribute('title') ?? '').startsWith(t));
       return click(prefixMatch ?? null);
     }, title);
     if (clicked) return true;
