@@ -217,7 +217,12 @@ describe('Runtime picker → login → onboarding → home → logout', () => {
     }
     await fillInput('input[type="url"]', 'http://127.0.0.1:1/rpc');
     // Token already required; supply something + a deliberately closed port.
-    const tokenOk = await fillInput('input[type="password"]', 'bad-token-e2e');
+    // The bearer-token field is a `type="text"` input (password-manager-ignored),
+    // not `type="password"`, so match it by its placeholder.
+    const tokenOk = await fillInput(
+      'input[placeholder="The bearer token from your remote runtime"]',
+      'bad-token-e2e'
+    );
     expect(tokenOk).toBe(true);
 
     const clicked = await clickByTextDom('Test Connection');
