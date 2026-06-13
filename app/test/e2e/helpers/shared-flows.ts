@@ -178,7 +178,7 @@ function routeReadySelector(hash) {
 }
 
 async function waitForHashRouteReady(hash, options = {}) {
-  const { timeout = 10_000 } = options;
+  const { timeout = 10_000, previousHash = null } = options;
   // Routes that redirect (e.g. /activity → /settings/notifications) settle on
   // the resolved target, so wait for that hash rather than the requested one.
   const expected = normalizeHash(`#${resolveRedirect(normalizeHash(hash).replace(/^#/, ''))}`);
@@ -215,7 +215,16 @@ async function waitForHashRouteReady(hash, options = {}) {
       // unmapped target — once the hash has stabilised for ~500ms.
       const cur = res.current;
       if (cur === expected) return true;
-      if (cur && cur === lastHash) stableCount += 1;
+      // Guard against a false "settle": if the hash never moved from where we
+      // started AND it isn't the expected target, navigation effectively didn't
+      // happen (e.g. a removed route that doesn't redirect). Don't let the
+      // stabilisation fallback report that as success.
+      if (!cur || cur === previousHash) {
+        stableCount = 0;
+        lastHash = cur;
+        return false;
+      }
+      if (cur === lastHash) stableCount += 1;
       else {
         stableCount = 0;
         lastHash = cur;
@@ -280,10 +289,14 @@ export async function navigateViaHash(hash) {
 
     // Fallback: direct hash set + wait for route readiness.
     try {
+      // Capture where we were *before* navigating so the readiness check can
+      // reject a "settle" on a hash that never actually moved (a removed route
+      // that doesn't redirect would otherwise look like a success).
+      const previousHash = await browser.execute(() => window.location.hash.replace(/\/$/, ''));
       await browser.execute(h => {
         window.location.hash = h;
       }, hash);
-      await waitForHashRouteReady(hash);
+      await waitForHashRouteReady(hash, { previousHash });
       const currentHash = await browser.execute(() => window.location.hash);
       console.log(`[E2E] Navigated to ${hash} (current: ${currentHash})`);
       return;

@@ -86,7 +86,7 @@ suiteRunner('Conversations web channel flow', () => {
     // ensure one is selected (same pattern as chat-harness-send-stream).
     await browser.waitUntil(async () => await chatMounted(), {
       timeout: 15_000,
-      timeoutMsg: 'Conversations did not mount (Threads heading missing)',
+      timeoutMsg: 'Conversations did not mount (composer/new-thread button missing)',
     });
     expect(await clickByTitle('New thread', 8_000)).toBe(true);
     await browser.pause(1_000);
