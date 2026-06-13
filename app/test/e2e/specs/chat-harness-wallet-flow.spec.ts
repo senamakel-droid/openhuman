@@ -102,7 +102,10 @@ describe('Chat harness — wallet flow', () => {
     this.timeout(90_000);
     await startMockServer();
     await waitForApp();
-    await resetApp(USER_ID);
+    // clearAuthSession drops a prior chat-harness spec's leftover session token
+    // so the crypto sub-agent run starts from a clean signed-in state (a
+    // polluted session was the source of the intermittent quote-store failures).
+    await resetApp(USER_ID, { clearAuthSession: true });
   });
 
   after(async () => {

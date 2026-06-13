@@ -139,8 +139,11 @@ describe('Runtime picker → login → onboarding → home → logout', () => {
     await waitForApp();
     resetMockBehavior();
     setMockBehavior('composioConnections', '[]');
-    // skipAuth so we land on Welcome (logged out) — the spec drives login itself.
-    await resetApp('e2e-runtime-picker-login', { skipAuth: true });
+    // skipAuth so we land on Welcome (logged out) — the spec drives login
+    // itself. clearAuthSession wipes the on-disk session token too, so a prior
+    // login spec in this shard can't leave us authenticated (which would make
+    // PublicRoute redirect past Welcome to /home).
+    await resetApp('e2e-runtime-picker-login', { skipAuth: true, clearAuthSession: true });
     clearRequestLog();
   });
 
