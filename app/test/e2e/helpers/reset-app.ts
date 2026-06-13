@@ -91,6 +91,24 @@ export async function resetApp(userId: string, options: ResetAppOptions = {}): P
     if (setOnboarding.ok) {
       stepLog('Restored onboarding_completed=true after reset');
     }
+
+    // `test_reset` removes active_user.toml + api_key but NOT the auth profile
+    // / session token (credentials domain). The renderer's CoreStateProvider
+    // keys "logged in" off the on-disk session token (auth_get_session_token),
+    // so without clearing it a `skipAuth` spec that runs after a prior login
+    // keeps seeing an authenticated snapshot and PublicRoute redirects it to
+    // /home instead of the signed-out Welcome page. Clear the session here so
+    // the post-reload renderer starts genuinely signed out; specs that need a
+    // user re-auth afterwards via the loopback/deep-link bypass.
+    const cleared = await callOpenhumanRpc('openhuman.auth_clear_session', {}).catch(
+      (err: unknown) => {
+        stepLog(`auth_clear_session failed (non-fatal): ${err}`);
+        return { ok: false as const };
+      }
+    );
+    if (cleared.ok) {
+      stepLog('Cleared auth session after reset');
+    }
   } else {
     const errText = String(reset.error ?? '');
     const unreachable =

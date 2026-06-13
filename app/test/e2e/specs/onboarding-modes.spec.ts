@@ -296,9 +296,11 @@ describe('Onboarding modes — Simple (Cloud) vs Advanced (Custom)', () => {
     await pause(400);
     await clickOnboardingNext();
 
-    // Step 8 — Custom Vault (Default). This is the final step → Finish.
+    // Step 8 — Custom Vault. Final step → Finish. VaultSetupStep auto-selects
+    // "configure" and hides the choice cards for local sessions (the default
+    // option is disabled when no cloud account backs the vault), so there is no
+    // -default button to click — just advance.
     expect(await testIdExists('onboarding-custom-vault-step', 10_000)).toBe(true);
-    expect(await clickTestId('onboarding-custom-vault-step-default')).toBe(true);
     await pause(400);
     await clickOnboardingNext();
 
@@ -434,9 +436,10 @@ describe('Onboarding modes — Simple (Cloud) vs Advanced (Custom)', () => {
     await pause(400);
     await clickOnboardingNext();
 
-    // Step 8 — Custom Vault (Default). Final step → Finish.
+    // Step 8 — Custom Vault. Final step → Finish. VaultSetupStep auto-selects
+    // "configure" and hides the choice cards for local sessions, so there is no
+    // -default button to click — just advance.
     expect(await testIdExists('onboarding-custom-vault-step', 10_000)).toBe(true);
-    expect(await clickTestId('onboarding-custom-vault-step-default')).toBe(true);
     await pause(400);
     await clickOnboardingNext();
 

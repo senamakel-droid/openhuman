@@ -173,6 +173,31 @@ describe('Chat harness — orchestrator → subagent flow', () => {
     // At least ONE of the two signals must have fired — the timeline
     // entry is the more durable check (the live phase can flip back to
     // 'thinking' or 'idle' before our 200ms poll catches it).
+    // [DIAGNOSTIC] Dump the LLM call sequence to understand forced-response
+    // queue consumption under the parallel/subagent inference flow (#3633/#3641).
+    try {
+      const llmLog = (getRequestLog() as Array<{ method: string; url: string; body?: string }>)
+        .filter(r => r.method === 'POST' && r.url.includes('/chat/completions'))
+        .map((r, i) => {
+          let msgs: Array<{ role?: string; content?: unknown }> = [];
+          let tools: unknown[] = [];
+          try {
+            const b = JSON.parse(r.body ?? '{}');
+            msgs = Array.isArray(b.messages) ? b.messages : [];
+            tools = Array.isArray(b.tools) ? b.tools : [];
+          } catch {
+            /* ignore */
+          }
+          const last = msgs[msgs.length - 1];
+          const sys = msgs.find(m => m.role === 'system');
+          const sysSnippet = String(sys?.content ?? '').slice(0, 90);
+          return `#${i} msgs=${msgs.length} tools=${tools.length} lastRole=${last?.role} sys="${sysSnippet}" last="${String(last?.content ?? '').slice(0, 60)}"`;
+        });
+      console.log(`[DIAG subagent] ${llmLog.length} chat/completions calls:\n${llmLog.join('\n')}`);
+    } catch (e) {
+      console.log('[DIAG subagent] dump failed', e);
+    }
+
     expect(sawSubagentPhase || sawSubagentTimeline).toBe(true);
 
     // Final canary must land in the DOM after the orchestrator wraps up.
