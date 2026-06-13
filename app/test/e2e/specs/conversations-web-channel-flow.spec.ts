@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { waitForApp } from '../helpers/app-helpers';
 import {
+  chatMounted,
   clickByTitle,
   clickSend,
   typeIntoComposer,
@@ -83,7 +84,7 @@ suiteRunner('Conversations web channel flow', () => {
     stepLog('ensure thread exists');
     // The agent pipeline requires an active thread. Click "New thread" to
     // ensure one is selected (same pattern as chat-harness-send-stream).
-    await browser.waitUntil(async () => await textExists('Threads'), {
+    await browser.waitUntil(async () => await chatMounted(), {
       timeout: 15_000,
       timeoutMsg: 'Conversations did not mount (Threads heading missing)',
     });

@@ -37,6 +37,7 @@
  */
 import { waitForApp } from '../helpers/app-helpers';
 import {
+  chatMounted,
   clickByTitle,
   clickSend,
   getSelectedThreadId,
@@ -125,7 +126,7 @@ describe('Chat harness — orchestrator → subagent flow', () => {
   it('orchestrator delegates to researcher and produces the final canary', async function () {
     this.timeout(90_000);
     await navigateViaHash('/chat');
-    await browser.waitUntil(async () => await textExists('Threads'), {
+    await browser.waitUntil(async () => await chatMounted(), {
       timeout: 15_000,
       timeoutMsg: 'Conversations did not mount',
     });
