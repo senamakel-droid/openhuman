@@ -205,8 +205,17 @@ describe('Runtime picker → login → onboarding → home → logout', () => {
   });
 
   it('"Test Connection" against an unreachable host shows the unreachable pill', async function () {
-    // Polling up to 20s for the connection result + potential accessibility tree dump.
     this.timeout(60_000);
+    // The ModePicker can re-render back to the runtime *choice cards* between
+    // the sequential `it`s in this suite, dropping the cloud URL/token form the
+    // previous test revealed. Make this test self-contained: if the Auth Token
+    // field isn't showing, re-select Cloud and re-enter the (deliberately
+    // closed-port) URL before filling the token.
+    if (!(await textExists('Auth Token'))) {
+      await clickByTextDom('Run on the Cloud (Complex)');
+      await browser.pause(500);
+    }
+    await fillInput('input[type="url"]', 'http://127.0.0.1:1/rpc');
     // Token already required; supply something + a deliberately closed port.
     const tokenOk = await fillInput('input[type="password"]', 'bad-token-e2e');
     expect(tokenOk).toBe(true);
