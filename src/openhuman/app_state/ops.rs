@@ -420,6 +420,20 @@ pub fn peek_cached_current_user_identity() -> Option<crate::openhuman::agent::pr
     }
 }
 
+/// Drop the in-memory app-state caches (current user + runtime snapshot).
+///
+/// These are TTL caches that front the `app_state_snapshot` RPC. After an
+/// out-of-band state wipe (e.g. `openhuman.test_reset` clearing the active
+/// user + api key), the caches would otherwise keep serving the previous,
+/// now-stale snapshot — including a logged-in user — until their TTL elapses.
+/// That makes E2E specs which expect a freshly-signed-out shell (the Welcome
+/// page) flake when they run after a spec that authenticated. Calling this on
+/// reset guarantees the very next snapshot is rebuilt from the wiped state.
+pub fn clear_snapshot_caches() {
+    *CURRENT_USER_CACHE.lock() = None;
+    *RUNTIME_SNAPSHOT_CACHE.lock() = None;
+}
+
 async fn build_runtime_snapshot(config: &Config, req_id: u64) -> RuntimeSnapshot {
     {
         let cache = RUNTIME_SNAPSHOT_CACHE.lock();
