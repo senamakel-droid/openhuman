@@ -283,9 +283,22 @@ describe('Onboarding modes — Simple (Cloud) vs Advanced (Custom)', () => {
     await pause(400);
     await clickOnboardingNext();
 
-    // Step 6 — Custom Embeddings (Default). This is the final step → Finish.
+    // Step 6 — Custom Embeddings (Default).
     expect(await testIdExists('onboarding-custom-embeddings-step', 10_000)).toBe(true);
     expect(await clickTestId('onboarding-custom-embeddings-step-default')).toBe(true);
+    await pause(400);
+    await clickOnboardingNext();
+
+    // Step 7 — Custom Activity (Default). Added to CUSTOM_WIZARD_STEPS after
+    // embeddings (see app/src/pages/onboarding/customWizardSteps.ts).
+    expect(await testIdExists('onboarding-custom-activity-step', 10_000)).toBe(true);
+    expect(await clickTestId('onboarding-custom-activity-step-default')).toBe(true);
+    await pause(400);
+    await clickOnboardingNext();
+
+    // Step 8 — Custom Vault (Default). This is the final step → Finish.
+    expect(await testIdExists('onboarding-custom-vault-step', 10_000)).toBe(true);
+    expect(await clickTestId('onboarding-custom-vault-step-default')).toBe(true);
     await pause(400);
     await clickOnboardingNext();
 
@@ -409,9 +422,21 @@ describe('Onboarding modes — Simple (Cloud) vs Advanced (Custom)', () => {
     await pause(400);
     await clickOnboardingNext();
 
-    // Step 6 — Custom Embeddings (Default). Final step → Finish.
+    // Step 6 — Custom Embeddings (Default).
     expect(await testIdExists('onboarding-custom-embeddings-step', 10_000)).toBe(true);
     expect(await clickTestId('onboarding-custom-embeddings-step-default')).toBe(true);
+    await pause(400);
+    await clickOnboardingNext();
+
+    // Step 7 — Custom Activity (Default).
+    expect(await testIdExists('onboarding-custom-activity-step', 10_000)).toBe(true);
+    expect(await clickTestId('onboarding-custom-activity-step-default')).toBe(true);
+    await pause(400);
+    await clickOnboardingNext();
+
+    // Step 8 — Custom Vault (Default). Final step → Finish.
+    expect(await testIdExists('onboarding-custom-vault-step', 10_000)).toBe(true);
+    expect(await clickTestId('onboarding-custom-vault-step-default')).toBe(true);
     await pause(400);
     await clickOnboardingNext();
 
