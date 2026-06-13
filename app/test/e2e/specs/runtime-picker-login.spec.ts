@@ -215,9 +215,11 @@ describe('Runtime picker → login → onboarding → home → logout', () => {
     expect(clicked).toBe(true);
 
     // Either "auth failed" (if something happens to respond) or unreachable.
-    // Both prove the test path actually fired. Poll up to 20s — chromium-driver
-    // can sit on the connect timeout for a while before failing.
-    const deadline = Date.now() + 20_000;
+    // Both prove the test path actually fired. Poll up to 45s — under CI load
+    // chromium-driver/the core's reqwest client can sit on the TCP connect
+    // timeout to the deliberately-closed port well past 20s before the
+    // unreachable pill renders (stays within this.timeout(60_000)).
+    const deadline = Date.now() + 45_000;
     let saw = false;
     while (Date.now() < deadline) {
       if (
