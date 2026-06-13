@@ -73,7 +73,8 @@ describe('Settings - Account Preferences', () => {
 
     await navigateViaHash('/settings/privacy');
     await waitForText('Privacy', 15_000);
-    await waitForText('Share Anonymized Usage Data', 15_000);
+    // Renamed: t('privacy.shareAnonymizedData') = 'Share Product Analytics and Diagnostics'.
+    await waitForText('Share Product Analytics and Diagnostics', 15_000);
 
     await clickSelector('[data-testid="privacy-analytics-toggle"]');
     await clickSelector('[data-testid="privacy-meet-handoff-toggle"]');

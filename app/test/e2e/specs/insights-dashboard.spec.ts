@@ -57,9 +57,13 @@ describe('Insights dashboard smoke', () => {
     await stopMockServer();
   });
 
-  it('mounts the /intelligence route and renders the Memory tab', async () => {
-    stepLog('navigating to /intelligence');
-    await navigateViaHash('/intelligence');
+  it('mounts the intelligence dashboard and renders the Memory tab', async () => {
+    // The old top-level /intelligence page was folded into Brain as the
+    // "intelligence" tab (renders the same <Intelligence/> dashboard with the
+    // memory workspace). The legacy /settings/intelligence slug redirects here
+    // too. See app/src/pages/Brain.tsx and app/src/pages/Settings.tsx.
+    stepLog('navigating to /brain?tab=intelligence');
+    await navigateViaHash('/brain?tab=intelligence');
 
     // Wait for tab bar to appear then click the Memory tab to activate it.
     await waitForText('Memory', 15_000);

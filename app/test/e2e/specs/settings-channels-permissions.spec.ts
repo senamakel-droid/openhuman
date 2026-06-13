@@ -47,9 +47,11 @@ describe('Settings - Channels & Permissions', () => {
     await navigateViaHash('/settings/privacy');
 
     await waitForText('Privacy', 15_000);
-    // PrivacyPanel renders "Anonymized Analytics" section header (not "Data Sharing")
-    await waitForText('Anonymized Analytics', 15_000);
-    expect(await textExists('Share Anonymized Usage Data')).toBe(true);
+    // PrivacyPanel's analytics section was renamed: t('privacy.anonymizedAnalytics')
+    // is now "Product Analytics" and the toggle label t('privacy.shareAnonymizedData')
+    // is "Share Product Analytics and Diagnostics".
+    await waitForText('Product Analytics', 15_000);
+    expect(await textExists('Share Product Analytics and Diagnostics')).toBe(true);
     // Capability list section is "What leaves your computer" (not "Permission Metadata")
     await waitForText('What leaves your computer', 5_000);
   });

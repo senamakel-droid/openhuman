@@ -194,25 +194,25 @@ async function waitForHashRouteReady(hash, options = {}) {
   await browser.waitUntil(
     async () => {
       const res = await browser.execute(
-        ({ target, selector }) => {
-          if (document.readyState !== 'complete') return { state: 'loading' };
-          const current = window.location.hash.replace(/\/$/, '');
+        ({ selector }) => {
+          if (document.readyState !== 'complete') return { loading: true };
           const root = document.getElementById('root');
-          if (!root) return { state: 'loading', current };
-          if (selector) {
-            return {
-              state: root.querySelector(selector) && current === target ? 'ready' : 'pending',
-              current,
-            };
-          }
-          return { state: 'undecided', current };
+          if (!root) return { loading: true };
+          return {
+            loading: false,
+            hasSelector: selector ? root.querySelector(selector) !== null : false,
+            current: window.location.hash.replace(/\/$/, ''),
+          };
         },
-        { target: expected, selector: readySelector }
+        { selector: readySelector }
       );
-      if (res.state === 'ready') return true;
-      if (res.state === 'loading' || res.state === 'pending') return false;
-      // No ready selector: accept the resolved target hash immediately, or a
-      // redirect to an unmapped target once the hash has stabilised (~500ms).
+      if (res.loading) return false;
+      // A known route-ready selector being present is a definitive signal the
+      // target panel rendered — accept it regardless of the hash, since routes
+      // can redirect to a different hash (e.g. /settings/memory-data → /brain).
+      if (res.hasSelector) return true;
+      // Otherwise accept the resolved target hash, or — for redirects to an
+      // unmapped target — once the hash has stabilised for ~500ms.
       const cur = res.current;
       if (cur === expected) return true;
       if (cur && cur === lastHash) stableCount += 1;
