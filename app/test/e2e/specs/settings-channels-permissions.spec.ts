@@ -11,7 +11,7 @@
  *   - 13.2.2 Privacy panel renders + analytics toggle is present
  */
 import { waitForApp } from '../helpers/app-helpers';
-import { clickText, textExists, waitForText } from '../helpers/element-helpers';
+import { clickSelector, textExists, waitForText } from '../helpers/element-helpers';
 import { resetApp } from '../helpers/reset-app';
 import { navigateViaHash } from '../helpers/shared-flows';
 import { startMockServer, stopMockServer } from '../mock-server';
@@ -38,7 +38,9 @@ describe('Settings - Channels & Permissions', () => {
     expect(await textExists('Telegram')).toBe(true);
     expect(await textExists('Discord')).toBe(true);
 
-    await clickText('Discord');
+    // Select via the stable channel-select test id rather than the ambiguous
+    // "Discord" text (which also appears on connection tiles / help copy).
+    await clickSelector('[data-testid="channel-select-discord"]');
     // The active-route line always renders regardless of connection state.
     await waitForText('Active route', 5_000);
   });

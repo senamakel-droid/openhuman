@@ -41,9 +41,8 @@ describe('Settings - Advanced Config', () => {
 
     // The dev-mode gate was dropped (#3639) and the per-feature dev entries
     // moved to the settings sidebar's "Diagnostics & Logs" group. The
-    // Developer Options panel is now the slim "Developer & Diagnostics" page
-    // with a Restart Tour action.
-    await waitForText('Developer & Diagnostics', 15_000);
+    // Developer Options panel is now slim — its stable, panel-specific marker
+    // is the "Restart Tour" action.
     await waitForText('Restart Tour', 15_000);
   });
 

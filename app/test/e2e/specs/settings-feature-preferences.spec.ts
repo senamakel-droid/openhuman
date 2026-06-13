@@ -87,7 +87,9 @@ describe('Settings - Feature Preferences', () => {
     await navigateViaHash('/connections?tab=messaging');
 
     await waitForText('Default Messaging Channel', 15_000);
-    await clickText('Discord', 10_000);
+    // Use the stable channel-select test id — "Discord" text also appears on
+    // connection tiles and help copy, so clickText could hit the wrong node.
+    await clickSelector('[data-testid="channel-select-discord"]', 10_000);
     await browser.waitUntil(async () => (await defaultMessagingChannelFromStore()) === 'discord', {
       timeout: 10_000,
       interval: 500,
