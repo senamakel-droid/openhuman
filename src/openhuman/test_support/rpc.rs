@@ -111,14 +111,6 @@ pub async fn reset() -> Result<RpcOutcome<ResetSummary>, String> {
         root.display()
     );
 
-    // Invalidate the in-memory app-state caches (current user + runtime
-    // snapshot). Without this the next `app_state_snapshot` keeps serving the
-    // pre-reset, still-authenticated snapshot until its TTL elapses, so a
-    // skipAuth spec that runs after a login never sees the signed-out Welcome
-    // shell (PublicRoute redirects the "logged-in" snapshot to /home).
-    crate::openhuman::app_state::clear_snapshot_caches();
-    log::debug!("[test_reset] step=clear_snapshot_caches ok");
-
     let memory_tree_log = format!(
         "memory_tree wiped rows={} dirs={:?} sync_state={}",
         memory_tree.rows_deleted, memory_tree.dirs_removed, memory_tree.sync_state_cleared

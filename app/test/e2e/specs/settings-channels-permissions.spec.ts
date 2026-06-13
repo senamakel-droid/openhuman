@@ -41,8 +41,20 @@ describe('Settings - Channels & Permissions', () => {
     // Select via the stable channel-select test id rather than the ambiguous
     // "Discord" text (which also appears on connection tiles / help copy).
     await clickSelector('[data-testid="channel-select-discord"]');
-    // The active-route line always renders regardless of connection state.
-    await waitForText('Active route', 5_000);
+    // Confirm the selection persisted to redux state (the Connections messaging
+    // tab no longer renders the legacy "Active route" line).
+    await browser.waitUntil(
+      async () =>
+        (await browser.execute(() => {
+          const win = window as unknown as {
+            __OPENHUMAN_STORE__?: {
+              getState?: () => { channelConnections?: { defaultMessagingChannel?: string | null } };
+            };
+          };
+          return win.__OPENHUMAN_STORE__?.getState?.().channelConnections?.defaultMessagingChannel;
+        })) === 'discord',
+      { timeout: 10_000, interval: 500, timeoutMsg: 'default messaging channel did not switch to discord' }
+    );
   });
 
   it('renders privacy settings and analytics toggle (13.2.2)', async () => {
