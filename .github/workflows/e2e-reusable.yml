@@ -123,7 +123,7 @@ jobs:
           path: |
             ~/.appium
             /usr/local/lib/node_modules/appium
-          key: appium3-chromium-${{ runner.os }}-v1
+          key: appium3-chromium-${{ runner.os }}-v2
 
       - name: Install JS dependencies
         run: bash scripts/ci-cancel-aware.sh pnpm install --frozen-lockfile
@@ -138,6 +138,9 @@ jobs:
           if ! command -v appium >/dev/null 2>&1; then
             bash scripts/ci-cancel-aware.sh npm install -g appium@3
           fi
+          # appium-chromium-driver is loaded from ~/.appium and imports the
+          # appium package from that tree at runtime.
+          bash scripts/ci-cancel-aware.sh npm install --prefix "$HOME/.appium" appium@3
           # `appium driver list --installed` can miss cached installs on some
           # Appium builds; install idempotently and ignore "already installed".
           bash scripts/ci-cancel-aware.sh appium driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
@@ -300,7 +303,7 @@ jobs:
           path: |
             ~/.appium
             /usr/local/lib/node_modules/appium
-          key: appium3-chromium-${{ runner.os }}-v1
+          key: appium3-chromium-${{ runner.os }}-v2
 
       - name: Install JS dependencies (for test harness only)
         run: bash scripts/ci-cancel-aware.sh pnpm install --frozen-lockfile
@@ -310,6 +313,7 @@ jobs:
           if ! command -v appium >/dev/null 2>&1; then
             bash scripts/ci-cancel-aware.sh npm install -g appium@3
           fi
+          bash scripts/ci-cancel-aware.sh npm install --prefix "$HOME/.appium" appium@3
           bash scripts/ci-cancel-aware.sh appium driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
 
       - name: Download build artifact
@@ -483,7 +487,7 @@ jobs:
         with:
           path: |
             ~/.appium
-          key: appium3-chromium-${{ runner.os }}-v1
+          key: appium3-chromium-${{ runner.os }}-v2
 
       - name: Install JS dependencies
         run: bash scripts/ci-cancel-aware.sh pnpm install --frozen-lockfile
@@ -498,6 +502,9 @@ jobs:
           if ! command -v appium >/dev/null 2>&1; then
             bash scripts/ci-cancel-aware.sh npm install -g appium@3
           fi
+          # appium-chromium-driver is loaded from ~/.appium and imports the
+          # appium package from that tree at runtime.
+          bash scripts/ci-cancel-aware.sh npm install --prefix "$HOME/.appium" appium@3
           # `appium driver list --installed` can miss cached installs on some
           # Appium builds; install idempotently and ignore "already installed".
           bash scripts/ci-cancel-aware.sh appium driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
@@ -574,7 +581,7 @@ jobs:
         with:
           path: |
             ~/.appium
-          key: appium3-chromium-${{ runner.os }}-v1
+          key: appium3-chromium-${{ runner.os }}-v2
 
       - name: Install JS dependencies
         run: bash scripts/ci-cancel-aware.sh pnpm install --frozen-lockfile
@@ -591,6 +598,9 @@ jobs:
           if ! command -v appium >/dev/null 2>&1; then
             bash scripts/ci-cancel-aware.sh npm install -g appium@3
           fi
+          # appium-chromium-driver is loaded from ~/.appium and imports the
+          # appium package from that tree at runtime.
+          bash scripts/ci-cancel-aware.sh npm install --prefix "$HOME/.appium" appium@3
           # `appium driver list --installed` can miss cached installs on some
           # Appium builds; install idempotently and ignore "already installed".
           bash scripts/ci-cancel-aware.sh appium driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
@@ -739,7 +749,7 @@ jobs:
         with:
           path: |
             ~/.appium
-          key: appium3-chromium-${{ runner.os }}-v1
+          key: appium3-chromium-${{ runner.os }}-v2
 
       - name: Install JS dependencies (for test harness only)
         run: bash scripts/ci-cancel-aware.sh pnpm install --frozen-lockfile
@@ -749,6 +759,7 @@ jobs:
           if ! command -v appium >/dev/null 2>&1; then
             bash scripts/ci-cancel-aware.sh npm install -g appium@3
           fi
+          bash scripts/ci-cancel-aware.sh npm install --prefix "$HOME/.appium" appium@3
           bash scripts/ci-cancel-aware.sh appium driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
 
       - name: Download build artifact
@@ -938,7 +949,7 @@ jobs:
         with:
           path: |
             ~/.appium
-          key: appium3-chromium-${{ runner.os }}-v1
+          key: appium3-chromium-${{ runner.os }}-v2
 
       - name: Install JS dependencies (for test harness only)
         run: bash scripts/ci-cancel-aware.sh pnpm install --frozen-lockfile
@@ -949,6 +960,7 @@ jobs:
           if ! command -v appium >/dev/null 2>&1; then
             bash scripts/ci-cancel-aware.sh npm install -g appium@3
           fi
+          bash scripts/ci-cancel-aware.sh npm install --prefix "$HOME/.appium" appium@3
           bash scripts/ci-cancel-aware.sh appium driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
 
       - name: Download build artifact

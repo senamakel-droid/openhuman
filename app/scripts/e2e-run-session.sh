@@ -588,6 +588,11 @@ source "$SCRIPT_DIR/e2e-resolve-node-appium.sh"
 # exits non-zero on parse errors in some Appium versions, so just attempt the
 # install and ignore "already installed" output.
 echo "[runner] Ensuring Appium chromium driver is installed..."
+APPIUM_HOME_DIR="${APPIUM_HOME:-$HOME/.appium}"
+if [ ! -d "$APPIUM_HOME_DIR/node_modules/appium" ]; then
+  echo "[runner] Installing Appium into $APPIUM_HOME_DIR for chromium driver peer resolution..."
+  npm install --prefix "$APPIUM_HOME_DIR" appium@3 >/dev/null
+fi
 "$APPIUM_BIN" driver install --source=npm appium-chromium-driver >/dev/null 2>&1 || true
 
 APPIUM_LOG="$LOG_DIR/appium-e2e-${LOG_SUFFIX}.log"
