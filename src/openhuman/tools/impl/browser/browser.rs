@@ -539,6 +539,11 @@ impl BrowserTool {
     }
 
     async fn execute_playwright_action(&self, action: BrowserAction) -> anyhow::Result<ToolResult> {
+        if let BrowserAction::Open { url } = &action {
+            debug!("[browser] validating playwright open url before dispatch");
+            self.validate_url(url)?;
+        }
+
         let mut state = self.playwright_state.lock().await;
         let output = state
             .execute_action(action, self.native_headless)

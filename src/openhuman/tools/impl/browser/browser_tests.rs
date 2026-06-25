@@ -196,6 +196,34 @@ fn browser_tool_accepts_playwright_backend_config() {
     );
 }
 
+#[tokio::test]
+async fn playwright_backend_validates_open_url_before_runner() {
+    let security = Arc::new(SecurityPolicy::default());
+    let tool = BrowserTool::new_with_backend(
+        security,
+        vec!["example.com".into()],
+        None,
+        "playwright".into(),
+        true,
+        "http://127.0.0.1:9515".into(),
+        None,
+        ComputerUseConfig::default(),
+    );
+
+    let err = tool
+        .execute_action(
+            BrowserAction::Open {
+                url: "file:///tmp/secret.txt".into(),
+            },
+            ResolvedBackend::Playwright,
+        )
+        .await
+        .unwrap_err()
+        .to_string();
+
+    assert!(err.contains("file:// URLs are not allowed"));
+}
+
 #[test]
 fn browser_tool_accepts_computer_use_backend_config() {
     let security = Arc::new(SecurityPolicy::default());
