@@ -822,7 +822,7 @@ mod tests {
             .next()
             .expect("prose before structured reference");
 
-        assert!(prose.contains("Accepted background sub-agent `archivist`"));
+        assert!(prose.contains("Accepted async sub-agent `archivist`"));
         assert!(!prose.contains("sub-internal-123"));
         assert!(message.contains("[async_subagent_ref]"));
         assert!(message.contains("sub-internal-123"));
