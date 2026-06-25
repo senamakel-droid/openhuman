@@ -48,6 +48,7 @@ SPEC_ARG="${SPEC_ARGS[0]:-}"
 E2E_MOCK_PORT="${E2E_MOCK_PORT:-18473}"
 CEF_CDP_PORT="${CEF_CDP_PORT:-19222}"
 APPIUM_PORT="${APPIUM_PORT:-4723}"
+E2E_CDP_READY_TIMEOUT_SECONDS="${E2E_CDP_READY_TIMEOUT_SECONDS:-180}"
 OS="$(uname)"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -440,7 +441,7 @@ APP_PID=$!
 
 echo "[runner] Waiting for CDP at http://127.0.0.1:${CEF_CDP_PORT}/json/version ..."
 CDP_VERSION_JSON=""
-for i in $(seq 1 60); do
+for i in $(seq 1 "$E2E_CDP_READY_TIMEOUT_SECONDS"); do
   CDP_VERSION_JSON="$(curl -sf "http://127.0.0.1:${CEF_CDP_PORT}/json/version" 2>/dev/null || true)"
   if [ -n "$CDP_VERSION_JSON" ]; then
     echo "[runner] CDP is ready."
@@ -453,8 +454,8 @@ for i in $(seq 1 60); do
     echo "----- end log -----" >&2
     exit 1
   fi
-  if [ "$i" -eq 60 ]; then
-    echo "ERROR: CDP did not come up within 60s. App log follows:" >&2
+  if [ "$i" -eq "$E2E_CDP_READY_TIMEOUT_SECONDS" ]; then
+    echo "ERROR: CDP did not come up within ${E2E_CDP_READY_TIMEOUT_SECONDS}s. App log follows:" >&2
     echo "----- $APP_LOG -----" >&2
     cat "$APP_LOG" >&2 || true
     echo "----- end log -----" >&2

@@ -524,7 +524,11 @@ jobs:
   e2e-windows:
     if: inputs.run_windows && !inputs.full
     name: E2E (Windows / Appium Chromium)
-    runs-on: windows-latest
+    # Pin to 2022 for the CEF/Appium harness. As of June 2026,
+    # windows-latest resolves to Windows Server 2025 / VS 2026, where
+    # whisper-rs-sys' CMake build exits with 0xc0000142 before the harness can
+    # launch.
+    runs-on: windows-2022
     timeout-minutes: 30
     steps:
       - name: Checkout code
@@ -815,7 +819,8 @@ jobs:
   build-windows-full:
     if: inputs.run_windows && inputs.full
     name: Build (Windows full)
-    runs-on: windows-latest
+    # Keep the full-suite build on the same stable image as the smoke lane.
+    runs-on: windows-2022
     timeout-minutes: 30
     steps:
       - name: Checkout code
@@ -898,7 +903,8 @@ jobs:
     if: inputs.run_windows && inputs.full
     needs: build-windows-full
     name: E2E (Windows full / ${{ matrix.shard.name }})
-    runs-on: windows-latest
+    # Keep full-suite shards on the same stable image as the build job.
+    runs-on: windows-2022
     timeout-minutes: 30
     strategy:
       fail-fast: false
