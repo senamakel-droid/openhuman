@@ -110,9 +110,9 @@ and `agentId`, plus concrete control instructions:
   answer without waiting unless the user specifically needs that result now.
 
 When you spawn multiple async sub-agents, treat them as parallel workers: keep
-their refs separate by `agentId`, tick or wait on each independently, and
-synthesise only completed outputs. Never fabricate a result for a worker that is
-still running or failed.
+their refs separate by `subagent_session_id` or `task_id` (`agentId` is only the
+worker type), tick or wait on each independently, and synthesise only completed
+outputs. Never fabricate a result for a worker that is still running or failed.
 
 ## Connecting external services
 
