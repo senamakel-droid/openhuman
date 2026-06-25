@@ -129,6 +129,10 @@ fn browser_backend_parser_accepts_supported_values() {
         BrowserBackendKind::AgentBrowser
     );
     assert_eq!(
+        BrowserBackendKind::parse("playwright").unwrap(),
+        BrowserBackendKind::Playwright
+    );
+    assert_eq!(
         BrowserBackendKind::parse("rust-native").unwrap(),
         BrowserBackendKind::RustNative
     );
@@ -148,7 +152,7 @@ fn browser_backend_parser_rejects_unknown_values() {
 }
 
 #[test]
-fn browser_tool_default_backend_is_agent_browser() {
+fn browser_tool_default_backend_is_agent_browser_for_legacy_constructor() {
     let security = Arc::new(SecurityPolicy::default());
     let tool = BrowserTool::new(security, vec!["example.com".into()], None);
     assert_eq!(
@@ -171,6 +175,25 @@ fn browser_tool_accepts_auto_backend_config() {
         ComputerUseConfig::default(),
     );
     assert_eq!(tool.configured_backend().unwrap(), BrowserBackendKind::Auto);
+}
+
+#[test]
+fn browser_tool_accepts_playwright_backend_config() {
+    let security = Arc::new(SecurityPolicy::default());
+    let tool = BrowserTool::new_with_backend(
+        security,
+        vec!["example.com".into()],
+        None,
+        "playwright".into(),
+        true,
+        "http://127.0.0.1:9515".into(),
+        None,
+        ComputerUseConfig::default(),
+    );
+    assert_eq!(
+        tool.configured_backend().unwrap(),
+        BrowserBackendKind::Playwright
+    );
 }
 
 #[test]
@@ -606,6 +629,7 @@ fn supported_action_detection_is_exhaustive() {
 #[test]
 fn browser_backend_kind_as_str_roundtrips() {
     assert_eq!(BrowserBackendKind::AgentBrowser.as_str(), "agent_browser");
+    assert_eq!(BrowserBackendKind::Playwright.as_str(), "playwright");
     assert_eq!(BrowserBackendKind::RustNative.as_str(), "rust_native");
     assert_eq!(BrowserBackendKind::ComputerUse.as_str(), "computer_use");
     assert_eq!(BrowserBackendKind::Auto.as_str(), "auto");
@@ -749,6 +773,7 @@ fn validate_coordinate_no_limit_allows_any_non_negative() {
 #[test]
 fn backend_name_covers_all_variants() {
     assert_eq!(backend_name(ResolvedBackend::AgentBrowser), "agent_browser");
+    assert_eq!(backend_name(ResolvedBackend::Playwright), "playwright");
     assert_eq!(backend_name(ResolvedBackend::RustNative), "rust_native");
     assert_eq!(backend_name(ResolvedBackend::ComputerUse), "computer_use");
 }
