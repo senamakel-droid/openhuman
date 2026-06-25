@@ -295,21 +295,19 @@ impl Tool for SpawnAsyncSubagentTool {
                                 definition.id,
                                 reuse_decision.as_str()
                             );
-                            let payload = json!({
-                                "task_id": running_task_id,
-                                "subagent_session_id": session.subagent_session_id,
-                                "agent_id": definition.id,
-                                "mode": "async",
-                                "worker_thread_id": session.worker_thread_id,
-                                "reused": true,
-                                "reuse_decision": reuse_decision.as_str(),
-                            });
-                            return Ok(ToolResult::success(format!(
-                                "Continued reusable sub-agent `{}` (subagent_session_id `{}`, task_id `{}`). \
-                                 It is already running and will pick up the new instruction at its next step.\n\n[async_subagent_ref]\n{}\n[/async_subagent_ref]",
-                                payload["agent_id"].as_str().unwrap_or("subagent"),
-                                payload["subagent_session_id"].as_str().unwrap_or(""),
+                            let payload = async_subagent_ref_payload(
                                 running_task_id,
+                                &session.subagent_session_id,
+                                &definition.id,
+                                session.worker_thread_id.as_deref(),
+                                true,
+                                reuse_decision.as_str(),
+                                "running",
+                            );
+                            return Ok(ToolResult::success(format!(
+                                "Continued reusable async sub-agent `{}`. It is already running and will pick up the new instruction at its next step. \
+                                 Use the structured reference below to send more input, wait, or perform a short timeout tick.\n\n[async_subagent_ref]\n{}\n[/async_subagent_ref]",
+                                payload["agent_id"].as_str().unwrap_or("subagent"),
                                 serde_json::to_string(&payload).unwrap_or_else(|_| "{}".to_string())
                             )));
                         }
@@ -641,15 +639,15 @@ impl Tool for SpawnAsyncSubagentTool {
             status_rx,
         );
 
-        let payload = json!({
-            "task_id": task_id,
-            "subagent_session_id": durable_session.subagent_session_id,
-            "agent_id": definition.id,
-            "mode": "async",
-            "worker_thread_id": worker_thread_id,
-            "reused": reusable.is_some(),
-            "reuse_decision": reuse_decision.as_str(),
-        });
+        let payload = async_subagent_ref_payload(
+            &task_id,
+            &durable_session.subagent_session_id,
+            &definition.id,
+            worker_thread_id.as_deref(),
+            reusable.is_some(),
+            reuse_decision.as_str(),
+            "running",
+        );
         let payload_json = match serde_json::to_string(&payload) {
             Ok(serialized) => {
                 log::debug!(
@@ -676,10 +674,69 @@ impl Tool for SpawnAsyncSubagentTool {
 
 fn format_async_subagent_accepted(agent_id: &str, payload_json: &str) -> String {
     format!(
-        "Accepted background sub-agent `{agent_id}`. Do not block on it before answering the user. \
-         You may redirect it mid-run with `steer_subagent` and collect its result with `wait_subagent` \
-         using the structured reference below.\n\n[async_subagent_ref]\n{payload_json}\n[/async_subagent_ref]"
+        "Accepted async sub-agent `{agent_id}`. Use the structured reference below to send more input, \
+         wait for completion, or perform a short timeout tick to check status. If the user does not need \
+         the result now, continue without blocking.\n\n[async_subagent_ref]\n{payload_json}\n[/async_subagent_ref]"
     )
+}
+
+fn async_subagent_ref_payload(
+    task_id: &str,
+    subagent_session_id: &str,
+    agent_id: &str,
+    worker_thread_id: Option<&str>,
+    reused: bool,
+    reuse_decision: &str,
+    status: &str,
+) -> serde_json::Value {
+    json!({
+        "task_id": task_id,
+        "taskId": task_id,
+        "subagent_session_id": subagent_session_id,
+        "subagentSessionId": subagent_session_id,
+        "agent_id": agent_id,
+        "agentId": agent_id,
+        "mode": "async",
+        "status": status,
+        "worker_thread_id": worker_thread_id,
+        "workerThreadId": worker_thread_id,
+        "reused": reused,
+        "reuse_decision": reuse_decision,
+        "reuseDecision": reuse_decision,
+        "instructions": {
+            "send_message": {
+                "tool": "steer_subagent",
+                "description": "Send additional instructions or context to this running async sub-agent.",
+                "arguments": {
+                    "subagent_session_id": subagent_session_id,
+                    "message": "<message>",
+                    "mode": "steer"
+                }
+            },
+            "wait": {
+                "tool": "wait_subagent",
+                "description": "Block until the async sub-agent finishes, up to the timeout.",
+                "arguments": {
+                    "subagent_session_id": subagent_session_id,
+                    "timeout_secs": 120
+                }
+            },
+            "timeout_tick": {
+                "tool": "wait_subagent",
+                "description": "Perform a short status tick without committing the parent to a long wait.",
+                "arguments": {
+                    "subagent_session_id": subagent_session_id,
+                    "timeout_secs": 1
+                }
+            }
+        },
+        "next_actions": [
+            "call steer_subagent to send more input",
+            "call wait_subagent with timeout_secs to collect the result",
+            "call wait_subagent with timeout_secs=1 as a timeout tick/status check",
+            "continue without waiting when the current user reply does not depend on the result"
+        ]
+    })
 }
 
 fn add_background_contract(prompt: &str) -> String {
@@ -769,6 +826,31 @@ mod tests {
         assert!(!prose.contains("sub-internal-123"));
         assert!(message.contains("[async_subagent_ref]"));
         assert!(message.contains("sub-internal-123"));
+    }
+
+    #[test]
+    fn async_reference_payload_includes_agent_id_and_control_instructions() {
+        let payload = async_subagent_ref_payload(
+            "sub-123",
+            "subsess-456",
+            "researcher",
+            Some("thread-worker"),
+            false,
+            "created",
+            "running",
+        );
+
+        assert_eq!(payload["agent_id"], "researcher");
+        assert_eq!(payload["agentId"], "researcher");
+        assert_eq!(payload["instructions"]["wait"]["tool"], "wait_subagent");
+        assert_eq!(
+            payload["instructions"]["timeout_tick"]["arguments"]["timeout_secs"],
+            1
+        );
+        assert_eq!(
+            payload["instructions"]["send_message"]["tool"],
+            "steer_subagent"
+        );
     }
 
     #[test]
