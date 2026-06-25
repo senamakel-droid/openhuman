@@ -181,6 +181,7 @@ use openhuman_core::openhuman::profiles::{
 };
 use openhuman_core::openhuman::security::SecurityPolicy;
 use openhuman_core::openhuman::todos::ops::BoardLocation;
+use openhuman_core::openhuman::tokenjuice::AgentTokenjuiceCompression;
 use openhuman_core::openhuman::tools::{Tool, ToolResult, ToolSpec};
 
 static ENV_LOCK: Mutex<()> = Mutex::new(());
@@ -1602,6 +1603,7 @@ named = ["todo", "plan_exit"]
         sandbox_mode: SandboxMode::None,
         background: false,
         trigger_memory_agent: Default::default(),
+        tokenjuice_compression: AgentTokenjuiceCompression::Auto,
         subagents: Vec::new(),
         delegate_name: None,
         agent_tier: AgentTier::Worker,
@@ -4701,6 +4703,7 @@ async fn agent_subagent_public_types_cover_task_local_and_error_display_paths() 
         mode: SubagentMode::Typed,
         status: SubagentRunStatus::Completed,
         final_history: Vec::new(),
+        usage: Default::default(),
     };
     assert_eq!(outcome.mode.as_str(), "typed");
     assert_eq!(outcome.elapsed.as_millis(), 12);
