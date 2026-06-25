@@ -2,7 +2,7 @@
 # Reusable E2E workflow — single source of truth for the desktop E2E recipe.
 #
 # Callers:
-#   - `.github/workflows/e2e.yml`     — PR/push, all-OS mega-flow gate.
+#   - `.github/workflows/e2e.yml`     — PR/push, all-OS selected-spec gate.
 #   - `.github/workflows/release-staging.yml`    — pretest gate, all 3 OS, full suite.
 #   - `.github/workflows/release-production.yml` — pretest gate, all 3 OS, full suite.
 #
@@ -50,17 +50,25 @@ on:
       full:
         description:
           When true, run the entire spec suite via `e2e-run-session.sh` (no
-          spec arg). When false, run the desktop full-flow lane only
-          (`mega-flow.spec.ts`). Releases set this to true.
+          spec arg). When false, run the selected desktop spec. Releases set
+          this to true.
         type: boolean
         default: false
+      spec_path:
+        description: Spec path to run when full is false.
+        type: string
+        default: test/e2e/specs/mega-flow.spec.ts
+      spec_label:
+        description: Log label for the selected spec when full is false.
+        type: string
+        default: mega-flow
 
 permissions:
   contents: read
   packages: read
 
 jobs:
-  # Mega-flow gate for PR/push (full=false). The full-suite path lives in
+  # Selected-spec gate for PR/push (full=false). The full-suite path lives in
   # `e2e-linux-full` below, which fans out across 4 parallel shards via
   # `e2e-run-all-flows.sh --suite=<list>`. Splitting the two prevents the
   # smoke job from paying matrix overhead for a 2-spec run.
@@ -137,12 +145,12 @@ jobs:
       - name: Build E2E app
         run: bash scripts/ci-cancel-aware.sh pnpm --filter openhuman-app test:e2e:build
 
-      - name: Run E2E (mega-flow)
+      - name: Run E2E (${{ inputs.spec_label }})
         if: ${{ !inputs.full }}
         run: |
           bash scripts/ci-cancel-aware.sh \
             xvfb-run -a --server-args="-screen 0 1280x960x24" \
-            bash app/scripts/e2e-run-session.sh test/e2e/specs/mega-flow.spec.ts mega-flow
+            bash app/scripts/e2e-run-session.sh "${{ inputs.spec_path }}" "${{ inputs.spec_label }}"
 
       - name: Upload E2E failure artifacts
         if: failure()
@@ -506,9 +514,9 @@ jobs:
           codesign --verify --deep --verbose=2 \
             app/src-tauri/target/debug/bundle/macos/OpenHuman.app
 
-      - name: Run E2E (mega-flow)
+      - name: Run E2E (${{ inputs.spec_label }})
         run: |
-          bash scripts/ci-cancel-aware.sh bash app/scripts/e2e-run-session.sh test/e2e/specs/mega-flow.spec.ts mega-flow
+          bash scripts/ci-cancel-aware.sh bash app/scripts/e2e-run-session.sh "${{ inputs.spec_path }}" "${{ inputs.spec_label }}"
 
       # Artifact uploads intentionally omitted — see e2e-linux for the
       # reusable-workflow-is-also-used-by-releases rationale.
@@ -586,10 +594,10 @@ jobs:
       - name: Build E2E app
         run: bash scripts/ci-cancel-aware.sh pnpm --filter openhuman-app test:e2e:build
 
-      - name: Run E2E (mega-flow)
+      - name: Run E2E (${{ inputs.spec_label }})
         shell: bash
         run: |
-          bash scripts/ci-cancel-aware.sh bash app/scripts/e2e-run-session.sh test/e2e/specs/mega-flow.spec.ts mega-flow
+          bash scripts/ci-cancel-aware.sh bash app/scripts/e2e-run-session.sh "${{ inputs.spec_path }}" "${{ inputs.spec_label }}"
 
       # Artifact uploads intentionally omitted — see e2e-linux for the
       # reusable-workflow-is-also-used-by-releases rationale.
