@@ -273,6 +273,7 @@ impl Tool for WaitSubagentTool {
     }
 }
 
+/// Render a timeout/running wait response with a structured status payload.
 fn format_running_wait_message(
     reference: Option<&running_subagents::SubagentResumeRef>,
     task_id: &str,
@@ -293,6 +294,7 @@ fn format_running_wait_message(
     )
 }
 
+/// Build the machine-readable wait status block returned to the orchestrator.
 fn wait_status_payload(
     reference: Option<&running_subagents::SubagentResumeRef>,
     task_id: &str,

@@ -672,6 +672,7 @@ impl Tool for SpawnAsyncSubagentTool {
     }
 }
 
+/// Format the user-facing acceptance text around a structured async sub-agent reference.
 fn format_async_subagent_accepted(agent_id: &str, payload_json: &str) -> String {
     format!(
         "Accepted async sub-agent `{agent_id}`. Use the structured reference below to send more input, \
@@ -680,6 +681,7 @@ fn format_async_subagent_accepted(agent_id: &str, payload_json: &str) -> String 
     )
 }
 
+/// Build the machine-readable reference the orchestrator uses to steer, wait, or poll a worker.
 fn async_subagent_ref_payload(
     task_id: &str,
     subagent_session_id: &str,
