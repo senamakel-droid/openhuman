@@ -32,15 +32,15 @@ async function ensureRecoveryPhraseGenerateMode(page: Page): Promise<void> {
   await expect
     .poll(
       async () => {
-        if (await copyButton.isVisible().catch(() => false)) return 'generate';
-        if (await replaceButton.isVisible().catch(() => false)) return 'configured';
+        if (await copyButton.isVisible()) return 'generate';
+        if (await replaceButton.isVisible()) return 'configured';
         return 'loading';
       },
       { timeout: 15_000 }
     )
     .not.toBe('loading');
 
-  if (await replaceButton.isVisible().catch(() => false)) {
+  if (await replaceButton.isVisible()) {
     await replaceButton.click();
     await page.getByRole('button', { name: 'I understand, replace my wallet' }).click();
   }
