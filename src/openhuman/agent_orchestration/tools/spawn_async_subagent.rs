@@ -730,12 +730,31 @@ fn async_subagent_ref_payload(
                     "subagent_session_id": subagent_session_id,
                     "timeout_secs": 1
                 }
+            },
+            "delayed_tick": {
+                "tool": "wait",
+                "description": "Trigger a delayed callback before checking this async sub-agent again.",
+                "arguments": {
+                    "duration_secs": 30,
+                    "message": format!("Check async sub-agent {agent_id} status with wait_subagent using subagent_session_id {subagent_session_id}.")
+                }
+            },
+            "delayed_loop": {
+                "tool": "wait_loop",
+                "description": "Trigger repeatable delayed callbacks while this async sub-agent is still relevant.",
+                "arguments": {
+                    "duration_secs": 30,
+                    "message": format!("Check async sub-agent {agent_id} status with wait_subagent using subagent_session_id {subagent_session_id}."),
+                    "loop_key": subagent_session_id,
+                    "iteration": 1
+                }
             }
         },
         "next_actions": [
             "call steer_subagent to send more input",
             "call wait_subagent with timeout_secs to collect the result",
             "call wait_subagent with timeout_secs=1 as a timeout tick/status check",
+            "call wait or wait_loop with the returned message to trigger a delayed status check",
             "continue without waiting when the current user reply does not depend on the result"
         ]
     })
@@ -849,6 +868,8 @@ mod tests {
             payload["instructions"]["timeout_tick"]["arguments"]["timeout_secs"],
             1
         );
+        assert_eq!(payload["instructions"]["delayed_tick"]["tool"], "wait");
+        assert_eq!(payload["instructions"]["delayed_loop"]["tool"], "wait_loop");
         assert_eq!(
             payload["instructions"]["send_message"]["tool"],
             "steer_subagent"

@@ -108,6 +108,12 @@ and `agentId`, plus concrete control instructions:
 - To perform a non-blocking status tick, call `wait_subagent` with
   `timeout_secs: 1`. If it returns `status: "running"`, continue other work or
   answer without waiting unless the user specifically needs that result now.
+- To delay a status check, call `wait` with a short `duration_secs` and a
+  concrete `message` such as "check <subagent_session_id> with wait_subagent".
+  When it returns, treat the message as your callback prompt.
+- To keep polling, call `wait_loop` with the same message. Each tick returns a
+  ready-to-call `wait_loop` instruction with the same message and incremented
+  iteration; repeat only while the task still needs polling.
 
 When you spawn multiple async sub-agents, treat them as parallel workers: keep
 their refs separate by `subagent_session_id` or `task_id` (`agentId` is only the
