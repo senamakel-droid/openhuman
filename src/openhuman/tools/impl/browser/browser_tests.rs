@@ -148,7 +148,7 @@ fn browser_backend_parser_accepts_supported_values() {
 
 #[test]
 fn browser_backend_parser_rejects_unknown_values() {
-    assert!(BrowserBackendKind::parse("playwright").is_err());
+    assert!(BrowserBackendKind::parse("netscape").is_err());
 }
 
 #[test]
