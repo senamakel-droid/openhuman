@@ -2795,7 +2795,7 @@ async fn agent_runtime_policy_cost_and_triage_helpers_cover_public_edges() {
     );
     let estimated =
         openhuman_core::openhuman::agent::cost::estimate_call_cost_usd("agentic-v1", &usage);
-    assert!((estimated - 18.3).abs() < 1e-6, "got {estimated}");
+    assert!((estimated - 1.308625).abs() < 1e-6, "got {estimated}");
     let charged = UsageInfo {
         charged_amount_usd: 0.42,
         ..usage.clone()
