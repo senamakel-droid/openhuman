@@ -546,7 +546,14 @@ impl BrowserTool {
 
         let mut state = self.playwright_state.lock().await;
         let output = state
-            .execute_action(action, self.native_headless)
+            .execute_action(
+                action,
+                self.native_headless,
+                Some(playwright_backend::BrowserUrlPolicy {
+                    allowed_domains: self.allowed_domains.clone(),
+                    allow_all: allow_all_browser_domains(),
+                }),
+            )
             .await
             .context("Playwright browser action failed")?;
 

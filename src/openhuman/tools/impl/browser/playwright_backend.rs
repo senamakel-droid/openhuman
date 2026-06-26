@@ -23,6 +23,8 @@ struct PlaywrightDaemon {
 
 #[derive(Debug, Deserialize)]
 struct PlaywrightResponse {
+    #[serde(default)]
+    id: Option<u64>,
     success: bool,
     #[serde(default)]
     data: Option<Value>,
@@ -30,32 +32,60 @@ struct PlaywrightResponse {
     error: Option<String>,
 }
 
+#[derive(Clone, Debug)]
+pub(crate) struct BrowserUrlPolicy {
+    pub(crate) allowed_domains: Vec<String>,
+    pub(crate) allow_all: bool,
+}
+
 impl Drop for PlaywrightDaemon {
     fn drop(&mut self) {
+        tracing::debug!("[browser::playwright] dropping backend daemon");
         let _ = self.child.start_kill();
     }
 }
 
 impl PlaywrightBrowserState {
     pub async fn is_available() -> bool {
+        tracing::debug!("[browser::playwright] probing playwright runtime availability");
         let mut command = node_command();
         command
             .args([
                 "-e",
-                "try { require('playwright'); process.exit(0); } catch (_) { try { require('@playwright/test'); process.exit(0); } catch (_) { process.exit(1); } }",
+                "const load=()=>{try{return require('playwright')}catch(_){return require('@playwright/test')}};(async()=>{const {chromium}=load();const browser=await chromium.launch({headless:true});await browser.close();})().then(()=>process.exit(0)).catch(()=>process.exit(1));",
             ])
             .stdout(Stdio::null())
             .stderr(Stdio::null());
         apply_node_cwd(&mut command);
 
         match command.status().await {
-            Ok(status) => status.success(),
-            Err(_) => false,
+            Ok(status) => {
+                let available = status.success();
+                tracing::debug!(
+                    available,
+                    status = ?status.code(),
+                    "[browser::playwright] runtime availability probe finished"
+                );
+                available
+            }
+            Err(error) => {
+                tracing::debug!(
+                    error = %error,
+                    "[browser::playwright] runtime availability probe failed to start"
+                );
+                false
+            }
         }
     }
 
-    pub async fn execute_action(&mut self, action: BrowserAction, headless: bool) -> Result<Value> {
-        let args = action_to_args(action);
+    pub async fn execute_action(
+        &mut self,
+        action: BrowserAction,
+        headless: bool,
+        url_policy: Option<BrowserUrlPolicy>,
+    ) -> Result<Value> {
+        tracing::trace!("[browser::playwright] preparing action request");
+        let args = action_to_args(action, url_policy);
         self.execute_args(args, headless).await
     }
 
@@ -67,32 +97,81 @@ impl PlaywrightBrowserState {
 
         let id = self.next_id;
         self.next_id = self.next_id.saturating_add(1);
+        let action = args
+            .get("action")
+            .and_then(Value::as_str)
+            .unwrap_or("<unknown>")
+            .to_string();
 
         let request = json!({
             "id": id,
             "args": args,
         });
         let line = serde_json::to_vec(&request).context("Failed to encode Playwright request")?;
+        tracing::debug!(
+            request_id = id,
+            action = %action,
+            "[browser::playwright] dispatching action"
+        );
 
         let daemon = self.daemon.as_mut().expect("daemon just initialized");
         if let Err(error) = write_request(daemon, &line).await {
             tracing::debug!(
                 error = %error,
+                request_id = id,
                 "[browser::playwright] daemon write failed; restarting once"
             );
             self.daemon = Some(start_daemon(headless).await?);
             let daemon = self.daemon.as_mut().expect("daemon restarted");
-            write_request(daemon, &line).await?;
+            if let Err(error) = write_request(daemon, &line).await {
+                tracing::debug!(
+                    error = %error,
+                    request_id = id,
+                    "[browser::playwright] daemon write retry failed; dropping daemon"
+                );
+                self.daemon = None;
+                return Err(error);
+            }
         }
 
         let daemon = self.daemon.as_mut().expect("daemon available");
-        let response = read_response(daemon)
-            .await
-            .context("Failed to read Playwright response")?;
+        let response = match read_response(daemon).await {
+            Ok(response) => response,
+            Err(error) => {
+                tracing::debug!(
+                    error = %error,
+                    request_id = id,
+                    "[browser::playwright] daemon read failed; dropping daemon"
+                );
+                self.daemon = None;
+                return Err(error).context("Failed to read Playwright response");
+            }
+        };
+
+        if response.id != Some(id) {
+            tracing::debug!(
+                expected_id = id,
+                response_id = ?response.id,
+                "[browser::playwright] daemon response id mismatch; dropping daemon"
+            );
+            self.daemon = None;
+            anyhow::bail!("Playwright daemon response id mismatch");
+        }
 
         if response.success {
+            tracing::debug!(
+                request_id = id,
+                action = %action,
+                "[browser::playwright] action completed"
+            );
             Ok(response.data.unwrap_or_else(|| json!({ "ok": true })))
         } else {
+            tracing::debug!(
+                request_id = id,
+                action = %action,
+                error = ?response.error,
+                "[browser::playwright] action failed"
+            );
             anyhow::bail!(
                 "{}",
                 response
@@ -104,6 +183,7 @@ impl PlaywrightBrowserState {
 }
 
 async fn write_request(daemon: &mut PlaywrightDaemon, line: &[u8]) -> Result<()> {
+    tracing::trace!("[browser::playwright] writing request to daemon");
     daemon
         .stdin
         .write_all(line)
@@ -123,6 +203,7 @@ async fn write_request(daemon: &mut PlaywrightDaemon, line: &[u8]) -> Result<()>
 }
 
 async fn read_response(daemon: &mut PlaywrightDaemon) -> Result<PlaywrightResponse> {
+    tracing::trace!("[browser::playwright] reading response from daemon");
     let mut line = String::new();
     let read = daemon
         .stdout
@@ -132,10 +213,15 @@ async fn read_response(daemon: &mut PlaywrightDaemon) -> Result<PlaywrightRespon
     if read == 0 {
         anyhow::bail!("Playwright daemon exited without a response");
     }
+    tracing::trace!("[browser::playwright] received response from daemon");
     serde_json::from_str(&line).context("Playwright daemon returned invalid JSON")
 }
 
 async fn start_daemon(headless: bool) -> Result<PlaywrightDaemon> {
+    tracing::debug!(
+        headless,
+        "[browser::playwright] spawning playwright backend daemon"
+    );
     let mut command = node_command();
     command
         .arg("-e")
@@ -149,9 +235,18 @@ async fn start_daemon(headless: bool) -> Result<PlaywrightDaemon> {
         .stderr(Stdio::piped());
     apply_node_cwd(&mut command);
 
-    let mut child = command.spawn().context(
-        "Failed to start Playwright backend. Ensure Node.js and the Playwright package are installed.",
-    )?;
+    let mut child = command
+        .spawn()
+        .map_err(|error| {
+            tracing::debug!(
+                error = %error,
+                "[browser::playwright] failed to spawn backend daemon"
+            );
+            error
+        })
+        .context(
+            "Failed to start Playwright backend. Ensure Node.js and the Playwright package are installed.",
+        )?;
     let stdin = child
         .stdin
         .take()
@@ -170,6 +265,7 @@ async fn start_daemon(headless: bool) -> Result<PlaywrightDaemon> {
         });
     }
 
+    tracing::debug!("[browser::playwright] backend daemon spawned");
     Ok(PlaywrightDaemon {
         child,
         stdin,
@@ -204,9 +300,19 @@ fn playwright_node_cwd() -> Option<PathBuf> {
     None
 }
 
-fn action_to_args(action: BrowserAction) -> Value {
+fn action_to_args(action: BrowserAction, url_policy: Option<BrowserUrlPolicy>) -> Value {
     match action {
-        BrowserAction::Open { url } => json!({ "action": "open", "url": url }),
+        BrowserAction::Open { url } => {
+            let policy = url_policy.expect("playwright open actions require a URL policy");
+            json!({
+                "action": "open",
+                "url": url,
+                "url_policy": {
+                    "allowed_domains": policy.allowed_domains,
+                    "allow_all": policy.allow_all,
+                },
+            })
+        }
         BrowserAction::Snapshot {
             interactive_only,
             compact,

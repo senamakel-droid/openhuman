@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const net = require('node:net');
 const os = require('node:os');
 const path = require('node:path');
 const readline = require('node:readline');
@@ -190,11 +191,116 @@ async function runFind(args) {
   }
 }
 
+function ipv4Parts(host) {
+  const parts = host.split('.');
+  if (parts.length !== 4) return null;
+  const nums = parts.map(part => Number(part));
+  if (nums.some(num => !Number.isInteger(num) || num < 0 || num > 255)) return null;
+  return nums;
+}
+
+function isPrivateIpv4(host) {
+  const parts = ipv4Parts(host);
+  if (!parts) return false;
+  const [a, b] = parts;
+  return (
+    a === 0 ||
+    a === 10 ||
+    a === 127 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 100 && b >= 64 && b <= 127) ||
+    (a === 192 && b === 0 && parts[2] === 0) ||
+    (a === 192 && b === 0 && parts[2] === 2) ||
+    (a === 198 && (b === 18 || b === 19)) ||
+    (a === 198 && b === 51 && parts[2] === 100) ||
+    (a === 203 && b === 0 && parts[2] === 113) ||
+    a >= 224
+  );
+}
+
+function isPrivateIpv6(host) {
+  const normalized = host.toLowerCase().replace(/^\[|\]$/g, '');
+  if (normalized === '::1' || normalized === '::') return true;
+  if (normalized.startsWith('::ffff:')) {
+    return isPrivateIpv4(normalized.slice('::ffff:'.length));
+  }
+  return (
+    normalized.startsWith('fc') ||
+    normalized.startsWith('fd') ||
+    normalized.startsWith('fe8') ||
+    normalized.startsWith('fe9') ||
+    normalized.startsWith('fea') ||
+    normalized.startsWith('feb')
+  );
+}
+
+function isPrivateHost(host) {
+  const normalized = String(host || '').toLowerCase().replace(/^\[|\]$/g, '');
+  if (!normalized) return true;
+  if (normalized === 'localhost' || normalized.endsWith('.localhost') || normalized.endsWith('.local')) return true;
+  const ipVersion = net.isIP(normalized);
+  if (ipVersion === 4) return isPrivateIpv4(normalized);
+  if (ipVersion === 6) return isPrivateIpv6(normalized);
+  return false;
+}
+
+function hostMatchesAllowlist(host, allowedDomains) {
+  const normalizedHost = String(host || '').toLowerCase();
+  return allowedDomains.some(domain => {
+    const allowed = String(domain || '').trim().toLowerCase();
+    if (!allowed) return false;
+    if (allowed === '*') return true;
+    if (allowed.startsWith('*.')) {
+      const suffix = allowed.slice(2);
+      return normalizedHost === suffix || normalizedHost.endsWith(`.${suffix}`);
+    }
+    return normalizedHost === allowed || normalizedHost.endsWith(`.${allowed}`);
+  });
+}
+
+function authorizeUrl(rawUrl, policy) {
+  if (!policy) throw new Error('Missing browser URL policy');
+  const trimmed = String(rawUrl || '').trim();
+  if (!trimmed) throw new Error('URL cannot be empty');
+  if (trimmed.startsWith('file://')) throw new Error('file:// URLs are not allowed in browser automation');
+
+  let parsed;
+  try {
+    parsed = new URL(trimmed);
+  } catch (error) {
+    throw new Error(`Invalid URL: ${error.message}`);
+  }
+
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error('Only http:// and https:// URLs are allowed');
+  }
+
+  const host = parsed.hostname.toLowerCase();
+  if (isPrivateHost(host)) throw new Error(`Blocked local/private host: ${host}`);
+
+  const allowedDomains = Array.isArray(policy.allowed_domains) ? policy.allowed_domains : [];
+  if (allowedDomains.length === 0 && !policy.allow_all) {
+    throw new Error('Browser tool enabled but no allowed_domains configured');
+  }
+  if (allowedDomains.length > 0 && !hostMatchesAllowlist(host, allowedDomains)) {
+    throw new Error(`Host '${host}' not in browser.allowed_domains`);
+  }
+}
+
 async function run(args) {
   const current = await ensurePage();
   switch (args.action) {
     case 'open':
+      authorizeUrl(args.url, args.url_policy);
       await current.goto(args.url, { waitUntil: 'domcontentloaded' });
+      try {
+        authorizeUrl(current.url(), args.url_policy);
+      } catch (error) {
+        await current.goto('about:blank').catch(() => {});
+        throw new Error(`Redirect blocked: ${error.message}`);
+      }
       return { backend: 'playwright', action: 'open', url: current.url(), title: await current.title() };
     case 'snapshot': {
       const data = await snapshot(args.interactive_only ?? true, args.compact ?? true, args.depth);
@@ -224,9 +330,7 @@ async function run(args) {
     case 'screenshot': {
       const png = await current.screenshot({ fullPage: Boolean(args.full_page) });
       if (args.path) {
-        fs.mkdirSync(path.dirname(args.path), { recursive: true });
-        fs.writeFileSync(args.path, png);
-        return { backend: 'playwright', action: 'screenshot', path: args.path, bytes: png.length };
+        throw new Error('Playwright screenshot path writes require Rust-side path validation and are disabled');
       }
       return { backend: 'playwright', action: 'screenshot', png_base64: png.toString('base64'), bytes: png.length };
     }

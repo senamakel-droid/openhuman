@@ -103,11 +103,17 @@ pub async fn apply_browser_settings(
     config: &mut Config,
     update: BrowserSettingsPatch,
 ) -> Result<RpcOutcome<serde_json::Value>, String> {
+    let normalized_backend = update
+        .backend
+        .as_deref()
+        .map(normalize_browser_backend)
+        .transpose()?;
+
     if let Some(enabled) = update.enabled {
         config.browser.enabled = enabled;
     }
-    if let Some(backend) = update.backend {
-        config.browser.backend = normalize_browser_backend(&backend)?;
+    if let Some(backend) = normalized_backend {
+        config.browser.backend = backend;
     }
     config.save().await.map_err(|e| e.to_string())?;
     let snapshot = snapshot_config_json(config)?;
