@@ -6,8 +6,11 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::process::{Child, ChildStdin, ChildStdout, Command};
+use tokio::time::{timeout, Duration};
 
 const RUNNER_JS: &str = include_str!("playwright_runner.mjs");
+const PLAYWRIGHT_PROBE_TIMEOUT: Duration = Duration::from_secs(20);
+const PLAYWRIGHT_RESPONSE_TIMEOUT: Duration = Duration::from_secs(60);
 
 #[derive(Default)]
 pub struct PlaywrightBrowserState {
@@ -58,8 +61,8 @@ impl PlaywrightBrowserState {
             .stderr(Stdio::null());
         apply_node_cwd(&mut command);
 
-        match command.status().await {
-            Ok(status) => {
+        match timeout(PLAYWRIGHT_PROBE_TIMEOUT, command.status()).await {
+            Ok(Ok(status)) => {
                 let available = status.success();
                 tracing::debug!(
                     available,
@@ -68,10 +71,17 @@ impl PlaywrightBrowserState {
                 );
                 available
             }
-            Err(error) => {
+            Ok(Err(error)) => {
                 tracing::debug!(
                     error = %error,
                     "[browser::playwright] runtime availability probe failed to start"
+                );
+                false
+            }
+            Err(_) => {
+                tracing::debug!(
+                    timeout_ms = PLAYWRIGHT_PROBE_TIMEOUT.as_millis() as u64,
+                    "[browser::playwright] runtime availability probe timed out"
                 );
                 false
             }
@@ -135,9 +145,9 @@ impl PlaywrightBrowserState {
         }
 
         let daemon = self.daemon.as_mut().expect("daemon available");
-        let response = match read_response(daemon).await {
-            Ok(response) => response,
-            Err(error) => {
+        let response = match timeout(PLAYWRIGHT_RESPONSE_TIMEOUT, read_response(daemon)).await {
+            Ok(Ok(response)) => response,
+            Ok(Err(error)) => {
                 tracing::debug!(
                     error = %error,
                     request_id = id,
@@ -145,6 +155,15 @@ impl PlaywrightBrowserState {
                 );
                 self.daemon = None;
                 return Err(error).context("Failed to read Playwright response");
+            }
+            Err(_) => {
+                tracing::debug!(
+                    request_id = id,
+                    timeout_ms = PLAYWRIGHT_RESPONSE_TIMEOUT.as_millis() as u64,
+                    "[browser::playwright] daemon response timed out; dropping daemon"
+                );
+                self.daemon = None;
+                anyhow::bail!("Timed out waiting for Playwright response");
             }
         };
 

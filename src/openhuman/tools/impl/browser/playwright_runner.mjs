@@ -1,3 +1,4 @@
+const dns = require('node:dns').promises;
 const fs = require('node:fs');
 const net = require('node:net');
 const os = require('node:os');
@@ -220,11 +221,24 @@ function isPrivateIpv4(host) {
   );
 }
 
+function mappedIpv4FromIpv6Tail(tail) {
+  if (tail.includes('.')) return tail;
+  const groups = tail.split(':').filter(Boolean);
+  if (groups.length < 2) return null;
+  const high = Number.parseInt(groups[groups.length - 2], 16);
+  const low = Number.parseInt(groups[groups.length - 1], 16);
+  if (!Number.isInteger(high) || !Number.isInteger(low) || high < 0 || high > 0xffff || low < 0 || low > 0xffff) {
+    return null;
+  }
+  return `${(high >> 8) & 0xff}.${high & 0xff}.${(low >> 8) & 0xff}.${low & 0xff}`;
+}
+
 function isPrivateIpv6(host) {
   const normalized = host.toLowerCase().replace(/^\[|\]$/g, '');
   if (normalized === '::1' || normalized === '::') return true;
   if (normalized.startsWith('::ffff:')) {
-    return isPrivateIpv4(normalized.slice('::ffff:'.length));
+    const mapped = mappedIpv4FromIpv6Tail(normalized.slice('::ffff:'.length));
+    return !mapped || isPrivateIpv4(mapped);
   }
   return (
     normalized.startsWith('fc') ||
@@ -246,6 +260,21 @@ function isPrivateHost(host) {
   return false;
 }
 
+async function assertDnsDoesNotResolvePrivate(host) {
+  if (net.isIP(host)) return;
+  let addresses;
+  try {
+    addresses = await dns.lookup(host, { all: true, verbatim: true });
+  } catch (error) {
+    throw new Error(`Failed to resolve host '${host}': ${error.message}`);
+  }
+  for (const entry of addresses) {
+    if (isPrivateHost(entry.address)) {
+      throw new Error(`Host '${host}' resolves to blocked local/private address: ${entry.address}`);
+    }
+  }
+}
+
 function hostMatchesAllowlist(host, allowedDomains) {
   const normalizedHost = String(host || '').toLowerCase();
   return allowedDomains.some(domain => {
@@ -260,7 +289,7 @@ function hostMatchesAllowlist(host, allowedDomains) {
   });
 }
 
-function authorizeUrl(rawUrl, policy) {
+async function authorizeUrl(rawUrl, policy) {
   if (!policy) throw new Error('Missing browser URL policy');
   const trimmed = String(rawUrl || '').trim();
   if (!trimmed) throw new Error('URL cannot be empty');
@@ -279,12 +308,13 @@ function authorizeUrl(rawUrl, policy) {
 
   const host = parsed.hostname.toLowerCase();
   if (isPrivateHost(host)) throw new Error(`Blocked local/private host: ${host}`);
+  await assertDnsDoesNotResolvePrivate(host);
 
   const allowedDomains = Array.isArray(policy.allowed_domains) ? policy.allowed_domains : [];
   if (allowedDomains.length === 0 && !policy.allow_all) {
     throw new Error('Browser tool enabled but no allowed_domains configured');
   }
-  if (allowedDomains.length > 0 && !hostMatchesAllowlist(host, allowedDomains)) {
+  if (!policy.allow_all && allowedDomains.length > 0 && !hostMatchesAllowlist(host, allowedDomains)) {
     throw new Error(`Host '${host}' not in browser.allowed_domains`);
   }
 }
@@ -293,10 +323,10 @@ async function run(args) {
   const current = await ensurePage();
   switch (args.action) {
     case 'open':
-      authorizeUrl(args.url, args.url_policy);
+      await authorizeUrl(args.url, args.url_policy);
       await current.goto(args.url, { waitUntil: 'domcontentloaded' });
       try {
-        authorizeUrl(current.url(), args.url_policy);
+        await authorizeUrl(current.url(), args.url_policy);
       } catch (error) {
         await current.goto('about:blank').catch(() => {});
         throw new Error(`Redirect blocked: ${error.message}`);
