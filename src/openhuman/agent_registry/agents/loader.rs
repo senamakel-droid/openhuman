@@ -356,6 +356,7 @@ mod tests {
     use crate::openhuman::agent::harness::definition::{
         ModelSpec, SandboxMode, SubagentEntry, ToolScope, TriggerMemoryAgent,
     };
+    use crate::openhuman::tokenjuice::AgentTokenjuiceCompression;
 
     #[test]
     fn all_builtins_parse() {
@@ -643,6 +644,10 @@ mod tests {
         assert_eq!(def.sandbox_mode, SandboxMode::Sandboxed);
         assert!(!def.omit_safety_preamble);
         assert_eq!(def.max_iterations, 10);
+        assert_eq!(
+            def.effective_tokenjuice_compression(),
+            AgentTokenjuiceCompression::Light
+        );
     }
 
     #[test]
@@ -651,6 +656,10 @@ mod tests {
         assert_eq!(def.sandbox_mode, SandboxMode::Sandboxed);
         assert_eq!(def.max_iterations, 2);
         assert!(!def.omit_safety_preamble);
+        assert_eq!(
+            def.effective_tokenjuice_compression(),
+            AgentTokenjuiceCompression::Light
+        );
     }
 
     #[test]
@@ -659,6 +668,10 @@ mod tests {
         assert_eq!(def.sandbox_mode, SandboxMode::Sandboxed);
         assert_eq!(def.max_iterations, 10);
         assert!(!def.omit_safety_preamble);
+        assert_eq!(
+            def.effective_tokenjuice_compression(),
+            AgentTokenjuiceCompression::Light
+        );
         match &def.tools {
             ToolScope::Named(names) => {
                 for required in ["node_exec", "npm_exec", "apply_patch", "update_memory_md"] {
@@ -932,15 +945,16 @@ mod tests {
     }
 
     #[test]
-    fn orchestrator_exposes_agent_prepare_context_planner_does_not() {
-        // The orchestrator owns the first-message context-scout pass.
+    fn orchestrator_and_nested_agents_do_not_expose_agent_prepare_context() {
+        // First-turn context preparation is owned by the harness. Keeping the
+        // direct tool out of the orchestrator scope prevents a duplicate scout
+        // pass after the harness has already prepared context.
         let orch = find("orchestrator");
-        match &orch.tools {
-            ToolScope::Named(tools) => assert!(
-                tools.iter().any(|t| t == "agent_prepare_context"),
-                "orchestrator must allowlist `agent_prepare_context`"
-            ),
-            ToolScope::Wildcard => {}
+        if let ToolScope::Named(tools) = &orch.tools {
+            assert!(
+                !tools.iter().any(|t| t == "agent_prepare_context"),
+                "orchestrator must NOT allowlist `agent_prepare_context`"
+            );
         }
         // The planner must NOT: when invoked via delegate_plan it runs under
         // the orchestrator's PARENT_CONTEXT, so a nested scout would render the

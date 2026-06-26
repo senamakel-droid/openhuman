@@ -25,22 +25,22 @@ async function gotoSettingsRoute(page: Page, hash: string): Promise<void> {
   await dismissWalkthroughIfPresent(page);
 }
 
-async function ensureGeneratedRecoveryPhraseMode(page: Page): Promise<void> {
+async function ensureRecoveryPhraseGenerateMode(page: Page): Promise<void> {
   const copyButton = page.getByRole('button', { name: 'Copy to Clipboard' });
   const replaceButton = page.getByRole('button', { name: 'Replace wallet' });
 
   await expect
     .poll(
       async () => {
-        if (await copyButton.isVisible().catch(() => false)) return 'generate';
-        if (await replaceButton.isVisible().catch(() => false)) return 'configured';
+        if (await copyButton.isVisible()) return 'generate';
+        if (await replaceButton.isVisible()) return 'configured';
         return 'loading';
       },
       { timeout: 15_000 }
     )
-    .toMatch(/generate|configured/);
+    .not.toBe('loading');
 
-  if (await replaceButton.isVisible().catch(() => false)) {
+  if (await replaceButton.isVisible()) {
     await replaceButton.click();
     await page.getByRole('button', { name: 'I understand, replace my wallet' }).click();
   }
@@ -87,8 +87,8 @@ test.describe('Settings - Account Preferences', () => {
   }) => {
     await gotoSettingsRoute(page, '/settings/recovery-phrase');
 
-    await ensureGeneratedRecoveryPhraseMode(page);
-    await page.locator('input[type="checkbox"]').first().check();
+    await ensureRecoveryPhraseGenerateMode(page);
+    await page.locator('#mnemonic-confirm-checkbox').check();
     await page.getByRole('button', { name: 'Save Recovery Phrase' }).click();
 
     await expect(page.getByText('Recovery phrase saved')).toBeVisible();
