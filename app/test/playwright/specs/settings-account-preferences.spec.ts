@@ -25,6 +25,29 @@ async function gotoSettingsRoute(page: Page, hash: string): Promise<void> {
   await dismissWalkthroughIfPresent(page);
 }
 
+async function ensureGeneratedRecoveryPhraseMode(page: Page): Promise<void> {
+  const copyButton = page.getByRole('button', { name: 'Copy to Clipboard' });
+  const replaceButton = page.getByRole('button', { name: 'Replace wallet' });
+
+  await expect
+    .poll(
+      async () => {
+        if (await copyButton.isVisible().catch(() => false)) return 'generate';
+        if (await replaceButton.isVisible().catch(() => false)) return 'configured';
+        return 'loading';
+      },
+      { timeout: 15_000 }
+    )
+    .toMatch(/generate|configured/);
+
+  if (await replaceButton.isVisible().catch(() => false)) {
+    await replaceButton.click();
+    await page.getByRole('button', { name: 'I understand, replace my wallet' }).click();
+  }
+
+  await expect(copyButton).toBeVisible();
+}
+
 test.describe('Settings - Account Preferences', () => {
   test.beforeEach(async ({ page }) => {
     await bootAuthenticatedPage(page, 'pw-settings-account-user');
@@ -64,7 +87,7 @@ test.describe('Settings - Account Preferences', () => {
   }) => {
     await gotoSettingsRoute(page, '/settings/recovery-phrase');
 
-    await expect(page.getByRole('button', { name: 'Copy to Clipboard' })).toBeVisible();
+    await ensureGeneratedRecoveryPhraseMode(page);
     await page.locator('input[type="checkbox"]').first().check();
     await page.getByRole('button', { name: 'Save Recovery Phrase' }).click();
 
